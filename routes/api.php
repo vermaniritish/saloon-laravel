@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BrandsController;
+use App\Http\Controllers\ProductsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,4 +30,9 @@ Route::middleware(['apiAuth'])->group(function () {
 });
 
 
-Route::apiResource('brands', BrandsController::class);
+Route::apiResources(
+    [
+    'brands' => BrandsController::class,
+    'products' => ProductsController::class
+    ]
+);

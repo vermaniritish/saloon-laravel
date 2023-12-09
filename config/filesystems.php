@@ -66,7 +66,11 @@ return [
             'root' => storage_path('images/brands'),
             'visibility' => 'public'
         ],
-
+        'products_images' => [
+            'driver' => 'local',
+            'root' => storage_path('images/products'),
+            'visibility' => 'public'
+        ],
     ],
 
     /*
