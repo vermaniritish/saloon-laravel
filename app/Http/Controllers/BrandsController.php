@@ -96,7 +96,6 @@ class BrandsController extends BaseController
             $input['image_name'] = $filename;
             $input['image_path'] = Storage::disk('brand_images')->path('');
         }
-        dd($input);
 
         Brands::whereId($id)->update($input);
 
