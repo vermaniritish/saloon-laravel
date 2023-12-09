@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Carbon\Carbon;
+use App\Http\Resources\ProductsResource;
 
 class BrandsResource extends JsonResource
 {
@@ -23,6 +24,7 @@ class BrandsResource extends JsonResource
                 'image_name' =>  $this->image_name,
                 'created_at' =>  Carbon::createFromDate($this->created_at)->toDateTimeString(),
                 'updated_at' =>  Carbon::createFromDate($this->updated_at)->toDateTimeString(),
+                'products' => $this->products
         ];
     }
 }

@@ -59,4 +59,15 @@ class Brands extends Model
             'brand_description'
         ];
     }
+
+    /**
+     * Define a one-to-many relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function products()
+    {
+        return $this->hasMany(Products::class,'brand_id');
+    }
+
 }
