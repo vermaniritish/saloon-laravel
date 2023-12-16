@@ -114,7 +114,15 @@
             </ul>
         </li>
         <?php endif; ?>
-        
+        <?php if(Permissions::hasPermission('brands', 'listing')): ?>
+            <?php $active = strpos(request()->route()->getAction()['as'], 'admin.brands') > -1; ?>
+            <li class="nav-item">
+                <a class="nav-link<?php echo ($active ? ' active' : '') ?>" href="<?php echo route('admin.brands') ?>">
+                    <i class="fas fa-globe text-orange"></i>
+                    <span class="nav-link-text">Brands</span>
+                </a>
+            </li>
+        <?php endif; ?>
     </ul>
     <!-- Divider -->
     <hr class="my-3">

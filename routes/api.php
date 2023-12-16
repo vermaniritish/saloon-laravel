@@ -19,20 +19,20 @@ use App\Http\Controllers\ProductsController;
 Route::middleware(['guest:api'])->group(function () {
     include "API/auth.php";
     include "API/home.php";
+    include "API/products.php";
 
 });
 
 Route::middleware(['apiAuth'])->group(function () {
-    include "API/products.php";
     include "API/users.php";
-    include "API/wishlist.php";
-    include "API/messages.php";
+    // include "API/wishlist.php";
+    // include "API/messages.php";
 });
 
 
-Route::apiResources(
-    [
-    'brands' => BrandsController::class,
-    'products' => ProductsController::class
-    ]
-);
+// Route::apiResources(
+//     [
+//     'brands' => BrandsController::class,
+//     'products' => ProductsController::class
+//     ]
+// );
