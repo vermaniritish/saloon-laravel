@@ -1,9 +1,10 @@
 <?php
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BrandsController;
-use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\API\CouponsController;
+use App\Http\Controllers\API\ProductCategoriesController;
+use App\Http\Controllers\API\ProductsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,7 +20,6 @@ use App\Http\Controllers\ProductsController;
 Route::middleware(['guest:api'])->group(function () {
     include "API/auth.php";
     include "API/home.php";
-    include "API/products.php";
 
 });
 
@@ -30,9 +30,10 @@ Route::middleware(['apiAuth'])->group(function () {
 });
 
 
-// Route::apiResources(
-//     [
-//     'brands' => BrandsController::class,
-//     'products' => ProductsController::class
-//     ]
-// );
+Route::apiResources(
+    [
+    'categories' => ProductCategoriesController::class,
+    'products' => ProductsController::class,
+    'coupons' => CouponsController::class,
+    ]
+);

@@ -12,29 +12,31 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\API\BaseController;
+use App\Http\Resources\ProductsResource;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
-use App\Models\Admin\Settings;
 use App\Models\API\ApiAuth;
-use App\Libraries\General;
 use App\Models\API\Products;
 use App\Models\API\ProductCategories;
 use App\Models\API\UsersWishlist;
 use App\Models\API\ProductReports;
-use App\Models\Admin\ProductCategoryRelation;
 use App\Libraries\FileSystem;
-use App\Libraries\Google;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
-class ProductsController extends AppController
+class ProductsController extends BaseController
 {
-	function __construct()
-	{
-		parent::__construct();
-	}
+	/**
+     * Display a listing of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function index(Request $request)
+    {
+        return $this->_index($request, Products::class, ProductsResource::class, []);
+    }
 
 	function categories(Request $request)
 	{

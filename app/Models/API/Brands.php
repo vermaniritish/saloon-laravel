@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\API;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -55,8 +55,8 @@ class Brands extends Model
     public function toSearchableArray()
     {
         return [
-            'brand_name',
-            'brand_description'
+            'title',
+            'description'
         ];
     }
 

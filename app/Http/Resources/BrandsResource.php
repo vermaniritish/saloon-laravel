@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Carbon\Carbon;
-use App\Http\Resources\ProductsResource;
 
 class BrandsResource extends JsonResource
 {
@@ -18,12 +17,11 @@ class BrandsResource extends JsonResource
     {
         return [
                 'id'   =>  $this->id,
-                'brand_name' =>  $this->brand_name,
-                'brand_description' =>  $this->brand_description,
-                'image_path' =>  $this->image_path,
-                'image_name' =>  $this->image_name,
-                'created_at' =>  Carbon::createFromDate($this->created_at)->toDateTimeString(),
-                'updated_at' =>  Carbon::createFromDate($this->updated_at)->toDateTimeString(),
+                'title' =>  $this->title,
+                'description' =>  $this->description,
+                'image' =>  $this->image,
+                'created' =>  Carbon::createFromDate($this->created)->toDateTimeString(),
+                'modified' =>  Carbon::createFromDate($this->modified)->toDateTimeString(),
                 'products' => $this->products
         ];
     }

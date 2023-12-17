@@ -19,6 +19,15 @@ class Products extends AdminProducts
     public $timestamps = false;
     
     /**
+     * Define a one-to-one relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function brand()
+    {
+        return $this->hasMany(Brands::class, 'id', 'brand_id');
+    }
+    /**
     * Get resize images
     *
     * @return array
