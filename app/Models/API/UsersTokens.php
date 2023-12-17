@@ -23,8 +23,8 @@ class UsersTokens extends AppModel
     {
         return $this->belongsTo(Users::class, 'user_id', 'id');
     }
-
-    **
+   
+    /**
     * To get single record by id
     * @param $id
     */

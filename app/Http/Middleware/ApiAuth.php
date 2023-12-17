@@ -18,7 +18,7 @@ class ApiAuth extends Middleware
      * @return mixed
      */
 
-    public function handle($request, Closure $next)
+    public function handle($request, Closure $next, ...$guards)
     {
         $clientId = ApiAuthModal::getLoginId();
         $clientId = $clientId ? $clientId : null;
