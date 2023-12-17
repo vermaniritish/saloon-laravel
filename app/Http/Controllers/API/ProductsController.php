@@ -323,10 +323,15 @@ class ProductsController extends AppController
 		        unset($data['id']);
 
 	        	$categories = [];
+				$brands = [];
 	        	if(isset($data['categories']) && $data['categories']) {
 	        		$categories = $data['categories'];
 	        	}
+				if(isset($data['brands']) && $data['brands']) {
+	        		$brands = $data['brands'];
+	        	}
 	        	unset($data['categories']);
+				unset($data['brands']);
 				
 				$data['sale_price'] = $data['sale_price'] > 0 && $data['sale_price'] < $data['price'] ? $data['sale_price'] : null;
 				$images = [];
@@ -391,6 +396,11 @@ class ProductsController extends AppController
 	        		if(!empty($categories))
 	        		{
 	        			Products::handleCategories($saved->id, $categories);
+	        		}
+
+					if(!empty($brands))
+	        		{
+	        			Products::handleBrands($saved->id, $brands);
 	        		}
 
 	        		return Response()->json([

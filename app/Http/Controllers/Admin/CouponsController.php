@@ -12,13 +12,9 @@
 namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Validator;
-use App\Models\Admin\Settings;
 use App\Models\Admin\Permissions;
-use App\Models\Admin\AdminAuth;
-use App\Libraries\General;
-use App\Models\Admin\Brands;
+use App\Models\Admin\Coupons;
 use App\Models\Admin\Admins;
 use App\Models\Admin\BlogCategories;
 use Illuminate\Validation\Rule;
@@ -27,7 +23,7 @@ use App\Libraries\FileSystem;
 use App\Http\Controllers\Admin\AppController;
 use Illuminate\Support\Facades\Storage;
 
-class BrandsController extends AppController
+class CouponsController extends AppController
 {
 	function __construct()
 	{
@@ -36,7 +32,7 @@ class BrandsController extends AppController
 
     function index(Request $request)
     {
-    	if(!Permissions::hasPermission('brands', 'listing'))
+    	if(!Permissions::hasPermission('coupons', 'listing'))
     	{
     		$request->session()->flash('error', 'Permission denied.');
     		return redirect()->route('admin.dashboard');
@@ -48,8 +44,8 @@ class BrandsController extends AppController
     		$search = $request->get('search');
     		$search = '%' . $search . '%';
     		$where['(
-				brands.id LIKE ? or
-				brands.title LIKE ? or
+				coupons.id LIKE ? or
+				coupons.title LIKE ? or
 			 	owner.first_name LIKE ? or 
 				owner.last_name LIKE ?)'] = [$search, $search, $search, $search];
     	}
@@ -58,11 +54,11 @@ class BrandsController extends AppController
     	{
     		$createdOn = $request->get('created_on');
     		if(isset($createdOn[0]) && !empty($createdOn[0]))
-    			$where['brands.created >= ?'] = [
+    			$where['coupons.created >= ?'] = [
     				date('Y-m-d 00:00:00', strtotime($createdOn[0]))
     			];
     		if(isset($createdOn[1]) && !empty($createdOn[1]))
-    			$where['brands.created <= ?'] = [
+    			$where['coupons.created <= ?'] = [
     				date('Y-m-d 23:59:59', strtotime($createdOn[1]))
     			];
     	}
@@ -71,21 +67,21 @@ class BrandsController extends AppController
     	{
     		$admins = $request->get('admins');
     		$admins = $admins ? implode(',', $admins) : 0;
-    		$where[] = 'brands.created_by IN ('.$admins.')';
+    		$where[] = 'coupons.created_by IN ('.$admins.')';
     	}
 
     	if($request->get('status') !== "" && $request->get('status') !== null)
     	{    		
-    		$where['brands.status'] = $request->get('status');
+    		$where['coupons.status'] = $request->get('status');
     	}
 
-    	$listing = Brands::getListing($request, $where);
+    	$listing = Coupons::getListing($request, $where);
 
 
     	if($request->ajax())
     	{
 		    $html = view(
-	    		"admin/brands/listingLoop", 
+	    		"admin/coupons/listingLoop", 
 	    		[
 	    			'listing' => $listing
 	    		]
@@ -104,7 +100,7 @@ class BrandsController extends AppController
 		{
 			$filters = $this->filters($request);
 	    	return view(
-	    		"admin/brands/index", 
+	    		"admin/coupons/index", 
 	    		[
 	    			'listing' => $listing,
 	    			'admins' => $filters['admins']
@@ -116,7 +112,7 @@ class BrandsController extends AppController
     function filters(Request $request)
     {
 		$admins = [];
-		$adminIds = Brands::distinct()->whereNotNull('created_by')->pluck('created_by')->toArray();
+		$adminIds = Coupons::distinct()->whereNotNull('created_by')->pluck('created_by')->toArray();
 		if($adminIds)
 		{
 	    	$admins = Admins::getAll(
@@ -139,7 +135,7 @@ class BrandsController extends AppController
 
     function add(Request $request)
     {
-    	if(!Permissions::hasPermission('brands', 'create'))
+    	if(!Permissions::hasPermission('coupons', 'create'))
     	{
     		$request->session()->flash('error', 'Permission denied.');
     		return redirect()->route('admin.dashboard');
@@ -152,22 +148,26 @@ class BrandsController extends AppController
     		$validator = Validator::make(
 	            $request->toArray(),
 	            [
-	                'title' => ['required', Rule::unique('brands', 'title')->whereNull('deleted_at')],
+	                'title' => ['required'],
+					'coupon_code' => ['required', Rule::unique('coupons','coupon_code')],
+					'max_use' => ['required', 'integer'],
+					'end_date' => ['required', 'after_or_equal:today'],
 	                'description' => 'nullable',
-					'image' => ['nullable'],
 	            ]
 	        );
 	        if(!$validator->fails())
 	        {
-	        	$page = Brands::create($data);
+				$formattedDateTime = date('Y-m-d H:i:s', strtotime($request->get('end_date')));
+				$data['end_date'] = $formattedDateTime;
+	        	$page = Coupons::create($data);
 	        	if($page)
 	        	{
-	        		$request->session()->flash('success', 'Brand created successfully.');
-	        		return redirect()->route('admin.brands');
+	        		$request->session()->flash('success', 'Coupon created successfully.');
+	        		return redirect()->route('admin.coupons');
 	        	}
 	        	else
 	        	{
-	        		$request->session()->flash('error', 'Brand could not be save. Please try again.');
+	        		$request->session()->flash('error', 'Coupon could not be save. Please try again.');
 		    		return redirect()->back()->withErrors($validator)->withInput();
 	        	}
 		    }
@@ -178,22 +178,22 @@ class BrandsController extends AppController
 		    }
 		}
 
-	    return view("admin/brands/add", [
+	    return view("admin/coupons/add", [
 	    		]);
     }
 
     function view(Request $request, $id)
     {
-    	if(!Permissions::hasPermission('brands', 'listing'))
+    	if(!Permissions::hasPermission('coupons', 'listing'))
     	{
     		$request->session()->flash('error', 'Permission denied.');
     		return redirect()->route('admin.dashboard');
     	}
 
-    	$page = Brands::get($id);
+    	$page = Coupons::get($id);
     	if($page)
     	{
-	    	return view("admin/brands/view", [
+	    	return view("admin/coupons/view", [
     			'page' => $page
     		]);
 		}
@@ -203,17 +203,15 @@ class BrandsController extends AppController
 		}
     }
 
-    
-
     function edit(Request $request, $id)
     {
-    	if(!Permissions::hasPermission('brands', 'update'))
+    	if(!Permissions::hasPermission('coupons', 'update'))
     	{
     		$request->session()->flash('error', 'Permission denied.');
     		return redirect()->route('admin.dashboard');
     	}
 
-    	$page = Brands::get($id);
+    	$page = Coupons::get($id);
 
     	if($page)
     	{
@@ -223,54 +221,27 @@ class BrandsController extends AppController
 	    		$validator = Validator::make(
 		            $request->toArray(),
 		            [
-						'title' => ['required', Rule::unique('brands', 'title')->ignore($page->id)->whereNull('deleted_at')],
-						'description' => 'required',
-						'image' => ['nullable'],
+						'title' => ['required'],
+						'coupon_code' => ['required', Rule::unique('coupons','coupon_code')->ignore($page->id)],
+						'max_use' => ['required', 'integer'],
+						'end_date' => ['required', 'after_or_equal:today'],
+						'description' => 'nullable',
 		            ]
 		        );
 
 		        if(!$validator->fails())
 		        {
+					$formattedDateTime = date('Y-m-d H:i:s', strtotime($request->get('end_date')));
+					$data['end_date'] = $formattedDateTime;
 		        	unset($data['_token']);
-	        		
-		        	/** IN CASE OF SINGLE UPLOAD **/
-		        	if(isset($data['image']) && $data['image'])
+		        	if(Coupons::modify($id, $data))
 		        	{
-		        		$oldImage = $page->image;
+		        		$request->session()->flash('success', 'Coupon updated successfully.');
+		        		return redirect()->route('admin.coupons');
 		        	}
 		        	else
 		        	{
-		        		unset($data['image']);
-		        		
-		        	}
-		        	/** IN CASE OF SINGLE UPLOAD **/
-
-		        	$categories = [];
-		        	if(isset($data['category']) && $data['category']) {
-		        		$categories = $data['category'];
-		        	}
-		        	unset($data['category']);
-
-		        	if(Brands::modify($id, $data))
-		        	{
-		        		/** IN CASE OF SINGLE UPLOAD **/
-		        		if(isset($oldImage) && $oldImage)
-		        		{
-		        			FileSystem::deleteFile($oldImage);
-		        		}
-		        		/** IN CASE OF SINGLE UPLOAD **/
-
-		        		if(!empty($categories))
-		        		{
-		        			Brands::handleCategories($page->id, $categories);
-		        		}
-
-		        		$request->session()->flash('success', 'Brand updated successfully.');
-		        		return redirect()->route('admin.brands');
-		        	}
-		        	else
-		        	{
-		        		$request->session()->flash('error', 'Brand could not be save. Please try again.');
+		        		$request->session()->flash('error', 'Coupon could not be save. Please try again.');
 			    		return redirect()->back()->withErrors($validator)->withInput();
 		        	}
 			    }
@@ -281,7 +252,7 @@ class BrandsController extends AppController
 			    }
 			}
 
-			return view("admin/brands/edit", [
+			return view("admin/coupons/edit", [
     			'page' => $page
     		]);
 		}
@@ -293,28 +264,28 @@ class BrandsController extends AppController
 
     function delete(Request $request, $id)
     {
-    	if(!Permissions::hasPermission('brands', 'delete'))
+    	if(!Permissions::hasPermission('coupons', 'delete'))
     	{
     		$request->session()->flash('error', 'Permission denied.');
     		return redirect()->route('admin.dashboard');
     	}
 
-    	$admin = Brands::find($id);
+    	$admin = Coupons::find($id);
     	if($admin->delete())
     	{
-    		$request->session()->flash('success', 'Brand deleted successfully.');
-    		return redirect()->route('admin.brands');
+    		$request->session()->flash('success', 'Coupon deleted successfully.');
+    		return redirect()->route('admin.coupons');
     	}
     	else
     	{
-    		$request->session()->flash('error', 'Brand could not be delete.');
-    		return redirect()->route('admin.brands');
+    		$request->session()->flash('error', 'Coupon could not be delete.');
+    		return redirect()->route('admin.coupons');
     	}
     }
 
     function bulkActions(Request $request, $action)
     {
-    	if( ($action != 'delete' && !Permissions::hasPermission('brands', 'update')) || ($action == 'delete' && !Permissions::hasPermission('brands', 'delete')) )
+    	if( ($action != 'delete' && !Permissions::hasPermission('coupons', 'update')) || ($action == 'delete' && !Permissions::hasPermission('coupons', 'delete')) )
     	{
     		$request->session()->flash('error', 'Permission denied.');
     		return redirect()->route('admin.dashboard');
@@ -325,19 +296,19 @@ class BrandsController extends AppController
     	{
     		switch ($action) {
     			case 'active':
-    				Brands::modifyAll($ids, [
+    				Coupons::modifyAll($ids, [
     					'status' => 1
     				]);
     				$message = count($ids) . ' records has been published.';
     			break;
     			case 'inactive':
-    				Brands::modifyAll($ids, [
+    				Coupons::modifyAll($ids, [
     					'status' => 0
     				]);
     				$message = count($ids) . ' records has been unpublished.';
     			break;
     			case 'delete':
-    				Brands::removeAll($ids);
+    				Coupons::removeAll($ids);
     				$message = count($ids) . ' records has been deleted.';
     			break;
     		}
