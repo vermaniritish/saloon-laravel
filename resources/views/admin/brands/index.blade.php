@@ -8,7 +8,9 @@
 						<h6 class="h2 text-white d-inline-block mb-0">Manage Brands</h6>
 					</div>
 					<div class="col-lg-6 col-5 text-right">
+					<?php if(Permissions::hasPermission('brands', 'create')): ?>
 						<a href="<?php echo route('admin.brands.add') ?>" class="btn btn-neutral">New</a>
+					<?php endif; ?>	
 						@include('admin.brands.filters')
 					</div>
 				</div>
@@ -35,41 +37,47 @@
 								</div>
 								<input class="form-control listing-search" placeholder="Search" type="text" value="<?php echo (isset($_GET['search']) && $_GET['search'] ? $_GET['search'] : '') ?>">
 							</div>
-							<div class="dropdown" data-toggle="tooltip" data-title="Bulk Actions" >
-								<a class="btn btn-sm btn-icon-only text-warning" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-									<i class="fas fa-ellipsis-v"></i>
-								</a>
-								<div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-									<a 
-										class="dropdown-item" 
-										href="javascript:;"
-										onclick="bulk_actions('<?php echo route('admin.brands.bulkActions', ['action' => 'active']) ?>', 'active');"
-									>
-										<span class="badge badge-dot mr-4">
-											<i class="bg-success"></i>
-											<span class="status">Publish</span>
-										</span>
+							<?php if(Permissions::hasPermission('brands', 'update') || Permissions::hasPermission('brands', 'delete')): ?>
+								<div class="dropdown" data-toggle="tooltip" data-title="Bulk Actions">
+									<a class="btn btn-sm btn-icon-only text-warning" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<i class="fas fa-ellipsis-v"></i>
 									</a>
-									<a 
-										class="dropdown-item" 
-										href="javascript:;"
-										onclick="bulk_actions('<?php echo route('admin.brands.bulkActions', ['action' => 'inactive']) ?>', 'inactive');"
-									>
-										<span class="badge badge-dot mr-4">
-											<i class="bg-warning"></i>
-											<span class="status">Unpublish</span>
-										</span>
-									</a>
-									<div class="dropdown-divider"></div>
-		                            <a 
-		                            	href="javascript:void(0);" 
-		                            	class="waves-effect waves-block dropdown-item text-danger" 
-		                            	onclick="bulk_actions('<?php echo route('admin.brands.bulkActions', ['action' => 'delete']) ?>', 'delete');">
-											<i class="fas fa-times text-danger"></i>
-											<span class="status text-danger">Delete</span>
-		                            </a>
+									<div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
+										<?php if(Permissions::hasPermission('brands', 'update')): ?>
+											<a 
+												class="dropdown-item" 
+												href="javascript:;"
+												onclick="bulk_actions('<?php echo route('admin.brands.bulkActions', ['action' => 'active']) ?>', 'active');"
+											>
+												<span class="badge badge-dot mr-4">
+													<i class="bg-success"></i>
+													<span class="status">Active</span>
+												</span>
+											</a>
+											<a 
+												class="dropdown-item" 
+												href="javascript:;"
+												onclick="bulk_actions('<?php echo route('admin.brands.bulkActions', ['action' => 'inactive']) ?>', 'inactive');"
+											>
+												<span class="badge badge-dot mr-4">
+													<i class="bg-warning"></i>
+													<span class="status">Inactive</span>
+												</span>
+											</a>
+											<div class="dropdown-divider"></div>
+										<?php endif; ?>
+										<?php if(Permissions::hasPermission('brands', 'delete')): ?>
+											<a 
+												href="javascript:void(0);" 
+												class="waves-effect waves-block dropdown-item text-danger" 
+												onclick="bulk_actions('<?php echo route('admin.brands.bulkActions', ['action' => 'delete']) ?>', 'delete');">
+													<i class="fas fa-times text-danger"></i>
+													<span class="status text-danger">Delete</span>
+											</a>
+										<?php endif; ?>
+									</div>
 								</div>
-							</div>
+							<?php endif; ?>
 						</div>
 					</div>
 					<div class="table-responsive">

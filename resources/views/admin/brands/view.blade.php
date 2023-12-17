@@ -10,26 +10,32 @@
 					<div class="col-lg-6 col-5 text-right">
 						<a href="<?php echo route('admin.brands') ?>" class="btn btn-neutral"><i class="fa fa-arrow-left"></i> Back</a>
 						<a href="#" class="btn btn-neutral" target="_blank"><i class="fa fa-eye"></i> View Page</a>
-						<div class="dropdown" data-toggle="tooltip" data-title="More Actions">
-							<a class="btn btn-neutral" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								<i class="fas fa-ellipsis-v"></i>
-							</a>
-							<div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-								<a class="dropdown-item" href="<?php echo route('admin.brands.edit', ['id' => $page->id]) ?>">
-									<i class="fas fa-pencil-alt text-info"></i>
-									<span class="status">Edit</span>
+						<?php if(Permissions::hasPermission('brands', 'update') || Permissions::hasPermission('brands', 'delete')): ?>
+							<div class="dropdown" data-toggle="tooltip" data-title="More Actions">
+								<a class="btn btn-neutral" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									<i class="fas fa-ellipsis-v"></i>
 								</a>
-								<div class="dropdown-divider"></div>
-								<a 
-									class="dropdown-item _delete" 
-									href="javascript:;"
-									data-link="<?php echo route('admin.brands.delete', ['id' => $page->id]) ?>"
-								>
-									<i class="fas fa-times text-danger"></i>
-									<span class="status text-danger">Delete</span>
-								</a>
+								<div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
+									<?php if(Permissions::hasPermission('brands', 'update')): ?>
+										<a class="dropdown-item" href="<?php echo route('admin.brands.edit', ['id' => $page->id]) ?>">
+											<i class="fas fa-pencil-alt text-info"></i>
+											<span class="status">Edit</span>
+										</a>
+										<?php endif; ?>
+									<?php if(Permissions::hasPermission('brands', 'delete')): ?>
+										<div class="dropdown-divider"></div>
+										<a 
+											class="dropdown-item _delete" 
+											href="javascript:;"
+											data-link="<?php echo route('admin.brands.delete', ['id' => $page->id]) ?>"
+										>
+											<i class="fas fa-times text-danger"></i>
+											<span class="status text-danger">Delete</span>
+										</a>
+									<?php endif; ?>
+								</div>
 							</div>
-						</div>
+						<?php endif; ?>
 					</div>
 				</div>
 			</div>
