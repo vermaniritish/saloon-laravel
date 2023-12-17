@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Admin\Controllers;
+namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
 use App\Helpers\CollectionHelper;
@@ -176,7 +176,7 @@ class BaseController extends Controller
                 $searchable_columns = (new $model())->toSearchableArray();
                 $db_query->where(function ($db_query) use ($searchable_columns, $query) {
                     foreach ($searchable_columns as $column) {
-                        $db_query->orWhere($column, 'ilike', '%' . $query . '%');
+                        $db_query->orWhere($column, 'LIKE', '%' . $query . '%');
                     }
                 });
             }
