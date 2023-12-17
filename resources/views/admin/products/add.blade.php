@@ -122,7 +122,7 @@
 								</div>
 							</div>
 							<div class="row">
-								<div class="col-lg-12">
+								<div class="col-lg-6">
 									<div class="form-group">
 										<label class="form-control-label" for="input-first-name">Location</label>
 										<input type="search" class="form-control" id="google-address" autocomplete="off"  name="address" placeholder="Address" required value="{{ old('address') }}">
@@ -131,12 +131,47 @@
 										@enderror
 									</div>
 								</div>
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label class="form-control-label" for="input-username">Brand</label>
+										<select class="form-control" name="brand[]" required multiple>
+											@foreach ($brands as $key => $value)
+											<option <?php echo (is_array(old('brand')) && in_array($value['id'], old('brand'))) ? 'selected' : ''; ?>
+												value="<?php echo $value['id']; ?>"><?php echo $value['title']; ?></option>
+											@endforeach
+										</select>
+										@error('brand')
+											<small class="text-danger">{{ $message }}</small>
+										@enderror
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-lg-12">
+									<label class="form-control-label" for="input-username">Duration Of Service</label>
+									<div class="input-group">
+										<div class="col-md-6 pl-0">
+											<input type="number" class="form-control" name="service_hours" placeholder="Enter hours" min="0" max="24">
+											<span class="input-group-addon"><small>Hours</small></span>
+										</div>
+										<div class="col-md-6 pr-0">
+											<input type="number" class="form-control" name="service_minutes" placeholder="Enter minutes" min="0" max="59">
+											<span class="input-group-addon"><small>Minutes</small></span>
+										</div>
+									</div>
+									@error('service_hours')
+										<small class="text-danger">{{ $message }}</small>
+									@enderror
+									@error('service_minutes')
+										<small class="text-danger">{{ $message }}</small>
+									@enderror
+								</div>
 							</div>
 							<div class="row">
 								<div class="col-lg-6">
 									<div class="form-group">
 										<label class="form-control-label" for="input-first-name">Lattitude</label>
-										<input type="text" class="form-control" id="google-lat" name="lat" placeholder="Address" required value="{{ old('lat') }}" readonly="">
+										<input type="text" class="form-control" id="google-lat" name="lat" placeholder="Address" value="{{ old('lat') }}">
 										@error('lat')
 										    <small class="text-danger">{{ $message }}</small>
 										@enderror
@@ -145,7 +180,7 @@
 								<div class="col-lg-6">
 									<div class="form-group">
 										<label class="form-control-label" for="input-first-name">Longitude</label>
-										<input type="text" class="form-control" id="google-lng" name="lng" placeholder="Address" required value="{{ old('lng') }}" readonly="">
+										<input type="text" class="form-control" id="google-lng" name="lng" placeholder="Address" value="{{ old('lng') }}">
 										@error('lng')
 										    <small class="text-danger">{{ $message }}</small>
 										@enderror

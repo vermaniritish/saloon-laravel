@@ -67,8 +67,7 @@
 								<select class="form-control" name="category[]" multiple required>
 							      	<option value="">Select</option>
 							      	<?php foreach($categories as $c): ?>
-							      		<option 
-							      			value="<?php echo $c->id ?>"
+							      		<option value="<?php echo $c->id ?>"
 							      			<?php echo $selectedCategories && in_array($c->id, $selectedCategories)  ? 'selected' : '' ?>
 							      		>
 							      			<?php echo $c->title ?>	
@@ -134,7 +133,7 @@
 								</div>
 							</div>
 							<div class="row">
-								<div class="col-lg-12">
+								<div class="col-lg-6">
 									<div class="form-group">
 										<label class="form-control-label" for="input-first-name">Location</label>
 										<input type="search" class="form-control" id="google-address" autocomplete="off" name="address" placeholder="Address" required value="<?php echo $product->address ?>">
@@ -143,12 +142,47 @@
 										@enderror
 									</div>
 								</div>
+								<div class="col-lg-6">
+									<div class="form-group">
+										<label class="form-control-label" for="input-username">Brand</label>
+										<select class="form-control" name="brand[]" required multiple>
+											@foreach ($brands as $key => $value)
+											<option <?php echo (is_array(old('brand',$product->brands->pluck('id')->toArray())) && in_array($value['id'], old('brand', $product->brands->pluck('id')->toArray()))) ? 'selected' : ''; ?>
+												value="<?php echo $value['id']; ?>"><?php echo $value['title']; ?></option>
+											@endforeach
+										</select>
+										@error('brand')
+											<small class="text-danger">{{ $message }}</small>
+										@enderror
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-lg-12">
+									<label class="form-control-label" for="input-username">Duration Of Service</label>
+									<div class="input-group">
+										<div class="col-md-6 pl-0">
+											<input value="{{ old('service_hours', $product->service_hours) }}" type="number" class="form-control" name="service_hours" placeholder="Enter hours" min="0" max="24">
+											<span class="input-group-addon"><small>Hours</small></span>
+										</div>
+										<div class="col-md-6 pr-0">
+											<input value="{{ old('service_minutes', $product->service_minutes) }}" type="number" class="form-control" name="service_minutes" placeholder="Enter minutes" min="0" max="59">
+											<span class="input-group-addon"><small>Minutes</small></span>
+										</div>
+									</div>
+									@error('service_hours')
+										<small class="text-danger">{{ $message }}</small>
+									@enderror
+									@error('service_minutes')
+										<small class="text-danger">{{ $message }}</small>
+									@enderror
+								</div>
 							</div>
 							<div class="row">
 								<div class="col-lg-6">
 									<div class="form-group">
 										<label class="form-control-label" for="input-first-name">Lattitude</label>
-										<input type="text" class="form-control" id="google-lat" name="lat" placeholder="Address" readonly="" required value="<?php echo $product->lat ?>">
+										<input type="text" class="form-control" id="google-lat" name="lat" placeholder="Address" readonly="" value="<?php echo $product->lat ?>">
 										@error('lat')
 										    <small class="text-danger">{{ $message }}</small>
 										@enderror
@@ -157,7 +191,7 @@
 								<div class="col-lg-6">
 									<div class="form-group">
 										<label class="form-control-label" for="input-first-name">Longitude</label>
-										<input type="text" class="form-control" id="google-lng" name="lng" placeholder="Address" readonly="" required value="<?php echo $product->lng ?>">
+										<input type="text" class="form-control" id="google-lng" name="lng" placeholder="Address" readonly="" value="<?php echo $product->lng ?>">
 										@error('lng')
 										    <small class="text-danger">{{ $message }}</small>
 										@enderror

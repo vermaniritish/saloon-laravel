@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Libraries\FileSystem;
 use Illuminate\Support\Str;
 use App\Libraries\General;
+use App\Models\Brands;
 
 class Products extends AppModel
 {
@@ -28,6 +29,16 @@ class Products extends AppModel
     public function categories()
     {
         return $this->belongsToMany(ProductCategories::class, 'product_category_relation', 'product_id', 'category_id');
+    }
+
+    /**
+    * Product -> Brands belongsToMany relation
+    *
+    * @return Brands
+    */
+    public function brands()
+    {
+        return $this->belongsToMany(Brands::class, 'brand_product', 'product_id', 'brand_id');
     }
 
     /**
@@ -347,6 +358,28 @@ class Products extends AppModel
 	    	return null;
 	    }
 
+    }
+
+    public static function handleBrands($id, $brands)
+    {
+        //Delete all first
+        BrandProducts::where('product_id', $id)->delete();
+        // Then Save
+        foreach($brands as $c)
+        {
+            $relation = new BrandProducts();
+            $relation->product_id = $id;
+            $relation->brand_id = $c;
+            $relation->created = date('Y-m-d H:i:s');
+    	    $relation->modified = date('Y-m-d H:i:s');
+            $relation->save();
+        }
+
+        $product = Products::find($id);
+        if($product)
+        {
+            Products::createKeywords($product->id, $product->title, $product->categories);
+        }
     }
 
     public static function handleCategories($id, $categories)

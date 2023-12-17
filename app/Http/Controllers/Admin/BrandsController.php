@@ -153,7 +153,7 @@ class BrandsController extends AppController
 	            $request->toArray(),
 	            [
 	                'title' => ['required', Rule::unique('brands')->whereNull('deleted_at')],
-	                'description' => 'required',
+	                'description' => 'nullable',
 					'image' => ['nullable'],
 	            ]
 	        );

@@ -85,7 +85,32 @@
 										</td>
 								</tr>
 								<tr>
+									<th>Brands</th>
+									<td>
+										<?php 
+										if(isset($product->brands) && $product->brands ): 
+											foreach ($product->brands as $key => $pc):
+												echo '<span class="badge badge-warning">'.$pc['title'].'</span> ';
+											endforeach;
+										endif; 
+										?>	
+									</td>
+								</tr>
+								<tr>
+									<th>Duration of Service</th>
+									<td>
+										<?php
+										if (isset($product->service_hours) && $product->service_hours > 0) {
+											echo $product->service_hours . ':' . $product->service_minutes;
+										} else {
+											echo 'Not specified';
+										}
+										?>
+									</td>
+								</tr>
+								<tr>
 									<td colspan="2">
+										<h2>Description</h2>
 										<?php echo $product->description ?>
 									</td>
 								</tr>

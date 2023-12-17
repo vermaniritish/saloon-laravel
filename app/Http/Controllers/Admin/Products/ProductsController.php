@@ -30,6 +30,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 use App\Libraries\FileSystem;
 use App\Http\Controllers\Admin\AppController;
+use App\Models\Admin\Brands;
 
 class ProductsController extends AppController
 {
@@ -195,28 +196,41 @@ class ProductsController extends AppController
 	            [
 	                'user_id' => 'required',
 	                'title' => 'required',
-	                'description' => 'required',
+	                'description' => 'nullable',
+					'service_hours' => ['nullable', 'numeric', 'min:0', 'max:23'],
+					'service_minutes' => ['nullable', 'numeric', 'min:0', 'max:59'],
+					'price' => ['required', 'numeric', 'min:0'],
+					'sale_price' => ['nullable', 'numeric', 'min:0'],
 	                'category' => 'required',
+	                'brand' => 'required',
 	                'address' => 'required',
-	                'lat' => 'required',
-	                'lng' => 'required',
+	                'lat' => 'nullable',
+	                'lng' => 'nullable',
 	            ]
 	        );
 
 	        if(!$validator->fails())
 	        {
 	        	$categories = [];
+				$brands = [];
 	        	if(isset($data['category']) && $data['category']) {
 	        		$categories = $data['category'];
 	        	}
+				if(isset($data['brand']) && $data['brand']) {
+	        		$brands = $data['brand'];
+	        	}
 	        	unset($data['category']);
-	        	
+	        	unset($data['brand']);
 	        	$product = Products::create($data);
 	        	if($product)
 	        	{
 	        		if(!empty($categories))
-	        		{
+	        		{  
 	        			Products::handleCategories($product->id, $categories);
+	        		}
+					if(!empty($brands))
+	        		{
+	        			Products::handleBrands($product->id, $brands);
 	        		}
 
 	        		$request->session()->flash('success', 'Product created successfully.');
@@ -245,6 +259,16 @@ class ProductsController extends AppController
 	    		'product_categories.title desc'
 	    	);
 
+		$brands = Brands::getAll(
+	    		[
+	    			'brands.id',
+	    			'brands.title'
+	    		],
+	    		[
+	    		],
+	    		'brands.title desc'
+	    	);
+
 	    $users = Users::getAll(
 	    		[
 	    			'users.id',
@@ -256,10 +280,11 @@ class ProductsController extends AppController
 	    		],
 	    		'concat(users.first_name, users.last_name) desc'
 	    	);
-
+	
 	    return view("admin/products/add", [
 	    			'categories' => $categories,
-	    			'users' => $users
+	    			'users' => $users,
+					'brands' => $brands
 	    		]);
     }
 
@@ -280,10 +305,18 @@ class ProductsController extends AppController
 	    		$validator = Validator::make(
 		            $request->toArray(),
 			            [
-		                'title' => 'required',
-		                'description' => 'required',
-		                'category' => 'required',
-		                'address' => 'required',
+							'user_id' => 'required',
+							'title' => 'required',
+							'description' => 'nullable',
+							'service_hours' => ['nullable', 'numeric', 'min:0', 'max:23'],
+							'service_minutes' => ['nullable', 'numeric', 'min:0', 'max:59'],
+							'price' => ['required', 'numeric', 'min:0'],
+							'sale_price' => ['nullable', 'numeric', 'min:0'],
+							'category' => 'required',
+							'brand' => 'required',
+							'address' => 'required',
+							'lat' => 'nullable',
+							'lng' => 'nullable',
 		            ]
 		        );
 
@@ -306,10 +339,12 @@ class ProductsController extends AppController
 		        	/** ONLY IN CASE OF MULTIPLE IMAGE USE THIS **/
 
 		        	$categories = [];
+					$brands = [];
 		        	if(isset($data['category']) && $data['category']) {
 		        		$categories = $data['category'];
 		        	}
 		        	unset($data['category']);
+		        	unset($data['brand']);
 
 		        	if(Products::modify($id, $data))
 		        	{
@@ -317,7 +352,10 @@ class ProductsController extends AppController
 		        		{
 		        			Products::handleCategories($product->id, $categories);
 		        		}
-
+						if(!empty($brands))
+		        		{
+		        			Products::handleBrands($product->id, $brands);
+		        		}
 		        		$request->session()->flash('success', 'Product updated successfully.');
 		        		return redirect()->route('admin.products');
 		        	}
@@ -356,10 +394,21 @@ class ProductsController extends AppController
 	    		'concat(users.first_name, users.last_name) desc'
 	    	);
 
+			$brands = Brands::getAll(
+	    		[
+	    			'brands.id',
+	    			'brands.title'
+	    		],
+	    		[
+	    		],
+	    		'brands.title desc'
+	    	);
+
 			return view("admin/products/edit", [
     			'product' => $product,
     			'categories' => $categories,
-    			'users' => $users
+    			'users' => $users,
+				'brands' => $brands
     		]);
 		}
 		else

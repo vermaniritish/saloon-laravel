@@ -33,7 +33,7 @@ class BrandsController extends BaseController
     {
         $input = $request->validate([
             'brand_name' => ['required', 'string','max:40'],
-            'brand_description' => ['required', 'string', 'max:255'],
+            'brand_description' => ['nullable', 'string', 'max:255'],
             'image' => ['required','image','max:2048']
         ]);
         $input['id'] = Str::uuid();
