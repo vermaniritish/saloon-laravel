@@ -46,6 +46,7 @@ class Coupons extends AppModel
     public function toSearchableArray()
     {
         return [
+            'id',
             'coupon_code',
             'title',
             'description',
