@@ -3,6 +3,7 @@
 namespace App\Models\API;
 
 use App\Models\AppModel;
+use App\Models\Scopes\Active;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -55,12 +56,21 @@ class Coupons extends AppModel
         ];
     }
 
-    public function scopeExpired($query)
+    /**
+	 * The "booted" method of the model.
+	 *
+	 * @return void
+	 */
+	protected static function booted() {
+		static::addGlobalScope(new Active);
+	}
+
+    public function scopeNotExpired($query)
     {       
         return $query->where('end_date', '>=', Carbon::now()->toDateString());
     }
 
-    public function scopeUsageExceeded($query)
+    public function scopeUsageNotExceeded($query)
     {
         $query->whereRaw('(used < max_use)');
     }
