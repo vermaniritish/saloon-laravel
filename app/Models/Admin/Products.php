@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Libraries\FileSystem;
 use Illuminate\Support\Str;
 use App\Libraries\General;
+use App\Models\Admin\Brands as AdminBrands;
 use App\Models\Brands;
 
 class Products extends AppModel
@@ -38,7 +39,7 @@ class Products extends AppModel
     */
     public function brands()
     {
-        return $this->belongsToMany(Brands::class, 'brand_product', 'product_id', 'brand_id');
+        return $this->belongsToMany(AdminBrands::class, 'brand_product', 'product_id', 'brand_id');
     }
 
     /**

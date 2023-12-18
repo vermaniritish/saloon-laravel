@@ -3,6 +3,7 @@
 namespace App\Models\API;
 
 use App\Models\AppModel;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Coupons extends AppModel
@@ -54,4 +55,13 @@ class Coupons extends AppModel
         ];
     }
 
+    public function scopeExpired($query)
+    {       
+        return $query->where('end_date', '>=', Carbon::now()->toDateString());
+    }
+
+    public function scopeUsageExceeded($query)
+    {
+        $query->whereRaw('(used < max_use)');
+    }
 }

@@ -22,6 +22,7 @@ use App\Models\API\ProductCategories;
 use App\Models\API\UsersWishlist;
 use App\Models\API\ProductReports;
 use App\Libraries\FileSystem;
+use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
@@ -36,6 +37,22 @@ class ProductsController extends BaseController
     public function index(Request $request)
     {
         return $this->_index($request, Products::class, ProductsResource::class, []);
+    }
+
+	/**
+     * Display the specified resource.
+     *
+     * @param  string  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function show(string $id)
+    {
+        $check_brand = Products::whereId($id)->first();
+        if (!$check_brand) {
+            return $this->error(trans('BRAND_NOT_FOUND'), Response::HTTP_NOT_FOUND);
+        }
+
+        return $this->success(new ProductsResource($check_brand), Response::HTTP_OK);
     }
 
 	function categories(Request $request)

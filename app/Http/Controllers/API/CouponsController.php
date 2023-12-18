@@ -22,7 +22,7 @@ class CouponsController extends BaseController
      */
     public function index(Request $request)
     {
-        return $this->_index($request, APICoupons::class, CouponsResource::class, []);
+        return $this->_index($request, APICoupons::class, CouponsResource::class, ['usageExceeded','expired']);
     }
 
     /**

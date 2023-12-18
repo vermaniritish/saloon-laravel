@@ -22,6 +22,7 @@ class CouponsResource extends JsonResource
                 'description' =>  $this->description,
                 'max_use' =>  $this->max_use,
                 'used' => $this->used,
+                'end_date' =>$this->end_date,
                 'created' =>  Carbon::createFromDate($this->created)->toDateTimeString(),
                 'modified' =>  Carbon::createFromDate($this->modified)->toDateTimeString()
         ];
