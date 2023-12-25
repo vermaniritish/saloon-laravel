@@ -43,7 +43,6 @@
 								?>
 								<label class="form-control-label" for="input-first-name">Category</label>
 								<select class="form-control" name="category[]" multiple required>
-							      	<option value="">Select</option>
 							      	<?php foreach($categories as $c): ?>
 							      		<option value="<?php echo $c->id ?>"
 							      			<?php echo $selectedCategories && in_array($c->id, $selectedCategories)  ? 'selected' : '' ?>

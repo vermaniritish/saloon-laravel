@@ -37,14 +37,9 @@
 							<div class="form-group">
 								<label class="form-control-label" for="input-first-name">Category</label>
 								<select class="form-control" name="category[]" multiple required>
-							      	<option value="">Select</option>
 							      	<?php foreach($categories as $c): ?>
-							      		<option 
-							      			value="<?php echo $c->id ?>"
-							      			<?php echo old('category') && in_array($c->id, old('category'))  ? 'selected' : '' ?>
-							      		>
-							      			<?php echo $c->title ?>	
-							      		</option>
+										<option <?php echo (is_array(old('category')) && in_array($c['id'], old('category'))) ? 'selected' : ''; ?>
+												c="<?php echo $c['id']; ?>"><?php echo $c['title']; ?></option>
 							  		<?php endforeach; ?>
 							    </select>
 								@error('category')
