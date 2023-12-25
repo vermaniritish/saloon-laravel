@@ -3,7 +3,6 @@
 namespace App\Models\API;
 
 use App\Models\Admin\Products as AdminProducts;
-use App\Models\Admin\ProductCategoryRelation;
 use App\Models\Admin\Settings;
 use App\Models\Admin\SearchSugessions;
 use Illuminate\Http\Request;
@@ -23,9 +22,9 @@ class Products extends AdminProducts
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function brand()
+    public function brands()
     {
-        return $this->hasMany(Brands::class, 'id', 'brand_id');
+        return $this->belongsToMany(Brands::class, 'brand_product', 'product_id', 'brand_id');
     }
     /**
     * Get resize images
@@ -87,7 +86,6 @@ class Products extends AdminProducts
     	   
         $select = [
             'products.id',
-            'products.user_id',
             'products.title',
             'products.slug',
             'products.price',

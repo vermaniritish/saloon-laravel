@@ -35,28 +35,6 @@
 						<h6 class="heading-small text-muted mb-4">Product information</h6>
 						<div class="pl-lg-4">
 							<div class="form-group">
-								<label class="form-control-label">Customers</label>
-								<select class="form-control" name="user_id" required>
-							      	<option value="">Select</option>
-							      	<?php 
-							      		foreach($users as $s): 
-							      		$content =  $s->first_name . " " . $s->last_name . "<small class='badge badge-".($s->status ? "success" : "danger")."'>".($s->status ? "Active" : "Inactive")."</small>";
-							      	?>
-
-							      		<option 
-							      			value="<?php echo $s->id ?>" 
-							      			<?php echo old('user_id') == $s->id  ? 'selected' : '' ?>
-							      			data-content="<?php echo $content ?>"
-							      		>
-							      			<?php echo $s->name; ?>		
-							      		</option>
-							  		<?php endforeach; ?>
-							    </select>
-							   	@error('user_id')
-							    <small class="text-danger">{{ $message }}</small>
-								@enderror
-							</div>
-							<div class="form-group">
 								<label class="form-control-label" for="input-first-name">Category</label>
 								<select class="form-control" name="category[]" multiple required>
 							      	<option value="">Select</option>

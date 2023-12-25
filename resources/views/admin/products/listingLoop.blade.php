@@ -14,11 +14,6 @@
 		</span>
 	</td>
 	<td>
-		<?php if($row->shop_owner_id): ?>
-		<a href="<?php echo route('admin.users.view', ['id' => $row->shop_owner_id]) ?>"><?php echo $row->shop_owner_name ?></a>
-		<?php endif; ?>
-	</td>
-	<td>
 		<?php echo $row->title ?>
 	</td>
 	<td>

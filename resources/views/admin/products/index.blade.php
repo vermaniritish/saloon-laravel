@@ -9,7 +9,8 @@
 					</div>
 					<div class="col-lg-6 col-5 text-right">
 						<?php if(Permissions::hasPermission('products', 'create')): ?>
-						<a href="<?php echo route('admin.products.add') ?>" class="btn btn-neutral">New</a>
+						<a href="<?php echo route('admin.products.add') ?>" class="btn btn-neutral">
+						<i class="fas fa-plus"></i> New</a>
 						<?php endif; ?>
 						@include('admin.products.filters')
 					</div>
@@ -106,19 +107,6 @@
 										<i class="fas fa-sort-up active" data-field="products.id" data-sort="desc"></i>
 										<?php else: ?>
 										<i class="fas fa-sort" data-field="products.id" data-sort="asc"></i>
-										<?php endif; ?>
-									</th>
-									<th 
-										class="sort"
-										width="10%" 
-									>
-										Owner
-										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'shop_owner_name' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
-										<i class="fas fa-sort-down active" data-field="shop_owner_name" data-sort="asc"></i>
-										<?php elseif(isset($_GET['sort']) && $_GET['sort'] == 'shop_owner_name' && isset($_GET['direction']) && $_GET['direction'] == 'desc'): ?>
-										<i class="fas fa-sort-up active" data-field="shop_owner_name" data-sort="desc"></i>
-										<?php else: ?>
-										<i class="fas fa-sort" data-field="shop_owner_name"></i>
 										<?php endif; ?>
 									</th>
 									<th class="sort" width="18%">

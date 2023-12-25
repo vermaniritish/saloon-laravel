@@ -9,7 +9,7 @@
 						<h6 class="h2 text-white d-inline-block mb-0">Manage Products</h6>
 					</div>
 					<div class="col-lg-6 col-5 text-right">
-						<a href="<?php echo route('admin.products') ?>" class="btn text-white"><i class="fa fa-arrow-left"></i> Back</a>
+						<a href="<?php echo route('admin.products') ?>" class="btn btn-neutral"><i class="fa fa-arrow-left"></i> Back</a>
 						<a href="<?php echo Settings::get('website_url') . '/product/' . $product->slug ?>" class="btn btn-neutral" target="_blank"><i class="fa fa-eye"></i> View Product</a>
 						<div class="dropdown" data-toggle="tooltip" data-title="More Actions">
 							<a class="btn btn-neutral" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -63,13 +63,6 @@
 									<td><?php echo $product->title ?></td>
 								</tr>
 								<tr>
-									<th>Customer</th>
-									<td>
-										<?php if($product->user_id): ?>
-										<a href="<?php echo route('admin.users.view', ['id' => $product->user_id]) ?>"><?php echo $product->users ? $product->users->first_name . ' ' . $product->users->last_name : "" ?></a>
-										<?php endif; ?>
-									</td>
-								</tr>
 								<tr>
 
 									<th>Categories</th>
@@ -195,7 +188,7 @@
 									</th>
 									<td>
 										<?php if(isset($product->owner) && $product->owner): ?>
-											<a href="<?php echo route('admin.users.view', ['id' => $product->user_id]) ?>"><?php echo $product->owner->name; ?></a>
+											<a href="<?php echo route('admin.users.view', ['id' => $product->created_by]) ?>"><?php echo $product->owner->name; ?></a>
 										<?php else: ?>
 											Shop Owner
 										<?php endif; ?>
