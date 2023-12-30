@@ -4,6 +4,7 @@ $favicon = Settings::get('favicon');
 $logo = Settings::get('logo');
 $companyName = Settings::get('company_name');
 $googleKey = Settings::get('google_api_key');
+$version = 1.0;
 ?>
 <!DOCTYPE html>
 <html>
@@ -96,6 +97,7 @@ $googleKey = Settings::get('google_api_key');
 		</script>
 		<script src="<?php echo url('assets/vendor/jquery/dist/jquery.min.js') ?>"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
 		<script src="<?php echo url('assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js') ?>"></script>
@@ -111,40 +113,16 @@ $googleKey = Settings::get('google_api_key');
 		<script src="<?php echo url('assets/js/argon.js') ?>"></script>
 		<script src="<?php echo url('assets/js/tag-it.min.js') ?>"></script>
 		<script src="<?php echo url('assets/js/custom.js') ?>"></script>
-		<?php if(strpos(request()->route()->getAction()['as'], 'admin.products.add') > -1 || strpos(request()->route()->getAction()['as'], 'admin.products.edit') > -1): ?>
-		<script>
-			$('#google-address').keypress(function(e){
-			    if ( e.which == 13 ) return false;
-			});
-        	var autocomplete = new google.maps.places.Autocomplete($("#google-address")[0], {
-        		componentRestrictions: {country: 'gb'},
-            	types: ['(regions)']
-        	});
-
-	        google.maps.event.addListener(autocomplete, 'place_changed', function() {
-	        	if($("#google-address").val())
-	        	{
-		            var geocoder = new google.maps.Geocoder();
-		            geocoder.geocode({ address: $("#google-address").val() }, function(results, status) {
-		                if (status === 'OK') {
-		                    let lc = results[0].geometry.location;
-		                    $("#google-lat").val(lc.lat());
-		                    $("#google-lng").val(lc.lng());
-		                }
-		                else
-		                {
-		                    $("#google-lat").val("");
-		                    $("#google-lng").val("");
-		                }
-		            });
-		        }
-		        else
-		        {
-		        	$("#google-lat").val("");
-		        	$("#google-lng").val("");
-		        }
-	        });
-	    </script>
+		<?php 
+		$action = get_controller_action(request()->route()->getAction()['controller']);
+		$route = explode('/', $action);
+		$controller = $route[0];
+		$method = isset($route[1]) ? $route[1] : null;
+		?>
+		<?php if(file_exists(public_path('assets/js/' . $action. '.js'))): ?>
+		<script src="<?php echo url('assets/js/' . $action. '.js?v=' . $version) ?>"></script>
+		<?php elseif( (strpos($action, '/add') > -1 || strpos($action, '/edit') > -1)  && file_exists(public_path('assets/js/'.$controller.'/form.js')) ): ?>
+		<script src="<?php echo url('assets/js/'.$controller.'/form.js?v=' . $version) ?>"></script>
 		<?php endif; ?>
 </body>
 </html>
