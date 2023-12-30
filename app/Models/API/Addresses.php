@@ -2,11 +2,11 @@
 
 namespace App\Models\API;
 
-use App\Models\AppModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\LogOptions;
 
-class Addresses extends AppModel
+class Addresses extends Model
 {
     use HasFactory;
 
@@ -15,16 +15,16 @@ class Addresses extends AppModel
      *
      * @var array
      */
-    // protected $fillable = [
-    //     'title',
-    //     'address',
-    //     'city',
-    //     'state',
-    //     'area',
-    //     'latitude',
-    //     'longitude',
-    //     'user_id'
-    // ];
+    protected $fillable = [
+        'title',
+        'address',
+        'city',
+        'state',
+        'area',
+        'latitude',
+        'longitude',
+        'user_id'
+    ];
     /**
      * The table associated with the model.
      *
