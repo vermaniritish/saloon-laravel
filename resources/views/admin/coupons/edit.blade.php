@@ -29,19 +29,21 @@
 					</div>
 				</div>
 				<div class="card-body">
-					<form method="post" action="<?php echo route('admin.coupons.add') ?>" class="form-validation">
+					<form method="post" action="<?php echo route('admin.coupons.edit', ['id' => $page->id]) ?>" class="form-validation">
 						<!--!! CSRF FIELD !!-->
 						{{ @csrf_field() }}
 						<h6 class="heading-small text-muted mb-4">Coupon information</h6>
 						<div class="pl-lg-4">
-						<div class="form-group">
-								<label class="form-control-label" for="input-first-name">Title</label>
-								<input type="text" class="form-control" name="title" required placeholder="Title" value="{{ old('title', $page->title) }}">
-								@error('title')
-								    <small class="text-danger">{{ $message }}</small>
-								@enderror
-							</div>
 							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label class="form-control-label" for="input-first-name">Title</label>
+										<input type="text" class="form-control" name="title" required placeholder="Title" value="{{ old('title', $page->title) }}">
+										@error('title')
+											<small class="text-danger">{{ $message }}</small>
+										@enderror
+									</div>
+								</div>
 								<div class="col-md-6">
 									<div class="form-group">
 										<label class="form-control-label" for="input-first-name">Code</label>
@@ -51,6 +53,8 @@
 										@enderror
 									</div>
 								</div>
+							</div>
+							<div class="row">
 								<div class="col-md-6">
 									<div class="form-group">
 										<label class="form-control-label" for="input-first-name">Max Use</label>
@@ -60,8 +64,6 @@
 										@enderror
 									</div>
 								</div>
-							</div>
-							<div class="row">
 								<div class="col-md-6">
 									<div class="form-group">
 										<label class="form-control-label" for="input-first-name">End Date</label>
@@ -69,6 +71,32 @@
 										@error('end_date')
 											<small class="text-danger">{{ $message }}</small>
 										@enderror
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label class="form-control-label" for="input-first-name">Amount</label>
+										<input type="number" class="form-control" name="amount" required placeholder="Amount" value="{{ old('amount', $page->amount) }}">
+										@error('amount')
+											<small class="text-danger">{{ $message }}</small>
+										@enderror
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="form-group">
+										<label class="form-control-label" for="input-first-name">Is Percentage ?</label>
+										<div required class="custom-control mt-2">
+											<label class="custom-toggle">
+												<input type="hidden" name="is_percentage" value="0">
+												<input type="checkbox" name="is_percentage" value="1"
+													<?php echo old('is_percentage', $page->is_percentage) != '0' ? 'checked' : ''; ?>>
+												<span class="custom-toggle-slider rounded-circle" data-label-off="No"
+													data-label-on="Yes"></span>
+											</label>
+											<label class="custom-control-label">Yes/No</label>
+										</div>
 									</div>
 								</div>
 							</div>

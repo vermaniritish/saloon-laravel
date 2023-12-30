@@ -148,11 +148,14 @@ class CouponsController extends AppController
     		$validator = Validator::make(
 	            $request->toArray(),
 	            [
+					dd('divya'),
 	                'title' => ['required'],
 					'coupon_code' => ['required', Rule::unique('coupons','coupon_code')],
 					'max_use' => ['required', 'integer'],
 					'end_date' => ['required', 'after_or_equal:today'],
 	                'description' => 'nullable',
+					'is_percentage' => ['required','boolean'],
+					'amount' => ['required', 'integer']
 	            ]
 	        );
 	        if(!$validator->fails())
@@ -215,17 +218,19 @@ class CouponsController extends AppController
 
     	if($page)
     	{
-	    	if($request->isMethod('post'))
+			if($request->isMethod('post'))
 	    	{
 	    		$data = $request->toArray();
 	    		$validator = Validator::make(
 		            $request->toArray(),
 		            [
 						'title' => ['required'],
-						'coupon_code' => ['required', Rule::unique('coupons','coupon_code')->ignore($page->id)],
+						'coupon_code' => ['required', Rule::unique('coupons','coupon_code')->ignore($id,'id')],
 						'max_use' => ['required', 'integer'],
 						'end_date' => ['required', 'after_or_equal:today'],
 						'description' => 'nullable',
+						'is_percentage' => ['required','boolean'],
+						'amount' => ['required', 'integer']
 		            ]
 		        );
 
