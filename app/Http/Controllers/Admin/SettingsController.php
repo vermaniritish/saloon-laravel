@@ -51,6 +51,7 @@ class SettingsController extends AppController
 	                'admin_second_auth_factor' => 'required',
 	                'currency_code' => 'required',
 	                'currency_symbol' => 'required',
+					'tax_percentage' => 'required',
 	                'admin_notification_email' => [
 	                	'required',
 	                	'email'

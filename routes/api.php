@@ -1,4 +1,6 @@
 <?php
+
+use App\Http\Controllers\API\AddressesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BrandsController;
@@ -35,5 +37,6 @@ Route::apiResources(
     'categories' => ProductCategoriesController::class,
     'products' => ProductsController::class,
     'coupons' => CouponsController::class,
+    'addresses' => AddressesController::class,
     ]
 );

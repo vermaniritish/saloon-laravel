@@ -42,6 +42,7 @@ class AddressesController extends BaseController
             'longitude' => ['required','numeric',]
         ]);
         $input['user_id'] = AdminAuth::getLoginId();
+        Addresses::where('user_id', $input['user_id'])->delete();
         Addresses::create($input);
         return $this->success([], Response::HTTP_OK, trans('ADDRESS_CREATED'));
     }

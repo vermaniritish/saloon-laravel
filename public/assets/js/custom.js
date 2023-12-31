@@ -146,11 +146,15 @@ $(".owl-carousel").owlCarousel({
 $('[required]').prev('.form-control-label').append('<span class="text-danger">*</span>');
 
 /** Select Boxes **/
-$('select').selectpicker({
-    liveSearch: true,
-    liveSearchStyle: 'contains',
-    showContent: true
-})
+function initSelectpicker(sel) {
+    $(sel).not('.no-selectpicker').selectpicker({
+        liveSearch: true,
+        liveSearchStyle: 'contains',
+        showContent: true,
+        dropdownAlignRight: 'auto'
+    })
+}
+initSelectpicker('select');
 /** Select Boxes **/
 
 /** Password **/

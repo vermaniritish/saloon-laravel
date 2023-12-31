@@ -175,6 +175,17 @@
 									</div>
 								</div>
 							</div>
+							<div class="row">
+								<div class="col-md-6">
+								<div class="form-group">
+										<label class="form-control-label" for="input-first-name">Tax Percentage</label>
+										<input type="text" class="form-control" name="tax_percentage" required placeholder="$" value="{{ Settings::get('tax_percentage') }}">
+										@error('tax_percentage')
+										    <small class="text-danger">{{ $message }}</small>
+										@enderror
+									</div>
+								</div>
+							</div>
 						</div>
 						<hr class="my-4" />
 						<button href="#" class="btn btn-sm py-2 px-3 btn-primary float-right">
