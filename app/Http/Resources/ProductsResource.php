@@ -30,7 +30,7 @@ class ProductsResource extends JsonResource
             'created' =>  Carbon::createFromDate($this->created)->toDateTimeString(),
             'modified' =>  Carbon::createFromDate($this->modified)->toDateTimeString(),
             'brands' => BrandsResource::collection($this->brands)->values(),
-            'categories' => ProductCategoriesResource::collection($this->brands)->values(),
+            'categories' => ProductCategoriesResource::collection($this->categories)->values(),
     ];
     }
 }
