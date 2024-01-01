@@ -34,10 +34,19 @@ class ProductsController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(Request $request)
-    {
-        return $this->_index($request, Products::class, ProductsResource::class, []);
-    }
+	public function index(Request $request)
+	{
+		$products = Products::with('categories')
+			->orderBy($request->get('sortBy') ? $request->get('sortBy') : 'id', $request->get('direction') ? $request->get('direction') : 'asc')
+			->where('title', 'like', '%' . $request->get('query') . '%')
+			->orWhereHas('categories', function ($query) use ($request) {
+				$query->where('product_category_relation.category_id', 'like', '%' . $request->get('query') . '%');
+			})
+			->paginate($request->get('per_page'));
+	
+		return ProductsResource::collection($products);
+	}
+	
 
 	/**
      * Display the specified resource.
