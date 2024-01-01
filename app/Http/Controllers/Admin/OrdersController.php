@@ -179,7 +179,7 @@ class OrdersController extends AppController
 				$data['booking_date'] = $formattedDateTime;
 				$customerId = $request->input('customer_id');
 				$user = User::find($customerId);
-				$address = Addresses::where('user_id', $customerId)->first();
+				$address = Addresses::where('id', $data['address_id'])->first();
 				if($user){
 					$data['customer_name'] = $user->first_name . ' ' . $user->last_name; 
 				}

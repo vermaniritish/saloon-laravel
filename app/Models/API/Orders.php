@@ -2,11 +2,14 @@
 
 namespace App\Models\API;
 
-use App\Models\Admin\Addresses as AdminAddresses;
+use App\Models\Admin\OrderProductRelation;
+use App\Models\Admin\Orders as AdminOrders;
+use App\Models\AppModel;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Spatie\Activitylog\LogOptions;
+use Illuminate\Database\Eloquent\Model;
 
-class Addresses extends AdminAddresses
+class Orders extends AdminOrders
 {
     use HasFactory;
 
@@ -16,21 +19,26 @@ class Addresses extends AdminAddresses
      * @var array
      */
     protected $fillable = [
-        'title',
-        'address',
-        'city',
+        'customer_id',
+        'booking_date',
+        'booking_time',
+        'address_id',
         'state',
+        'city',
         'area',
-        'latitude',
-        'longitude',
-        'user_id'
+        'payment_type' , 
+        'coupon_code_id',
+        'tax',
+        'total_amount',
+        'discount',
+        'subtotal'
     ];
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'addresses';
+    protected $table = 'orders';
 
     /**
      * The attributes that are not assignable.
@@ -61,24 +69,16 @@ class Addresses extends AdminAddresses
     public function toSearchableArray()
     {
         return [
-            'id',
-            'title',
-            'address',
-            'city',
-            'state',
-            'area',
-            'latitude',
-            'longitude'
+        'customer_id' ,
+        'booking_date' ,
+        'booking_time' ,
+        'address_id',
+        'payment_type' , 
+        'coupon_code_id',
+        'tax',
+        'total_amount',
+        'discount',
+        'subtotal'
         ];
     }
-    
-    /**
-	 * Define attributes that need to be logged.
-	 */
-	public function getActivitylogOptions(): LogOptions {
-		return LogOptions::defaults()
-			->logAll()
-			->dontLogIfAttributesChangedOnly(['updated_at'])
-			->useLogName('users');
-	}
 }

@@ -26,3 +26,8 @@ Route::post('/order/bulkActions/{action}', [OrdersController::class, 'bulkAction
 
 Route::get('/order/{id}/delete', [OrdersController::class, 'delete'])
     ->name('admin.orders.delete');
+
+Route::get('/order/{id}/comments', [OrderCommentsController::class, 'index'])->name('admin.orderComments');
+Route::post('/order/{id}/comments', [OrderCommentsController::class, 'add'])->name('admin.orderComments.add');
+Route::post('/order/{id}/update-comments', [OrderCommentsController::class, 'edit'])->name('admin.orderComments.edit');
+Route::post('/order/{id}/delete-comment', [OrdersController::class, 'delete'])->name('admin.orderComments.delete');

@@ -1,10 +1,9 @@
 <?php
 
 use App\Http\Controllers\API\AddressesController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\BrandsController;
 use App\Http\Controllers\API\CouponsController;
+use App\Http\Controllers\API\OrdersController;
 use App\Http\Controllers\API\ProductCategoriesController;
 use App\Http\Controllers\API\ProductsController;
 
@@ -38,5 +37,6 @@ Route::apiResources(
     'products' => ProductsController::class,
     'coupons' => CouponsController::class,
     'addresses' => AddressesController::class,
+    'orders' => OrdersController::class,
     ]
 );
