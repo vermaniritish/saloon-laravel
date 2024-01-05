@@ -72,7 +72,7 @@ class AddressesController extends BaseController
      */
     public function update(Request $request, string $id)
     {
-        $check_brand = Addresses::whereId($id)->first();
+        $check_brand = Addresses::whereId($id)->where('user_id', $request->user()->id)->exists();
         if (!$check_brand) {
             return $this->error(trans('ADDRESS_NOT_FOUND'), Response::HTTP_NOT_FOUND);
         }
@@ -97,14 +97,14 @@ class AddressesController extends BaseController
      * @param  string  $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
-        $check_brand = Addresses::whereId($id)->first();
-        if (!$check_brand) {
+        $check_address = Addresses::whereId($id)->where('user_id', $request->user()->id)->first();
+        if (!$check_address) {
             return $this->error(trans('ADDRESS_NOT_FOUND'), Response::HTTP_NOT_FOUND);
         }
 
-        $check_brand->delete();
+        $check_address->delete();
 
         return $this->success([], Response::HTTP_OK, trans('ADDRESS_DELETED'));
     }
