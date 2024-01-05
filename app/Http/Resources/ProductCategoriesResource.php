@@ -19,8 +19,6 @@ class ProductCategoriesResource extends JsonResource
                 'id'   =>  $this->id,
                 'title' =>  $this->title,
                 'image' => $this->image,
-                'created' =>  Carbon::createFromDate($this->created)->toDateTimeString(),
-                'modified' =>  Carbon::createFromDate($this->modified)->toDateTimeString(),
                 'products' => ProductsResource::collection($this->products)
         ];
     }

@@ -20,9 +20,6 @@ class BrandsResource extends JsonResource
                 'title' =>  $this->title,
                 'description' =>  $this->description,
                 'image' =>  $this->image,
-                'created' =>  Carbon::createFromDate($this->created)->toDateTimeString(),
-                'modified' =>  Carbon::createFromDate($this->modified)->toDateTimeString(),
-
         ];
     }
 }

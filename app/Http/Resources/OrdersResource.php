@@ -31,8 +31,6 @@ class OrdersResource extends JsonResource
             'discount' => $this->discount,
             'total_amount' => $this->total_amount,
             'coupon_code_id' => $this->coupon_code_id,
-            'created' =>  Carbon::createFromDate($this->created)->toDateTimeString(),
-            'modified' =>  Carbon::createFromDate($this->modified)->toDateTimeString(),
     ];
     }
 }
