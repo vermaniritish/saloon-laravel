@@ -46,7 +46,7 @@ class ProductCategoriesController extends BaseController
         $input['image_path'] = Storage::disk('brand_images')->path('');
         ProductCategories::create($input);
 
-        return $this->success([], Response::HTTP_OK, trans('BRAND_CREATED'));
+        return $this->success([], Response::HTTP_OK, trans('CATEGORY_CREATED'));
     }
 
     /**
@@ -59,7 +59,7 @@ class ProductCategoriesController extends BaseController
     {
         $check_brand = ProductCategories::whereId($id)->first();
         if (!$check_brand) {
-            return $this->error(trans('BRAND_NOT_FOUND'), Response::HTTP_NOT_FOUND);
+            return $this->error(trans('CATEGORY_NOT_FOUND'), Response::HTTP_NOT_FOUND);
         }
 
         return $this->success(new ProductCategoriesResource($check_brand), Response::HTTP_OK);
@@ -76,7 +76,7 @@ class ProductCategoriesController extends BaseController
     {
         $check_brand = ProductCategories::whereId($id)->first();
         if (!$check_brand) {
-            return $this->error(trans('BRAND_NOT_FOUND'), Response::HTTP_NOT_FOUND);
+            return $this->error(trans('CATEGORY_NOT_FOUND'), Response::HTTP_NOT_FOUND);
         }
 
         $input = $request->validate([
@@ -98,7 +98,7 @@ class ProductCategoriesController extends BaseController
 
         ProductCategories::whereId($id)->update($input);
 
-        return $this->success([], Response::HTTP_OK, trans('BRAND_UPDATED'));
+        return $this->success([], Response::HTTP_OK, trans('CATEGORY_UPDATED'));
     }
 
     /**
@@ -111,12 +111,12 @@ class ProductCategoriesController extends BaseController
     {
         $check_brand = ProductCategories::whereId($id)->first();
         if (!$check_brand) {
-            return $this->error(trans('BRAND_NOT_FOUND'), Response::HTTP_NOT_FOUND);
+            return $this->error(trans('CATEGORY_NOT_FOUND'), Response::HTTP_NOT_FOUND);
         }
 
         $check_brand->delete();
 
-        return $this->success([], Response::HTTP_OK, trans('BRAND_DELETED'));
+        return $this->success([], Response::HTTP_OK, trans('CATEGORY_DELETED'));
     }
 
 }

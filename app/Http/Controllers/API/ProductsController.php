@@ -58,7 +58,7 @@ class ProductsController extends BaseController
     {
         $check_brand = Products::whereId($id)->first();
         if (!$check_brand) {
-            return $this->error(trans('BRAND_NOT_FOUND'), Response::HTTP_NOT_FOUND);
+            return $this->error(trans('PRODUCT_NOT_FOUND'), Response::HTTP_NOT_FOUND);
         }
 
         return $this->success(new ProductsResource($check_brand), Response::HTTP_OK);

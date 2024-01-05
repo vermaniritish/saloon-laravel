@@ -32,22 +32,22 @@ class CouponsController extends BaseController
     public function store(Request $request)
     {
         $input = $request->validate([
-            'brand_name' => ['required', 'string','max:40'],
-            'brand_description' => ['nullable', 'string', 'max:255'],
+            'COUPON_name' => ['required', 'string','max:40'],
+            'COUPON_description' => ['nullable', 'string', 'max:255'],
             'image' => ['required','image','max:2048']
         ]);
         $input['id'] = Str::uuid();
         $image = $input['image'];
         $image_extension = $image->getClientOriginalExtension();
         $filename = Str::uuid() . '.' . $image_extension;
-        Storage::disk('brand_images')->put($filename, $image->getContent());
+        Storage::disk('COUPON_images')->put($filename, $image->getContent());
         unset($input['image']);
         $input['image_name'] = $filename;
-        $input['image_path'] = Storage::disk('brand_images')->path('');
+        $input['image_path'] = Storage::disk('COUPON_images')->path('');
 
         APICoupons::create($input);
 
-        return $this->success([], Response::HTTP_OK, trans('BRAND_CREATED'));
+        return $this->success([], Response::HTTP_OK, trans('COUPON_CREATED'));
     }
 
     /**
@@ -60,7 +60,7 @@ class CouponsController extends BaseController
     {
         $check_brand = APICoupons::whereId($id)->first();
         if (!$check_brand) {
-            return $this->error(trans('BRAND_NOT_FOUND'), Response::HTTP_NOT_FOUND);
+            return $this->error(trans('COUPON_NOT_FOUND'), Response::HTTP_NOT_FOUND);
         }
 
         return $this->success(new CouponsResource($check_brand), Response::HTTP_OK);
@@ -77,12 +77,12 @@ class CouponsController extends BaseController
     {
         $check_brand = APICoupons::whereId($id)->first();
         if (!$check_brand) {
-            return $this->error(trans('BRAND_NOT_FOUND'), Response::HTTP_NOT_FOUND);
+            return $this->error(trans('COUPON_NOT_FOUND'), Response::HTTP_NOT_FOUND);
         }
 
         $input = $request->validate([
-            'brand_name' => ['filled', 'string','max:40'],
-            'brand_description' => ['filled', 'string', 'max:255'],
+            'COUPON_name' => ['filled', 'string','max:40'],
+            'COUPON_description' => ['filled', 'string', 'max:255'],
             'image' => ['required','image','max:2048']
 
         ]);
@@ -91,15 +91,15 @@ class CouponsController extends BaseController
             $image = $input['image'];
             $image_extension = $image->getClientOriginalExtension();
             $filename = Str::uuid() . '.' . $image_extension;
-            Storage::disk('brand_images')->put($filename, $image->getContent());
+            Storage::disk('COUPON_images')->put($filename, $image->getContent());
             unset($input['image']);
             $input['image_name'] = $filename;
-            $input['image_path'] = Storage::disk('brand_images')->path('');
+            $input['image_path'] = Storage::disk('COUPON_images')->path('');
         }
 
         APICoupons::whereId($id)->update($input);
 
-        return $this->success([], Response::HTTP_OK, trans('BRAND_UPDATED'));
+        return $this->success([], Response::HTTP_OK, trans('COUPON_UPDATED'));
     }
 
     /**
@@ -112,12 +112,12 @@ class CouponsController extends BaseController
     {
         $check_brand = APICoupons::whereId($id)->first();
         if (!$check_brand) {
-            return $this->error(trans('BRAND_NOT_FOUND'), Response::HTTP_NOT_FOUND);
+            return $this->error(trans('COUPON_NOT_FOUND'), Response::HTTP_NOT_FOUND);
         }
 
         $check_brand->delete();
 
-        return $this->success([], Response::HTTP_OK, trans('BRAND_DELETED'));
+        return $this->success([], Response::HTTP_OK, trans('COUPON_DELETED'));
     }
 
 }

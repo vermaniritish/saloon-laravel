@@ -71,7 +71,7 @@ class AddressesController extends BaseController
      */
     public function update(Request $request, string $id)
     {
-        $check_brand = Addresses::whereId($id)->where('user_id', $request->user()->id)->exists();
+        $check_brand = Addresses::whereId($id)->where('user_id', $request->user()?->id)->exists();
         if (!$check_brand) {
             return $this->error(trans('ADDRESS_NOT_FOUND'), Response::HTTP_NOT_FOUND);
         }
@@ -98,7 +98,7 @@ class AddressesController extends BaseController
      */
     public function destroy(Request $request, string $id)
     {
-        $check_address = Addresses::whereId($id)->where('user_id', $request->user()->id)->first();
+        $check_address = Addresses::whereId($id)->where('user_id', $request->user()?->id)->first();
         if (!$check_address) {
             return $this->error(trans('ADDRESS_NOT_FOUND'), Response::HTTP_NOT_FOUND);
         }
