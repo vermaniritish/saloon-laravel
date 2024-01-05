@@ -4,7 +4,6 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\API\BaseController;
 use Illuminate\Http\Request;
-use App\Http\Resources\BrandsResource;
 use App\Http\Resources\ProductCategoriesResource;
 use App\Models\API\ProductCategories;
 use Illuminate\Http\Response;
@@ -63,7 +62,7 @@ class ProductCategoriesController extends BaseController
             return $this->error(trans('BRAND_NOT_FOUND'), Response::HTTP_NOT_FOUND);
         }
 
-        return $this->success(new BrandsResource($check_brand), Response::HTTP_OK);
+        return $this->success(new ProductCategoriesResource($check_brand), Response::HTTP_OK);
     }
 
     /**

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\API\BaseController;
 use Illuminate\Http\Request;
-use App\Http\Resources\BrandsResource;
 use App\Http\Resources\AddressesResource;
 use App\Models\Admin\AdminAuth;
 use App\Models\API\Addresses;
@@ -60,7 +59,7 @@ class AddressesController extends BaseController
             return $this->error(trans('ADDRESS_NOT_FOUND'), Response::HTTP_NOT_FOUND);
         }
 
-        return $this->success(new BrandsResource($check_brand), Response::HTTP_OK);
+        return $this->success(new AddressesResource($check_brand), Response::HTTP_OK);
     }
 
     /**
