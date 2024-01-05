@@ -157,7 +157,22 @@
 										Status
 									</th>
 									<td>
-										<?php echo $page->status ? '<span class="badge badge-success">Published</span>' : '<span class="badge badge-danger">Unpublished</span>' ?>
+										<div class="dropdown">
+											<?php $statusData = $status[$page->status] ?? null; ?>
+											<?php if ($statusData): ?>
+												<button class="btn btn-sm dropdown-toggle" style="<?php echo $statusData['styles']; ?>"
+														type="button" id="statusDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+														data-toggle="tooltip" title="{{ $page->statusBy ? ($page->statusBy->first_name . ($page->statusBy->last_name ? ' ' . $page->statusBy->last_name : '')) : null }}">
+													{{ ucfirst($page->status) }}
+												</button>
+												<div class="dropdown-menu dropdown-menu-left" aria-labelledby="statusDropdown">
+													<?php $switchUrl = route('admin.order.switchStatus', ['field' => 'status', 'id' => $page->id]); ?>
+													<?php foreach ($status as $statusKey => $statusData): ?>
+														<a class="dropdown-item" href="javascript:;" data-value="<?php echo $statusKey; ?>" onclick="switch_diary_page_action('<?php echo $switchUrl; ?>', this)">{{ ucfirst($statusData['label']) }}</a>
+													<?php endforeach; ?>
+												</div>
+											<?php endif; ?>
+										</div>
 									</td>
 								</tr>
 								<tr>

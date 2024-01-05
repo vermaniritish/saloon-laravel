@@ -5,9 +5,13 @@ namespace App\Models\Admin;
 use App\Models\AppModel;
 use Illuminate\Http\Request;
 use App\Libraries\General;
+use App\Traits\LogsCauserInfo;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Orders extends AppModel
 {
+    use LogsActivity, LogsCauserInfo;
     protected $table = 'orders';
     protected $primaryKey = 'id';
     public $timestamps = false;
@@ -41,6 +45,14 @@ class Orders extends AppModel
                 'UPI',
                 'Credit/Debit Cards'
             ],
+            'status' => [
+                'pending' => ['label' => 'Pending', 'styles' => 'background-color: #ffa07a; color: #cc0000;'],
+                'on_the_way' => ['label' => 'On The Way', 'styles' => 'background-color: #cce5ff; color: #004080;'],
+                'approved' => ['label' => 'Approved', 'styles' => 'background-color: #ccffcc; color: #006600;'],
+                'in_progress' => ['label' => 'In Progress', 'styles' => 'background-color: #ffffcc; color: #996600;'],
+                'completed' => ['label' => 'Completed', 'styles' => 'background-color: #d9ead3; color: #006600;'],
+            ],
+            
         ];
     }
 
@@ -50,6 +62,12 @@ class Orders extends AppModel
         foreach($products as $c)
         {
             $relation = new OrderProductRelation();
+            $product = Products::where('id',$c)->first();
+            $relation->product_title = $product->title;
+            $relation->product_description = $product->description;
+            $relation->amount = $product->price;
+            $relation->service_hours = $product->service_hours;
+            $relation->service_minutes = $product->service_minutes;
             $relation->order_id = $id;
             $relation->product_id = $c;
             $relation->save();
@@ -303,4 +321,13 @@ class Orders extends AppModel
         }
 
     }
+
+    /**
+	 * Define attributes that need to be logged.
+	 */
+	public function getActivitylogOptions(): LogOptions {
+		return LogOptions::defaults()
+			->logAll()
+			->useLogName('orders');
+	}
 }

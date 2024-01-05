@@ -65,16 +65,19 @@
 											<div class="form-group">
 												<label class="form-control-label" for="input-first-name">Products</label>
 												<select v-model="selectedProducts" v-on:change="updateTotal" class="form-control no-selectpicker" name="product_id[]" multiple required>
-													<option value="">Select</option>
-													<?php foreach($products as $c): ?>
-														<option 
-															value="<?php echo $c->id ?>"
-															data-product-price="<?php echo $c->price ?>" 
-															<?php echo old('product_id') && in_array($c->id, old('product_id'))  ? 'selected' : '' ?>
-														>
-															<?php echo $c->title ?>	
-														</option>
-													<?php endforeach; ?>
+													@foreach($productCategories as $category)
+														<optgroup label="{{ $category->title }}">
+															@foreach($category->products as $product)
+																<option 
+																	value="{{ $product->id }}"
+																	data-product-price="{{ $product->price }}" 
+																	<?php echo old('product_id') && in_array($product->id, old('product_id'))  ? 'selected' : '' ?>
+																>
+																	{{ $product->title }}    
+																</option>
+															@endforeach
+														</optgroup>
+													@endforeach
 												</select>
 												@error('product_id')
 													<small class="text-danger">{{ $message }}</small>
@@ -103,10 +106,46 @@
 										</div>
 									</div>
 									<div class="row">
+										<div class="col-md-12">
+											<div class="form-group">
+												<label class="form-check-label">
+													<input type="checkbox" v-model="manualAddress" class="form-check-input">
+													Manual Address ?
+												</label>
+											</div>
+										</div>
+									</div>
+									<div v-if="manualAddress" class="row">
 										<div class="col-md-6">
 											<div class="form-group">
+												<label class="form-control-label" for="input-manual-address">Address</label>
+												<input type="text" class="form-control" name="address" :required ="manualAddress">
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="form-group">
+												<label class="form-control-label" for="input-manual-address">State</label>
+												<input type="text" class="form-control" name="state" :required ="manualAddress">
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="form-group">
+												<label class="form-control-label" for="input-manual-address">City</label>
+												<input type="text" class="form-control" name="city" :required ="manualAddress">
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="form-group">
+												<label class="form-control-label" for="input-manual-address">Area</label>
+												<input type="text" class="form-control" name="area" :required ="manualAddress">
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div v-if="!manualAddress" class="col-md-6">
+											<div class="form-group">
 												<label class="form-control-label" for="input-first-name">Addresses</label>
-												<select class="form-control no-selectpicker" name="address_id" required>
+												<select class="form-control no-selectpicker" name="address_id" :required ="manualAddress">
 													<option value="">Select</option>
 													<?php foreach($address as $c): ?>
 														<?php
@@ -158,7 +197,7 @@
 												v-model="selectedCouponId" 
 												v-on:change="updateTotal" 
 												name="coupon_code_id" 
-												required>
+												>
 													<option value="">Select</option>
 													<?php 
 														foreach($coupons as $coupon): 
@@ -211,7 +250,7 @@
 									<div class="row">
 										<div class="col-md-6">
 											<div class="form-group">
-												<input type="hidden" name="total_amount" v-model="tax">
+												<input type="hidden" name="total_amount" v-model="totalAmount">
 												<label class="form-control-label">Total Amount</label>
 												<span id="total_amount" name="total_amount" class="form-control-static">0.00</span>
 											</div>

@@ -23,6 +23,7 @@ use App\Libraries\FileSystem;
 use App\Http\Controllers\Admin\AppController;
 use App\Models\Admin\Addresses;
 use App\Models\Admin\Orders;
+use App\Models\Admin\ProductCategories;
 use App\Models\Admin\Products;
 use App\Models\Admin\Settings;
 use App\Models\Admin\Users;
@@ -161,7 +162,7 @@ class OrdersController extends AppController
 					'booking_time' => ['required', 'after_or_equal:today'],
 					'address_id' => ['required',Rule::exists(Addresses::class,'id')],
 					'payment_type' => ['required'], 
-					'coupon_code_id' => ['required',Rule::exists(Coupons::class,'id')], 
+					'coupon_code_id' => ['nullable',Rule::exists(Coupons::class,'id')], 
 					'subtotal' => ['required', 'numeric'],
 					'discount' => ['required', 'numeric'],
 					'tax' => ['required', 'numeric'],
@@ -189,9 +190,13 @@ class OrdersController extends AppController
 					$data['state'] = $address->state; 
 					$data['area'] = $address->area; 
 				}
+				$data['status'] = 'pending';
 	        	$order = Orders::create($data);
 	        	if($order)
 	        	{
+					$order_prefix = (int)Settings::get('order_prefix');
+					$data['prefix_id'] = $order->id + $order_prefix;
+					Orders::modify($order->id,$data);
 					if(!empty($products))
 	        		{  
 	        			Orders::handleProducts($order->id, $products);
@@ -222,17 +227,8 @@ class OrdersController extends AppController
 			],
 			'concat(users.first_name, users.last_name) desc'
 		);
-	    $products = Products::getAll(
-			[
-				'products.id',
-				'products.title',
-				'products.description',
-				'products.price'
-			],
-			[
-			],
-			'products.title desc'
-		);
+		$productCategories = ProductCategories::with('products')
+		->get(['id', 'title']); 
 	    $address = Addresses::getAll(
 			[
 				'addresses.id',
@@ -256,7 +252,7 @@ class OrdersController extends AppController
 		);
 	    return view("admin/orders/add", [
 			'users' => $users,
-			'products' => $products,
+			'productCategories' => $productCategories,
 			'address' => $address,
 			'coupons' => $coupons,
 			'paymentType' => Orders::getStaticData()['paymentType'],
@@ -276,7 +272,9 @@ class OrdersController extends AppController
     	if($page)
     	{
 	    	return view("admin/orders/view", [
-    			'page' => $page
+    			'page' => $page,
+				'status' => Orders::getStaticData()['status'],
+
     		]);
 		}
 		else
@@ -410,4 +408,46 @@ class OrdersController extends AppController
 	        ], 200);	
     	}
     }
+
+	function switchStatus(Request $request, $field, $id)
+	{
+		if (!Permissions::hasPermission('diary_pages', 'update')) {
+		$request->session()->flash('error', 'Permission denied.');
+		return redirect()->route('admin.dashboard');
+		}
+		$data = $request->toArray();
+		$validator = Validator::make(
+		$request->toArray(),
+		[
+			'flag' => 'required'
+		]
+		);
+		if (!$validator->fails()) {
+		$order = Orders::find($id);
+		if($order){
+			$updated = $order->updateStatusAndLogHistory($field, $request->get('flag'));
+		}
+		if ($updated) {
+			return Response()->json([
+			'status' => 'success',
+			'message' => 'Record updated successfully.'
+			]);
+		} else {
+			return Response()->json([
+			'status' => 'error',
+			'message' => 'Record could not be update.'
+			]);
+		}
+		} else {
+		return Response()->json([
+			'status' => 'error',
+			'message' => 'Record could not be update.'
+		]);
+		}
+	}
+	
+	public function getStatuses()
+	{
+		return response()->json(Orders::getStaticData()['status']);
+	}
 }

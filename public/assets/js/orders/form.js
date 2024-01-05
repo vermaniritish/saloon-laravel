@@ -9,6 +9,7 @@ let order = new Vue({
         selectedCouponId: '',
         tax: 0,
         totalAmount: 0,
+        manualAddress: 0,
     },
     mounted: function() {
         this.mounting = false;
@@ -45,8 +46,8 @@ let order = new Vue({
             document.getElementById('total_amount').textContent = this.totalAmount.toFixed(2);
             document.querySelector('input[name="subtotal"]').value = this.subtotal.toFixed(2);
             document.querySelector('input[name="discount"]').value = this.discount.toFixed(2);
-            document.querySelector('input[name="tax"]').value = tax.toFixed(2);
-            document.querySelector('input[name="total_amount"]').value = tax.toFixed(2);
+            document.querySelector('input[name="tax"]').value = this.tax.toFixed(2);
+            document.querySelector('input[name="total_amount"]').value = this.totalAmount.toFixed(2);
         },
     }
 });

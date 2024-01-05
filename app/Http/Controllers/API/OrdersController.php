@@ -26,6 +26,11 @@ class OrdersController extends BaseController
         return $this->_index($request, Orders::class, OrdersResource::class, []);
     }
 
+    protected function throttleKey(Request $request)
+    {
+        return $request->input('customer_id');
+    }    
+
     /**
      * Store a newly created resource in storage.
      *
@@ -34,15 +39,21 @@ class OrdersController extends BaseController
      */
     public function store(Request $request)
     {
+        $this->middleware('throttle:1,30')->only('store');
         $input = $request->validate([
             'customer_id' => ['required', Rule::exists(User::class,'id')],
             'product_id' => ['required', 'array'],
             'product_id.*' => ['required', Rule::exists(Products::class,'id')],
             'booking_date' => ['required', 'date'],
             'booking_time' => ['required', 'after_or_equal:today'],
-            'address_id' => ['required',Rule::exists(Addresses::class,'id')],
+            'address_id' => ['nullable',Rule::exists(Addresses::class,'id')],
             'payment_type' => ['required'], 
             'coupon_code_id' => ['required',Rule::exists(Coupons::class,'id')], 
+            'manual_address' => ['required','boolean'],
+            'address' => ['required_if:manual_address,true','string','max:255'],
+            'state' => ['required_if:manual_address,true','string','max:40'],
+            'city' => ['required_if:manual_address,true','string','max:30'],
+            'area' => ['required_if:manual_address,true','string','max:40'],
         ]);
         $formattedDateTime = date('Y-m-d H:i:s', strtotime($request->get('booking_date')));
         $input['booking_date'] = $formattedDateTime;
