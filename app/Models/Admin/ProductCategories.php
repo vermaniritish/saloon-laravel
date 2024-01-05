@@ -20,6 +20,16 @@ class ProductCategories extends AppModel
     use SoftDeletes;
 
     /**
+    * ProductCategories -> Product belongsToMany relation
+    *
+    * @return ProductCategories
+    */
+    public function products()
+    {
+        return $this->belongsToMany(Products::class, 'product_category_relation', 'category_id', 'product_id');
+    }
+
+    /**
     * Get resize images
     *
     * @return array

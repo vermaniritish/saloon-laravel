@@ -51,4 +51,23 @@ class ProductCategories extends AppModel
         ];
     }
 
+    /**
+    * ProductCategories -> Product belongsToMany relation
+    *
+    * @return ProductCategories
+    */
+    public function products()
+    {
+        return $this->belongsToMany(Products::class, 'product_category_relation', 'category_id', 'product_id');
+    }
+
+    /**
+     * Define a one-to-one relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function brands()
+    {
+        return $this->belongsToMany(Brands::class, 'brand_product', 'product_id', 'brand_id');
+    }
 }
