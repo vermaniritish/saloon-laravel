@@ -32,18 +32,18 @@ class CouponsController extends BaseController
     public function store(Request $request)
     {
         $input = $request->validate([
-            'COUPON_name' => ['required', 'string','max:40'],
-            'COUPON_description' => ['nullable', 'string', 'max:255'],
+            'brand_name' => ['required', 'string','max:40'],
+            'brand_description' => ['nullable', 'string', 'max:255'],
             'image' => ['required','image','max:2048']
         ]);
         $input['id'] = Str::uuid();
         $image = $input['image'];
         $image_extension = $image->getClientOriginalExtension();
         $filename = Str::uuid() . '.' . $image_extension;
-        Storage::disk('COUPON_images')->put($filename, $image->getContent());
+        Storage::disk('brand_images')->put($filename, $image->getContent());
         unset($input['image']);
         $input['image_name'] = $filename;
-        $input['image_path'] = Storage::disk('COUPON_images')->path('');
+        $input['image_path'] = Storage::disk('brand_images')->path('');
 
         APICoupons::create($input);
 
@@ -81,8 +81,8 @@ class CouponsController extends BaseController
         }
 
         $input = $request->validate([
-            'COUPON_name' => ['filled', 'string','max:40'],
-            'COUPON_description' => ['filled', 'string', 'max:255'],
+            'brand_name' => ['filled', 'string','max:40'],
+            'brand_description' => ['filled', 'string', 'max:255'],
             'image' => ['required','image','max:2048']
 
         ]);
@@ -91,10 +91,10 @@ class CouponsController extends BaseController
             $image = $input['image'];
             $image_extension = $image->getClientOriginalExtension();
             $filename = Str::uuid() . '.' . $image_extension;
-            Storage::disk('COUPON_images')->put($filename, $image->getContent());
+            Storage::disk('brand_images')->put($filename, $image->getContent());
             unset($input['image']);
             $input['image_name'] = $filename;
-            $input['image_path'] = Storage::disk('COUPON_images')->path('');
+            $input['image_path'] = Storage::disk('brand_images')->path('');
         }
 
         APICoupons::whereId($id)->update($input);
