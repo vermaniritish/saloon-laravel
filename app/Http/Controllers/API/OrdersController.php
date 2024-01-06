@@ -50,10 +50,10 @@ class OrdersController extends BaseController
             'payment_type' => ['required'],
             'coupon_code_id' => ['nullable',Rule::exists(Coupons::class, 'id')],
             'manual_address' => ['required','boolean'],
-            'address' => ['required_if:manual_address,true','string','max:255'],
-            'state' => ['required_if:manual_address,true','string','max:40'],
-            'city' => ['required_if:manual_address,true','string','max:30'],
-            'area' => ['required_if:manual_address,true','string','max:40'],
+            'address' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:255'],
+            'state' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:40'],
+            'city' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:30'],
+            'area' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:40'],
         ]);
 
         $formattedDateTime = date('Y-m-d H:i:s', strtotime($request->get('booking_date')));
@@ -61,7 +61,7 @@ class OrdersController extends BaseController
         $subtotal = Products::findMany($input['product_id'])->pluck('price')->sum();
        if(isset($input['coupon_code_id']) && $input['coupon_code_id']){
            $coupon = Coupons::where('id', $input['coupon_code_id'])->first(['amount','is_percentage']);
-           if($coupon->is_percentage) {
+           if($coupon && $coupon->is_percentage) {
                $discount = ($coupon->amount / 100) * $subtotal;
            } else {
                $discount = $coupon->amount;
@@ -135,7 +135,7 @@ class OrdersController extends BaseController
     {
         $check_order = Orders::whereId($id)->first();
         if (!$check_order) {
-            return $this->error(trans('PRODUCT_NOT_FOUND'), Response::HTTP_NOT_FOUND);
+            return $this->error(trans('ORDER_NOT_FOUND'), Response::HTTP_NOT_FOUND);
         }
 
         $input = $request->validate([
@@ -146,17 +146,63 @@ class OrdersController extends BaseController
             'booking_time' => ['required', 'after_or_equal:today'],
             'address_id' => ['exclude_if:manual_address,true','required_if:manual_address,false',Rule::exists(Addresses::class, 'id')],
             'payment_type' => ['required'],
-            'coupon_code_id' => ['required',Rule::exists(Coupons::class, 'id')],
+            'coupon_code_id' => ['nullable',Rule::exists(Coupons::class, 'id')],
             'manual_address' => ['required','boolean'],
-            'address' => ['required_if:manual_address,true','string','max:255'],
-            'state' => ['required_if:manual_address,true','string','max:40'],
-            'city' => ['required_if:manual_address,true','string','max:30'],
-            'area' => ['required_if:manual_address,true','string','max:40'],
+            'address' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:255'],
+            'state' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:40'],
+            'city' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:30'],
+            'area' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:40'],
         ]);
 
-        Orders::whereId($id)->update($input);
-
-        return $this->success([], Response::HTTP_OK, trans('ORDER_UPDATED'));
+        $formattedDateTime = date('Y-m-d H:i:s', strtotime($request->get('booking_date')));
+        $input['booking_date'] = $formattedDateTime;
+        $subtotal = Products::findMany($input['product_id'])->pluck('price')->sum();
+       if(isset($input['coupon_code_id']) && $input['coupon_code_id']){
+           $coupon = Coupons::where('id', $input['coupon_code_id'])->first(['amount','is_percentage']);
+           if($coupon && $coupon->is_percentage) {
+               $discount = ($coupon->amount / 100) * $subtotal;
+           } else {
+               $discount = $coupon->amount;
+           }
+       }
+       else{
+            $discount = 0;
+       }
+        $taxPercentage = (int) Settings::get('tax_percentage');
+        $input['tax'] = ($subtotal - $discount) * $taxPercentage / 100;
+        $input['total_amount'] = $subtotal - $discount + $input['tax'];
+        $input['discount'] = $discount;
+        $input['subtotal'] = $subtotal;
+        $products = [];
+        if(isset($input['product_id']) && $input['product_id']) {
+            $products = $input['product_id'];
+        }
+        unset($input['product_id']);
+        $user = User::find($input['customer_id']);
+        if($user) {
+            $input['customer_name'] = $user->first_name . ' ' . $user->last_name;
+        }
+        if (!$input['manual_address']) {
+            $address = Addresses::where('id', $input['address_id'])->first();
+                if($address) {
+                    $input['address'] = $address->address;
+                    $input['city'] = $address->city;
+                    $input['state'] = $address->state;
+                    $input['area'] = $address->area;
+                    $input['latitude'] = $address->latitude;
+                    $input['longitude'] = $address->longitude;
+                }
+        }
+        $order = Orders::modify($id,$input);
+        if($order) {
+            $order_prefix = (int)Settings::get('order_prefix');
+            $data['prefix_id'] = $id + $order_prefix;
+            Orders::modify($id,$data);
+            if(!empty($products)) {
+                Orders::handleProducts($order->id, $products);
+            }
+            return $this->success([], Response::HTTP_OK, trans('ORDER_UPDATED'));
+        }
     }
 
     /**
