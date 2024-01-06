@@ -85,13 +85,13 @@
 						<table class="table align-items-center table-flush listing-table">
 							<thead class="thead-light">
 								<tr>
-									<th class="checkbox-th">
+									<th width="5%" class="checkbox-th">
 										<div class="custom-control custom-checkbox">
 											<input type="checkbox" class="custom-control-input mark_all" id="mark_all">
 											<label class="custom-control-label" for="mark_all"></label>
 										</div>
 									</th>
-									<th class="sort">
+									<th width="10%" class="sort">
 										<!--- MAKE SURE TO USE PROPOER FIELD IN data-field AND PROPOER DIRECTION IN data-sort -->
 										Id
 										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'coupons.id' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
@@ -102,7 +102,7 @@
 										<i class="fas fa-sort" data-field="coupons.id" data-sort="asc"></i>
 										<?php endif; ?>
 									</th>
-									<th class="sort">
+									<th width="26%" class="sort">
 										Title
 										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'coupons.title' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
 										<i class="fas fa-sort-down active" data-field="coupons.title" data-sort="asc"></i>
@@ -112,7 +112,7 @@
 										<i class="fas fa-sort" data-field="coupons.title"></i>
 										<?php endif; ?>
 									</th>
-									<th class="sort">
+									<th width="18%" class="sort">
 										Created By
 										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'owner.first_name' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
 										<i class="fas fa-sort-down active" data-field="owner.first_name" data-sort="asc"></i>
@@ -122,7 +122,7 @@
 										<i class="fas fa-sort" data-field="owner.first_name"></i>
 										<?php endif; ?>
 									</th>
-									<th class="sort">
+									<th  width="18%" class="sort">
 										Status
 										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'coupons.status' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
 										<i class="fas fa-sort-down active" data-field="coupons.status" data-sort="asc"></i>
@@ -132,7 +132,7 @@
 										<i class="fas fa-sort" data-field="coupons.status"></i>
 										<?php endif; ?>
 									</th>
-									<th class="sort">
+									<th width="18%" class="sort">
 										Created ON
 										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'coupons.created' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
 										<i class="fas fa-sort-down active" data-field="coupons.created" data-sort="asc"></i>
@@ -142,7 +142,7 @@
 										<i class="fas fa-sort" data-field="coupons.created"></i>
 										<?php endif; ?>
 									</th>
-									<th>
+									<th width="5%">
 										Actions
 									</th>
 								</tr>
