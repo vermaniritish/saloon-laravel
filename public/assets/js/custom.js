@@ -997,6 +997,17 @@ $('body').on('click', '.remarks-edit', function () {
     $('#remarsk-update textarea').val($(this).parents('.comment').find('.c-tex').text());
     $('#remarsk-update').modal('show');
 });
+$('body').on('click', '.remarks-edit', function () {
+    let id = $(this).attr('data-id');
+    let category = $(this).attr('data-category');
+    $('#remarsk-update input[name=id]').val(id);
+    if($('#remarsk-update input[name="date_time"]').length > 0) {
+        $('#remarsk-update input[name="date_time"]').val($(this).attr('date-time'));
+    }
+    $('#remarsk-update select[name=remarks_category]').val(category).selectpicker('refresh');
+    $('#remarsk-update textarea').val($(this).parents('.comment').find('.c-tex').text().trim());
+    $('#remarsk-update').modal('show');
+});
 $('#remarsk-update #update-comment').on('click', function () {
     $.ajax({
         url: admin_url + '/' + ($('#trip-comments').attr('data-module') ? $('#trip-comments').attr('data-module') : 'trips') + '/' + $('#remarsk-update').find('input[name=id]').val() + '/update-comments',
