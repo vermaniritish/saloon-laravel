@@ -46,7 +46,7 @@ class OrdersController extends BaseController
             'product_id.*' => ['required', Rule::exists(Products::class, 'id')],
             'booking_date' => ['required', 'date'],
             'booking_time' => ['required', 'after_or_equal:today'],
-            'address_id' => ['nullable',Rule::exists(Addresses::class, 'id')],
+            'address_id' => ['exclude_if:manual_address,true','required_if:manual_address,false',Rule::exists(Addresses::class, 'id')],
             'payment_type' => ['required'],
             'coupon_code_id' => ['required',Rule::exists(Coupons::class, 'id')],
             'manual_address' => ['required','boolean'],
@@ -76,15 +76,19 @@ class OrdersController extends BaseController
         }
         unset($input['product_id']);
         $user = User::find($input['customer_id']);
-        $address = Addresses::where('id', $input['address_id'])->first();
         if($user) {
             $input['customer_name'] = $user->first_name . ' ' . $user->last_name;
         }
-        if($address) {
-            $input['address'] = $address->address;
-            $input['city'] = $address->city;
-            $input['state'] = $address->state;
-            $input['area'] = $address->area;
+        if (!$input['manual_address']) {
+            $address = Addresses::where('id', $input['address_id'])->first();
+                if($address) {
+                    $input['address'] = $address->address;
+                    $input['city'] = $address->city;
+                    $input['state'] = $address->state;
+                    $input['area'] = $address->area;
+                    $input['latitude'] = $address->latitude;
+                    $input['longitude'] = $address->longitude;
+                }
         }
         unset($input['manual_address']);
         $order = Orders::create($input);
@@ -128,14 +132,19 @@ class OrdersController extends BaseController
         }
 
         $input = $request->validate([
-            // 'brand_id' => ['required','string',Rule::exists(Brands::class, 'id')],
-            'product_name' => ['filled', 'string','max:40'],
-            'product_description' => ['filled', 'string', 'max:255'],
-            'product_categories' => ['filled','array'],
-            'product_categories.*' => ['string','max:40'],
-            'image' => ['filled','image','max:2048'],
-            'price' => ['filled', 'integer'],
-            'sale_price' => ['filled', 'integer'],
+            'customer_id' => ['required', Rule::exists(User::class, 'id')],
+            'product_id' => ['required', 'array'],
+            'product_id.*' => ['required', Rule::exists(Products::class, 'id')],
+            'booking_date' => ['required', 'date'],
+            'booking_time' => ['required', 'after_or_equal:today'],
+            'address_id' => ['exclude_if:manual_address,true','required_if:manual_address,false',Rule::exists(Addresses::class, 'id')],
+            'payment_type' => ['required'],
+            'coupon_code_id' => ['required',Rule::exists(Coupons::class, 'id')],
+            'manual_address' => ['required','boolean'],
+            'address' => ['required_if:manual_address,true','string','max:255'],
+            'state' => ['required_if:manual_address,true','string','max:40'],
+            'city' => ['required_if:manual_address,true','string','max:30'],
+            'area' => ['required_if:manual_address,true','string','max:40'],
         ]);
 
         Orders::whereId($id)->update($input);
