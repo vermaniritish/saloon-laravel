@@ -5,14 +5,11 @@ namespace App\Models\Admin;
 use App\Models\AppModel;
 use Illuminate\Http\Request;
 use App\Libraries\General;
-use App\Traits\LogsCauserInfo;
 use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
 
-class Orders extends AppModel
+class OrderStatusHistory extends AppModel
 {
-    use LogsActivity, LogsCauserInfo;
-    protected $table = 'orders';
+    protected $table = 'order_status_history';
     protected $primaryKey = 'id';
     public $timestamps = false;
     
@@ -24,78 +21,6 @@ class Orders extends AppModel
     public function owner()
     {
         return $this->belongsTo(Admins::class, 'created_by', 'id');
-    }
-
-    /**
-    * Get resize images
-    *
-    * @return array
-    */
-    public function getResizeImagesAttribute()
-    {
-        return $this->image ? FileSystem::getAllSizeImages($this->image) : null;
-    }
-
-    public static function getStaticData()
-    {
-        return [
-
-            'paymentType' => [
-                'COD',
-                'UPI',
-                'Credit/Debit Cards'
-            ],
-            'status' => [
-                'pending' => ['label' => 'Pending', 'styles' => 'background-color: #ffa07a; color: #cc0000;'],
-                'on_the_way' => ['label' => 'On The Way', 'styles' => 'background-color: #cce5ff; color: #004080;'],
-                'approved' => ['label' => 'Approved', 'styles' => 'background-color: #ccffcc; color: #006600;'],
-                'in_progress' => ['label' => 'In Progress', 'styles' => 'background-color: #ffffcc; color: #996600;'],
-                'completed' => ['label' => 'Completed', 'styles' => 'background-color: #d9ead3; color: #006600;'],
-            ],
-            
-        ];
-    }
-
-    public static function handleProducts($id, $products)
-    {
-        OrderProductRelation::where('order_id', $id)->delete();
-        foreach($products as $c)
-        {
-            $relation = new OrderProductRelation();
-            $product = Products::where('id',$c)->first();
-            $relation->product_title = $product->title;
-            $relation->product_description = $product->description;
-            $relation->amount = $product->price;
-            $relation->service_hours = $product->service_hours;
-            $relation->service_minutes = $product->service_minutes;
-            $relation->order_id = $id;
-            $relation->product_id = $c;
-            $relation->save();
-        }
-    }
-
-    public function updateStatusAndLogHistory($field, $newStatus)
-    {
-        $updated = Orders::where('id', $this->id)
-            ->update([
-                $field => $newStatus,
-                'status_by' => AdminAuth::getLoginId(),
-                'status_at' => now()->format('Y-m-d H:i:s')
-            ]);
-
-        if ($updated) {
-            $this->logStatusHistory($newStatus, $this->id);
-        }
-
-        return $updated;
-    }
-
-    public function logStatusHistory($newStatus, $id)
-    {
-        OrderStatusHistory::create([
-            'order_id' => $id,
-            'status' => $newStatus,
-        ]);
     }
 
     /**
@@ -112,7 +37,7 @@ class Orders extends AppModel
         $limit = self::$paginationLimit;
         $offset = ($page - 1) * $limit;
         
-        $listing = Orders::select([
+        $listing = OrderStatusHistory::select([
                 'orders.*',
                 'owner.first_name as owner_first_name',
                 'owner.last_name as owner_last_name'
@@ -153,7 +78,7 @@ class Orders extends AppModel
     */
     public static function getAll($select = [], $where = [], $orderBy = 'orders.id desc', $limit = null)
     {
-        $listing = Orders::orderByRaw($orderBy);
+        $listing = OrderStatusHistory::orderByRaw($orderBy);
 
         if(!empty($select))
         {
@@ -195,7 +120,7 @@ class Orders extends AppModel
     */
     public static function get($id)
     {
-        $record = Orders::where('id', $id)
+        $record = OrderStatusHistory::where('id', $id)
             ->with([
                 'owner' => function($query) {
                     $query->select([
@@ -217,7 +142,7 @@ class Orders extends AppModel
     */
     public static function getRow($where = [], $orderBy = 'orders.id desc')
     {
-        $record = Orders::orderByRaw($orderBy);
+        $record = OrderStatusHistory::orderByRaw($orderBy);
 
         foreach($where as $query => $values)
         {
@@ -241,7 +166,7 @@ class Orders extends AppModel
     */
     public static function create($data)
     {
-        $page = new Orders();
+        $page = new OrderStatusHistory();
 
         foreach($data as $k => $v)
         {
@@ -274,7 +199,7 @@ class Orders extends AppModel
     */
     public static function modify($id, $data)
     {
-        $page = Orders::find($id);
+        $page = OrderStatusHistory::find($id);
         foreach($data as $k => $v)
         {
             $page->{$k} = $v;
@@ -307,7 +232,7 @@ class Orders extends AppModel
     {
         if(!empty($ids))
         {
-            return Orders::whereIn('orders.id', $ids)
+            return OrderStatusHistory::whereIn('orders.id', $ids)
                     ->update($data);
         }
         else
@@ -323,7 +248,7 @@ class Orders extends AppModel
     */
     public static function remove($id)
     {
-        $page = Orders::find($id);
+        $page = OrderStatusHistory::find($id);
         return $page->delete();
     }
 
@@ -336,7 +261,7 @@ class Orders extends AppModel
     {
         if(!empty($ids))
         {
-            return Orders::whereIn('orders.id', $ids)
+            return OrderStatusHistory::whereIn('orders.id', $ids)
                     ->delete();
         }
         else

@@ -77,11 +77,6 @@ class OrdersController extends AppController
     		$where[] = 'orders.created_by IN ('.$admins.')';
     	}
 
-    	if($request->get('status') !== "" && $request->get('status') !== null)
-    	{    		
-    		$where['orders.status'] = $request->get('status');
-    	}
-
     	$listing = Orders::getListing($request, $where);
 
 
@@ -160,7 +155,12 @@ class OrdersController extends AppController
     				'product_id.*' => ['required', Rule::exists(Products::class,'id')],
 					'booking_date' => ['required', 'date'],
 					'booking_time' => ['required', 'after_or_equal:today'],
-					'address_id' => ['required',Rule::exists(Addresses::class,'id')],
+					'manual_address' => ['required','boolean'],
+					'address' => ['required_if:manual_address,true','string','max:255'],
+					'state' => ['required_if:manual_address,true','string','max:40'],
+					'city' => ['required_if:manual_address,true','string','max:30'],
+					'area' => ['required_if:manual_address,true','string','max:40'],
+					'address_id' => ['exclude_if:manual_address,true','required_if:manual_address,false',Rule::exists(Addresses::class,'id')],
 					'payment_type' => ['required'], 
 					'coupon_code_id' => ['nullable',Rule::exists(Coupons::class,'id')], 
 					'subtotal' => ['required', 'numeric'],
@@ -180,15 +180,17 @@ class OrdersController extends AppController
 				$data['booking_date'] = $formattedDateTime;
 				$customerId = $request->input('customer_id');
 				$user = User::find($customerId);
-				$address = Addresses::where('id', $data['address_id'])->first();
 				if($user){
 					$data['customer_name'] = $user->first_name . ' ' . $user->last_name; 
 				}
-				if($address){
-					$data['address'] = $address->address; 
-					$data['city'] = $address->city; 
-					$data['state'] = $address->state; 
-					$data['area'] = $address->area; 
+				if (!$data['manual_address']) {
+					$address = Addresses::where('id', $data['address_id'])->first();
+					if($address){
+						$data['address'] = $address->address; 
+						$data['city'] = $address->city; 
+						$data['state'] = $address->state; 
+						$data['area'] = $address->area; 
+					}
 				}
 				$data['status'] = 'pending';
 	        	$order = Orders::create($data);

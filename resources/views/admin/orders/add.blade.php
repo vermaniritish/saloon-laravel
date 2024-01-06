@@ -106,14 +106,18 @@
 										</div>
 									</div>
 									<div class="row">
-										<div class="col-md-12">
-											<div class="form-group">
-												<label class="form-check-label">
-													<input type="checkbox" v-model="manualAddress" class="form-check-input">
-													Manual Address ?
+									<div class="col-md-6" id="contractor">
+										<div class="form-group">
+											<div class="custom-control p-0">
+												<label class="custom-toggle">
+													<input type="checkbox" v-model="manualAddress" name="manual_address" value="1">
+													<span class="custom-toggle-slider rounded-circle" data-label-off="No"
+														data-label-on="Yes"></span>
 												</label>
+												<label class="custom-control-label">Manual Address ?</label>
 											</div>
 										</div>
+									</div>
 									</div>
 									<div v-if="manualAddress" class="row">
 										<div class="col-md-6">

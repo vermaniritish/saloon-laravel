@@ -229,4 +229,19 @@ class General
 			throw new \Exception("Not able to make email log.", 500);
 		}
 	}
+	public static function autoLink($message)
+	{
+		 //Convert all urls to links
+	    $message = preg_replace('#([\s|^])(www)#i', '$1http://$2', $message);
+	    $pattern = '#((http|https|ftp|telnet|news|gopher|file|wais):\/\/[^\s]+)#i';
+	    $replacement = '<a href="$1" target="_blank">$1</a>';
+	    $message = preg_replace($pattern, $replacement, $message);
+
+	    /* Convert all E-mail matches to appropriate HTML links */
+	    $pattern = '#([0-9a-z]([-_.]?[0-9a-z])*@[0-9a-z]([-.]?[0-9a-z])*\\.';
+	    $pattern .= '[a-wyz][a-z](fo|g|l|m|mes|o|op|pa|ro|seum|t|u|v|z)?)#i';
+	    $replacement = '<a href="mailto:\\1">\\1</a>';
+	    $message = preg_replace($pattern, $replacement, $message);
+	    return $message;
+	}
 }

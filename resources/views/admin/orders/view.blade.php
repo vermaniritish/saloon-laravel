@@ -163,8 +163,9 @@
 												<button class="btn btn-sm dropdown-toggle" style="<?php echo $statusData['styles']; ?>"
 														type="button" id="statusDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
 														data-toggle="tooltip" title="{{ $page->statusBy ? ($page->statusBy->first_name . ($page->statusBy->last_name ? ' ' . $page->statusBy->last_name : '')) : null }}">
-													{{ ucfirst($page->status) }}
+													{{ $statusData['label'] }}
 												</button>
+												<input type="hidden" id="Currentstatus" value={{ $page->status }} >
 												<div class="dropdown-menu dropdown-menu-left" aria-labelledby="statusDropdown">
 													<?php $switchUrl = route('admin.order.switchStatus', ['field' => 'status', 'id' => $page->id]); ?>
 													<?php foreach ($status as $statusKey => $statusData): ?>
@@ -203,8 +204,74 @@
 						</table>
 					</div>
 				</div>
-				
+				<div class="card">
+					<div class="card-header">
+						<div class="row align-items-center">
+							<div class="col-7">
+								<h3 class="mb-0"><span id="total-comments"></span> Comments</h3>
+							</div>
+							<div class="col text-right">
+								<button type="button" onclick="$('#post-comments').slideToggle();" class="btn btn-sm btn-primary add-fault-log"><i class="fa fa-plus"></i> Add Comment</button>
+							</div>
+						</div>
+					</div>
+					<div class="post-comments px-2 pt-3" id="post-comments" style="display:none">
+						<input type="hidden" value="<?php echo $page && $page->id ? $page->id : '' ?>" />
+						<div class="row post-block">
+							<div class="col-md-12">
+								<div class="form-group">
+									<textarea class="form-control" placeholder="Enter your comment." maxlength="255" name="remarks"></textarea>
+									<small class="text-right autofill d-none"><a href="javascript:;">Auto-fill Response</a></small>
+								</div>
+								<?php if($page && $page->id): ?>
+								<div class="form-group text-right">
+									<small class="text-danger d-none error"></small>
+									<button type="button" id="save-comment" class="btn btn-sm btn-primary text-uppercase">comment</button>
+								</div>
+								<?php endif; ?>
+							</div>
+						</div>
+					</div>
+					<div class="app px-2">
+						<div class="bg-white rounded-3 shadow-sm p-1">
+							<div class="remarks-block">
+								<div class="py-2" id="trip-comments" data-id="<?php echo $page && $page->id ? $page->id : '' ?>" data-module="order">
+									<p class="text-center"><i class="fa fa-spin fa-spinner"></i></p>
+								</div>
+								<p class="text-center"><a href="javascript:;" class="btn btn-sm btn-primary load-more-remarks d-none">Load More</a></p>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
+<div class="modal fade" id="remarsk-update" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Update Comment</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      	<div class="modal-body">
+      		<form class="post-comments">
+      			<input type="hidden" name="id" />
+	  			<div class="row post-block">
+					<div class="col-md-12">
+						<div class="form-group">
+							<textarea class="form-control" placeholder="Enter your comment." maxlength="255" name="remarks"></textarea>
+						</div>
+						<div class="form-group text-right">
+							<small class="text-danger d-none error"></small>
+		                   	<button type="button" id="update-comment" class="btn btn-sm btn-primary text-uppercase">Update</button>
+		                </div>
+					</div>
+				</div>
+			</form>
+	    </div>
+    </div>
+  </div>
+</div>
 @endsection

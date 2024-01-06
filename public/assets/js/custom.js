@@ -879,3 +879,163 @@ function updateFileValues(textArea, fileType, isMultiple)
 }
 
 /** Upload File Script **/
+
+function getComments(lastId = null) {
+    $.ajax({
+        url: admin_url + '/' + ($('#trip-comments').attr('data-module') ? $('#trip-comments').attr('data-module') : 'trips') + '/' + $('#trip-comments').attr('data-id') + '/comments',
+        data: { last_id: lastId },
+        success: function (resp) {
+            $('.load-more-remarks i').remove();
+            if(resp.count > 0) {
+                $('.comments-empty-state').addClass('d-none')
+            }
+            else {
+                $('.comments-empty-state').removeClass('d-none')
+            }
+            $('#total-comments').html(resp.count * 1 > 0 ? resp.count : 'No ');
+            if (lastId) {
+                $('#trip-comments').append(resp.html);
+            }
+            else {
+                $('#trip-comments').html(resp.html);
+            }
+            if (resp.count * 1 < resp.pagination_counter) {
+                $('.load-more-remarks').addClass('d-none');
+            }
+            else {
+                $('.load-more-remarks').removeClass('d-none');
+            }
+        }
+    });
+}
+window.getComments = getComments;
+
+if ($('#trip-comments').attr('data-id')) {
+    getComments();
+}
+
+$('body').on('click', '#post-comments #save-comment', function () {
+    if ($('#save-comment').find('i').length > 0) return false;
+
+    $('#post-comments .error').addClass('d-none');
+    if ((!$('#post-comments').find('.datetimepicker').length || $('#post-comments').find('.datetimepicker').val()) && (!$('#post-comments').find('select').length || $('#post-comments').find('select').val()) && $('#post-comments').find('textarea').val()) {
+        $('#save-comment').prepend('<i class="fa fa-spin fa-spinner"></i>');
+        $.ajax({
+            url: admin_url + '/' + ($('#trip-comments').attr('data-module') ? $('#trip-comments').attr('data-module') : 'trips') + '/' + $('#post-comments').find('input[type=hidden]').val() + '/comments',
+            type: 'post',
+            data: $('#post-comments input[name="date_time"]').length  ? {
+                category: $('#post-comments').find('select').length ? $('#post-comments').find('select').val() : null,
+                comment: $('#post-comments').find('textarea').val(),
+                date_time: $('#post-comments input[name="date_time"]').length ? $('#post-comments input[name="date_time"]').val() : null,
+                _token: csrf_token()
+            }: {
+                category: $('#post-comments').find('select').length ? $('#post-comments').find('select').val() : null,
+                comment: $('#post-comments').find('textarea').val(),
+                _token: csrf_token()
+            },
+            success: function (resp) {
+                $('#save-comment').find('i').remove();
+                if (resp && resp.status == 'success') {
+                    // $('#post-comments').slideToggle();
+                    $('#post-comments textarea').val('');
+                    $('#post-comments input[name="date_time"]').val('');
+                    window.getComments();
+                }
+                else if (resp && resp.status == 'error') {
+                    $('#post-comments .error').removeClass('d-none').html(resp.message);
+                }
+            }
+        });
+    }
+    else {
+        $('#post-comments .error').removeClass('d-none').html('Please fill in all details to post.');
+    }
+});
+
+$('body').on('click', '.load-more-remarks', function () {
+    $('.load-more-remarks').prepend('<i class="fa fa-spin fa-spinner"></i> ');
+    window.getComments($('#trip-comments .comment:last-child').attr('data-id'));
+});
+
+$('#post-comments select').on('change', function () {
+    if ($(this).val())
+        $('#post-comments .autofill').removeClass('d-none');
+    else
+        $('#post-comments .autofill').addClass('d-none');
+});
+
+$('.post-comments .autofill a').on('click', function () {
+    let parent = $(this).parents('.post-comments');
+    if (parent.find('select').val()) {
+        $('#autofill-responses .modal-body').html('<p class="text-center"><i class="fa fa-spin fa-spinner"></i></p>');
+        $('#autofill-responses').modal('show');
+        $.ajax({
+            url: admin_url + '/trips/comments/autofill',
+            data: { category: parent.find('select').val() },
+            success: function (resp) {
+                let html = "";
+                if (resp && resp.status == 'success') {
+
+                    for (let i in resp.autofills) {
+                        html += '<div class="row"><div class="col-md-10"><h4>' + resp.autofills[i].title + '</h4><p>' + resp.autofills[i].description + '</p></div><div class="col-md-2"><button type="button" class="btn btn-primary select-autofill">Select</button></div></div>';
+                    }
+                    $('#autofill-responses .modal-body').html('<div class="row"><div class="col-md-12">' + (html && html.trim() ? html.trim() : '<p class="text-center">No record available!</p>') + '</div></div>');
+                }
+            }
+        })
+    }
+});
+
+$('body').on('click', '.remarks-edit', function () {
+    let id = $(this).attr('data-id');
+    let category = $(this).attr('data-category');
+    $('#remarsk-update input[name=id]').val(id);
+    if($('#remarsk-update input[name="date_time"]').length > 0) {
+        $('#remarsk-update input[name="date_time"]').val($(this).attr('date-time'));
+    }
+    $('#remarsk-update select[name=remarks_category]').val(category).selectpicker('refresh');
+    $('#remarsk-update textarea').val($(this).parents('.comment').find('.c-tex').text());
+    $('#remarsk-update').modal('show');
+});
+$('#remarsk-update #update-comment').on('click', function () {
+    $.ajax({
+        url: admin_url + '/' + ($('#trip-comments').attr('data-module') ? $('#trip-comments').attr('data-module') : 'trips') + '/' + $('#remarsk-update').find('input[name=id]').val() + '/update-comments',
+        type: 'post',
+        data: {
+            comment: $('#remarsk-update').find('textarea').val(),
+            category: $('#remarsk-update').find('select').val(),
+            _token: csrf_token()
+        },
+        success: function (resp) {
+            if (resp.status == 'success') {
+                $('.comment[data-id=' + resp.id + ']').replaceWith(resp.html);
+                $('#remarsk-update').modal('hide');
+                set_notification('success', resp.message);
+            }
+            else if (resp.message) {
+                set_notification('error', resp.message);
+            }
+        }
+    })
+});
+$('body').on('click', '.remarks-delete', function () {
+    if (confirm('Are you sure to delete this comment?')) {
+        let id = $(this).attr('data-id');
+        $.ajax({
+            url: admin_url + '/' + ($('#trip-comments').attr('data-module') ? $('#trip-comments').attr('data-module') : 'trips') + '/' + id + '/delete-comment',
+            type: 'post',
+            data: {
+                _token: csrf_token()
+            },
+            success: function (resp) {
+                if (resp.status == 'success') {
+                    $('.comment[data-id=' + id + ']').remove();
+                    set_notification('success', resp.message);
+                }
+                else if (resp.message) {
+                    set_notification('error', resp.message);
+                }
+            }
+        });
+    }
+});

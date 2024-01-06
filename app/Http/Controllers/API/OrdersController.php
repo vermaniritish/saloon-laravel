@@ -90,7 +90,6 @@ class OrdersController extends BaseController
                     $input['longitude'] = $address->longitude;
                 }
         }
-        unset($input['manual_address']);
         $order = Orders::create($input);
         if($order) {
             if(!empty($products)) {

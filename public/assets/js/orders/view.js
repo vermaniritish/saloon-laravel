@@ -1,8 +1,9 @@
 async function switch_diary_page_action(url, that) {
     var flag = $(that).data('value');
-    var currentStatus = $(that).closest('.dropdown').find('.btn').text().toLowerCase();
-    if (flag.toLowerCase() === currentStatus.trim()) {
-        set_notification('error', 'Cannot change status to ' + flag + ' again.');
+    var currentStatus = $('#Currentstatus').val();
+    if (flag.toLowerCase() === currentStatus) {
+        var text = $(that).closest('.dropdown').find('.btn').text().toLowerCase();
+        set_notification('error', 'Cannot change status to ' + text + ' again.');
         return;
     }
     var statusStyles = await getStatuses();

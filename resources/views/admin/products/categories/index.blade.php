@@ -60,13 +60,13 @@
 						<table class="table align-items-center table-flush listing-table">
 							<thead class="thead-light">
 								<tr>
-									<th class="checkbox-th">
+									<th width="5%" class="checkbox-th">
 										<div class="custom-control custom-checkbox">
 											<input type="checkbox" class="custom-control-input mark_all" id="mark_all">
 											<label class="custom-control-label" for="mark_all"></label>
 										</div>
 									</th>
-									<th class="sort">
+									<th class="sort" width="5%">
 										<!--- MAKE SURE TO USE PROPOER FIELD IN data-field AND PROPOER DIRECTION IN data-sort -->
 										Id
 										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'product_categories.id' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
@@ -77,7 +77,7 @@
 										<i class="fas fa-sort" data-field="product_categories.id" data-sort="asc"></i>
 										<?php endif; ?>
 									</th>
-									<th class="sort">
+									<th class="sort" width="42.5%">
 										Category
 										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'parent.title' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
 										<i class="fas fa-sort-down active" data-field="parent.title" data-sort="asc"></i>
@@ -87,7 +87,7 @@
 										<i class="fas fa-sort" data-field="product_categories.title"></i>
 										<?php endif; ?>
 									</th>
-									<th class="sort">
+									<th class="sort" width="42.5%">
 										Created ON
 										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'product_categories.created' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
 										<i class="fas fa-sort-down active" data-field="product_categories.created" data-sort="asc"></i>
@@ -97,7 +97,7 @@
 										<i class="fas fa-sort" data-field="product_categories.created"></i>
 										<?php endif; ?>
 									</th>
-									<th>
+									<th width="5%">  
 										Actions
 									</th>
 								</tr>

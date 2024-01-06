@@ -29,3 +29,8 @@ Route::get('/order/{id}/delete', [OrdersController::class, 'delete'])
 
 Route::post('/order/switch-status/{field}/{id}', [OrdersController::class, 'switchStatus'])->name('admin.order.switchStatus');
 Route::get('/order/getStatus', [OrdersController::class, 'getStatuses'])->name('admin.order.getStatus');
+
+Route::get('/order/{id}/comments', [OrderCommentsController::class, 'index'])->name('admin.orderComments');
+Route::post('/order/{id}/comments', [OrderCommentsController::class, 'add'])->name('admin.orderComments.add');
+Route::post('/order/{id}/update-comments', [OrderCommentsController::class, 'edit'])->name('admin.orderComments.edit');
+Route::post('/order/{id}/delete-comment', [OrderCommentsController::class, 'delete'])->name('admin.orderComments.delete');
