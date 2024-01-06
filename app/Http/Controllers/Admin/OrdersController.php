@@ -190,9 +190,10 @@ class OrdersController extends AppController
 						$data['city'] = $address->city; 
 						$data['state'] = $address->state; 
 						$data['area'] = $address->area; 
+						$input['latitude'] = $address->latitude;
+						$input['longitude'] = $address->longitude;
 					}
 				}
-				$data['status'] = 'pending';
 	        	$order = Orders::create($data);
 	        	if($order)
 	        	{

@@ -6,6 +6,7 @@ use App\Models\AppModel;
 use Illuminate\Http\Request;
 use App\Libraries\General;
 use App\Traits\LogsCauserInfo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -16,6 +17,9 @@ class Orders extends AppModel
     protected $primaryKey = 'id';
     public $timestamps = false;
     
+    /**** ONLY USE FOR MAIN TALBLES NO NEED TO USE FOR RELATION TABLES OR DROPDOWNS OR SMALL SECTIONS ***/
+    use SoftDeletes;
+
     /**
     * Pages -> Admins belongsTO relation
     * 
@@ -251,6 +255,9 @@ class Orders extends AppModel
         $page->created_by = AdminAuth::getLoginId();
         $page->created = date('Y-m-d H:i:s');
         $page->modified = date('Y-m-d H:i:s');
+        $page->status = 'pending';
+        $page->status_by = AdminAuth::getLoginId();
+        $page->status_at = now()->format('Y-m-d H:i:s');
         if($page->save())
         {
             if(isset($data['title']) && $data['title'])

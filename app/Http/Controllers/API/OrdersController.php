@@ -48,7 +48,7 @@ class OrdersController extends BaseController
             'booking_time' => ['required', 'after_or_equal:today'],
             'address_id' => ['exclude_if:manual_address,true','required_if:manual_address,false',Rule::exists(Addresses::class, 'id')],
             'payment_type' => ['required'],
-            'coupon_code_id' => ['required',Rule::exists(Coupons::class, 'id')],
+            'coupon_code_id' => ['nullable',Rule::exists(Coupons::class, 'id')],
             'manual_address' => ['required','boolean'],
             'address' => ['required_if:manual_address,true','string','max:255'],
             'state' => ['required_if:manual_address,true','string','max:40'],
@@ -59,12 +59,17 @@ class OrdersController extends BaseController
         $formattedDateTime = date('Y-m-d H:i:s', strtotime($request->get('booking_date')));
         $input['booking_date'] = $formattedDateTime;
         $subtotal = Products::findMany($input['product_id'])->pluck('price')->sum();
-        $coupon = Coupons::where('id', $input['coupon_code_id'])->first(['amount','is_percentage']);
-        if($coupon->is_percentage) {
-            $discount = ($coupon->amount / 100) * $subtotal;
-        } else {
-            $discount = $coupon->amount;
-        }
+       if(isset($input['coupon_code_id']) && $input['coupon_code_id']){
+           $coupon = Coupons::where('id', $input['coupon_code_id'])->first(['amount','is_percentage']);
+           if($coupon->is_percentage) {
+               $discount = ($coupon->amount / 100) * $subtotal;
+           } else {
+               $discount = $coupon->amount;
+           }
+       }
+       else{
+        $discount = 0;
+       }
         $taxPercentage = (int) Settings::get('tax_percentage');
         $input['tax'] = ($subtotal - $discount) * $taxPercentage / 100;
         $input['total_amount'] = $subtotal - $discount + $input['tax'];
@@ -92,6 +97,9 @@ class OrdersController extends BaseController
         }
         $order = Orders::create($input);
         if($order) {
+            $order_prefix = (int)Settings::get('order_prefix');
+            $data['prefix_id'] = $order->id + $order_prefix;
+            Orders::modify($order->id,$data);
             if(!empty($products)) {
                 Orders::handleProducts($order->id, $products);
             }

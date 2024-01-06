@@ -222,6 +222,23 @@
 											</div>
 										</div>
 									</div>
+									<div class="table-responsive" v-if="selectedProducts.length > 0">
+										<hr class="my-4" />
+										<table class="table align-items-center table-flush view-table">
+											<thead>
+												<tr>
+													<th>#</th>
+													<th>Item</th>
+													<th>Rate</th>
+													<th>Quantity</th>
+													<th>Price</th>
+												</tr>
+											</thead>
+											<tbody>
+											
+											</tbody>
+										</table>
+									</div>
 									<hr class="my-4" />
 									<div class="row">
 										<div class="col-md-6">
