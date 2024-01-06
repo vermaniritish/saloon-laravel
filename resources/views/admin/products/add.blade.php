@@ -37,10 +37,12 @@
 							<div class="form-group">
 								<label class="form-control-label" for="input-first-name">Category</label>
 								<select class="form-control" name="category[]" multiple required>
-							      	<?php foreach($categories as $c): ?>
-										<option <?php echo (is_array(old('category')) && in_array($c['id'], old('category'))) ? 'selected' : ''; ?>
-												c="<?php echo $c['id']; ?>"><?php echo $c['title']; ?></option>
-							  		<?php endforeach; ?>
+								<?php foreach($categories as $c): ?>
+									<option 
+										value="<?php echo $c->id ?>" 
+										<?php echo old('category') && in_array($c->id, old('category'))  ? 'selected' : '' ?> 
+									><?php echo $c->title ?></option>
+								<?php endforeach; ?>
 							    </select>
 								@error('category')
 								    <small class="text-danger">{{ $message }}</small>
@@ -52,6 +54,17 @@
 								@error('title')
 								    <small class="text-danger">{{ $message }}</small>
 								@enderror
+							</div>
+							<div class="row">
+								<div class="col-lg-12">
+									<div class="form-group">
+										<label class="form-control-label" for="input-tags">Tag</label>
+										<input type="text" class="form-control tag-it" name="tags" required placeholder="Enter tags here." value="{{ old('tags') }}">
+										@error('tags.*')
+											<small class="text-danger">{{ $message }}</small>
+										@enderror
+									</div>
+								</div>
 							</div>
 							<div class="row">
 								<div class="col-lg-12">
@@ -68,7 +81,7 @@
 								<div class="col-lg-6">
 									<div class="form-group">
 										<label class="form-control-label" for="input-first-name">Price</label>
-										<input type="number" class="form-control" name="price" placeholder="Price" required value="{{ old('price') }}">
+										<input type="number" min="0" class="form-control" name="price" placeholder="Price" required value="{{ old('price') }}">
 										@error('price')
 										    <small class="text-danger">{{ $message }}</small>
 										@enderror
@@ -121,23 +134,23 @@
 							</div>
 							<div class="row">
 								<div class="col-lg-12">
-									<label class="form-control-label" for="input-username">Duration Of Service</label>
-									<div class="input-group">
-										<div class="col-md-6 pl-0">
-											<input type="number" class="form-control" name="service_hours" placeholder="Enter hours" min="0" max="24">
-											<span class="input-group-addon"><small>Hours</small></span>
+									<div class="form-group">
+										<label class="form-control-label" for="input-username">Duration Of Service</label>
+										<div class="input-group">
+											<div class="col-md-6 pl-0">
+												<input type="number" class="form-control" name="service_hours" placeholder="Enter hours" min="0" max="24">
+											</div>
+											<div class="col-md-6 pr-0">
+												<input type="number" class="form-control" name="service_minutes" placeholder="Enter minutes" min="0" max="59">
+											</div>
 										</div>
-										<div class="col-md-6 pr-0">
-											<input type="number" class="form-control" name="service_minutes" placeholder="Enter minutes" min="0" max="59">
-											<span class="input-group-addon"><small>Minutes</small></span>
-										</div>
+										@error('service_hours')
+											<small class="text-danger">{{ $message }}</small>
+										@enderror
+										@error('service_minutes')
+											<small class="text-danger">{{ $message }}</small>
+										@enderror
 									</div>
-									@error('service_hours')
-										<small class="text-danger">{{ $message }}</small>
-									@enderror
-									@error('service_minutes')
-										<small class="text-danger">{{ $message }}</small>
-									@enderror
 								</div>
 							</div>
 							<div class="row">

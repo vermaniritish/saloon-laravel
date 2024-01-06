@@ -64,9 +64,18 @@
 										    <small class="text-danger">{{ $message }}</small>
 										@enderror
 									</div>
-
 								</div>
-								
+							</div>
+							<div class="row">
+								<div class="col-lg-12">
+									<div class="form-group">
+										<label class="form-control-label" for="input-emails">Tag</label>
+										<input type="text" class="form-control tag-it" name="tags" required placeholder="info@example.com" value="{{ old('tags',implode(', ', $product->tags)) }}">
+										@error('tags.*')
+											<small class="text-danger">{{ $message }}</small>
+										@enderror
+									</div>
+								</div>
 							</div>
 							<div class="row">
 								<div class="col-lg-12">
@@ -136,23 +145,23 @@
 							</div>
 							<div class="row">
 								<div class="col-lg-12">
-									<label class="form-control-label" for="input-username">Duration Of Service</label>
-									<div class="input-group">
-										<div class="col-md-6 pl-0">
-											<input value="{{ old('service_hours', $product->service_hours) }}" type="number" class="form-control" name="service_hours" placeholder="Enter hours" min="0" max="24">
-											<span class="input-group-addon"><small>Hours</small></span>
+									<div class="form-group">
+										<label class="form-control-label" for="input-username">Duration Of Service</label>
+										<div class="input-group">
+											<div class="col-md-6 pl-0">
+												<input value="{{ old('service_hours', $product->service_hours) }}" type="number" class="form-control" name="service_hours" placeholder="Enter hours" min="0" max="24">
+											</div>
+											<div class="col-md-6 pr-0">
+												<input value="{{ old('service_minutes', $product->service_minutes) }}" type="number" class="form-control" name="service_minutes" placeholder="Enter minutes" min="0" max="59">
+											</div>
 										</div>
-										<div class="col-md-6 pr-0">
-											<input value="{{ old('service_minutes', $product->service_minutes) }}" type="number" class="form-control" name="service_minutes" placeholder="Enter minutes" min="0" max="59">
-											<span class="input-group-addon"><small>Minutes</small></span>
-										</div>
+										@error('service_hours')
+											<small class="text-danger">{{ $message }}</small>
+										@enderror
+										@error('service_minutes')
+											<small class="text-danger">{{ $message }}</small>
+										@enderror
 									</div>
-									@error('service_hours')
-										<small class="text-danger">{{ $message }}</small>
-									@enderror
-									@error('service_minutes')
-										<small class="text-danger">{{ $message }}</small>
-									@enderror
 								</div>
 							</div>
 							<div class="row">

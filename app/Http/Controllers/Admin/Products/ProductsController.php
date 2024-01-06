@@ -190,11 +190,10 @@ class ProductsController extends AppController
     	{
     		$data = $request->toArray();
     		unset($data['_token']);
-
+			$data['tags'] = explode(',', $data['tags']);
     		$validator = Validator::make(
-	            $request->toArray(),
+	            $data,
 	            [
-	                'user_id' => 'required',
 	                'title' => 'required',
 	                'description' => 'nullable',
 					'service_hours' => ['nullable', 'numeric', 'min:0', 'max:23'],
@@ -206,6 +205,8 @@ class ProductsController extends AppController
 	                'address' => 'required',
 	                'lat' => 'nullable',
 	                'lng' => 'nullable',
+					'tags' => ['required', 'array'],
+					'tags.*' => ['string','max:20',],
 	            ]
 	        );
 
@@ -244,6 +245,7 @@ class ProductsController extends AppController
 		    }
 		    else
 		    {
+				dd($validator->errors());
 		    	$request->session()->flash('error', 'Please provide valid inputs.');
 		    	return redirect()->back()->withErrors($validator)->withInput();
 		    }
@@ -302,10 +304,10 @@ class ProductsController extends AppController
 	    	if($request->isMethod('post'))
 	    	{
 	    		$data = $request->toArray();
+				$data['tags'] = explode(',', $data['tags']);
 	    		$validator = Validator::make(
-		            $request->toArray(),
+		            $data,
 			            [
-							'user_id' => 'required',
 							'title' => 'required',
 							'description' => 'nullable',
 							'service_hours' => ['nullable', 'numeric', 'min:0', 'max:23'],
@@ -317,9 +319,10 @@ class ProductsController extends AppController
 							'address' => 'required',
 							'lat' => 'nullable',
 							'lng' => 'nullable',
+							'tags' => ['required', 'array'],
+							'tags.*' => ['string','max:20',],
 		            ]
 		        );
-
 		        if(!$validator->fails())
 		        {
 		        	unset($data['_token']);

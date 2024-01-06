@@ -19,6 +19,16 @@ class Products extends AppModel
     protected $primaryKey = 'id';
     public $timestamps = false;
 
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'tags' => 'array',
+    ];
+    
     /**** ONLY USE FOR MAIN TALBLES NO NEED TO USE FOR RELATION TABLES OR DROPDOWNS OR SMALL SECTIONS ***/
     use SoftDeletes;
 
