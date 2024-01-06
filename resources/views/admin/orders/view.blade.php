@@ -243,6 +243,44 @@
 						</div>
 					</div>
 				</div>
+				<div class="card">
+					<div class="card-header">
+						<div class="row align-items-center">
+							<div class="col-9">
+								<h3 class="mb-0">Status Change History</h3>
+							</div>
+						</div>
+					</div>
+					<div class="card-body remarks-block">
+						@foreach($history as $change)
+							<div class="row align-items-top p-2">
+								<div class="col-auto text-center">
+									<span class="avatar avatar-sm rounded-circle">
+										<?php
+											$admin = \App\Models\Admin\Admins::find($change->created_by);
+										?>
+										<?php $image = $admin->image ? $admin->getResizeImagesAttribute() : []; ?>
+										<img alt="Image placeholder" src="<?php echo isset($image['medium']) ? url($image['medium']) : url('assets/img/noprofile.jpg'); ?>">
+									</span>
+								</div>
+								<div class="col ml--1">
+									<div class="d-flex justify-content-between align-items-top">
+										<div>
+											<h4 class="mb-0 text-sm" style="font-size: 14px !important;padding-right: 10px;">{{ $admin ? ($admin->first_name . ($admin->last_name ? ' ' . $admin->last_name : '')) : null  }}</h4>
+										</div>
+										<div class="text-right">
+											@if ($change->status)
+												<span class="mx-3 badge" style="{{ $status[$change->status]['styles'] }}">{{ $status[$change->status]['label'] }}</span>
+											@endif										
+										</div>
+									</div>
+									<p class="text-danger m-0" style="font-size: 12px !important;">At: {{ _dt($change->created) }}</p>
+								</div>
+							</div>
+							<div class="dropdown-divider"></div>
+						@endforeach
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

@@ -31,7 +31,10 @@ class Orders extends AdminOrders
         'tax',
         'total_amount',
         'discount',
-        'subtotal'
+        'subtotal',
+        'status',
+        'status_by',
+        'status_at'
     ];
     /**
      * The table associated with the model.

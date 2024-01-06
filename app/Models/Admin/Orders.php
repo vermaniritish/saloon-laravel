@@ -78,17 +78,16 @@ class Orders extends AppModel
         }
     }
 
-    public function updateStatusAndLogHistory($field, $newStatus)
+    public function updateStatusAndLogHistory($field, $newStatus, $orderCreate = null)
     {
-        $updated = Orders::where('id', $this->id)
-            ->update([
+        $id = $orderCreate ? $orderCreate : $this->id;
+        $updated = Orders::where('id', $id)->update([
                 $field => $newStatus,
                 'status_by' => AdminAuth::getLoginId(),
                 'status_at' => now()->format('Y-m-d H:i:s')
             ]);
-
         if ($updated) {
-            $this->logStatusHistory($newStatus, $this->id);
+            $this->logStatusHistory($newStatus, $id);
         }
 
         return $updated;
@@ -99,6 +98,7 @@ class Orders extends AppModel
         OrderStatusHistory::create([
             'order_id' => $id,
             'status' => $newStatus,
+            'created_by' => AdminAuth::getLoginId(),
         ]);
     }
 
@@ -255,11 +255,9 @@ class Orders extends AppModel
         $page->created_by = AdminAuth::getLoginId();
         $page->created = date('Y-m-d H:i:s');
         $page->modified = date('Y-m-d H:i:s');
-        $page->status = 'pending';
-        $page->status_by = AdminAuth::getLoginId();
-        $page->status_at = now()->format('Y-m-d H:i:s');
         if($page->save())
         {
+            $page->updateStatusAndLogHistory('status', 'pending', $page->id);
             if(isset($data['title']) && $data['title'])
             {
                 $page->slug = Str::slug($page->title) . '-' . General::encode($page->id);

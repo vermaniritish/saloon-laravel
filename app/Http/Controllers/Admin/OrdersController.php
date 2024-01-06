@@ -23,6 +23,7 @@ use App\Libraries\FileSystem;
 use App\Http\Controllers\Admin\AppController;
 use App\Models\Admin\Addresses;
 use App\Models\Admin\Orders;
+use App\Models\Admin\OrderStatusHistory;
 use App\Models\Admin\ProductCategories;
 use App\Models\Admin\Products;
 use App\Models\Admin\Settings;
@@ -272,12 +273,13 @@ class OrdersController extends AppController
     	}
 
     	$page = Orders::get($id);
+		$history = OrderStatusHistory::where('order_id', $id)->get();
     	if($page)
     	{
 	    	return view("admin/orders/view", [
     			'page' => $page,
 				'status' => Orders::getStaticData()['status'],
-
+				'history' => OrderStatusHistory::where('order_id', $id)->get()
     		]);
 		}
 		else
