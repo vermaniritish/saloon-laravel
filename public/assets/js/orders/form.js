@@ -4,7 +4,7 @@ let order = new Vue({
         mounting: true,
         subtotal: 0,
         discount: 0,
-        taxPercentage:  this.taxPercentage = parseFloat(document.getElementById('taxPercentageInput').value),
+        taxPercentage: parseFloat(document.getElementById('taxPercentageInput').value),
         selectedProducts: [], 
         selectedCouponId: '',
         tax: 0,

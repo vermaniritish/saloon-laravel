@@ -55,7 +55,7 @@
 								<div class="col-lg-12">
 									<div class="form-group">
 										<label class="form-control-label" for="input-first-name" >Title</label>
-										<input type="text" class="form-control" name="title" required placeholder="Title" value="<?php echo $product->title ?>">
+										<input type="text" class="form-control" name="title" required placeholder="Title" value="{{ old('title',$product->title) }}">
 										@error('title')
 										    <small class="text-danger">{{ $message }}</small>
 										@enderror
@@ -77,7 +77,7 @@
 								<div class="col-lg-12">
 									<div class="form-group">
 										<label class="form-control-label">Description</label>
-										<textarea rows="2" id="editor1" class="form-control" placeholder="Description" required name="description"><?php echo $product->description ?></textarea>
+										<textarea rows="2" id="editor1" class="form-control" placeholder="Description" required name="description">{{ old('description', $product->description) }}</textarea>
 										@error('description')
 										    <small class="text-danger">{{ $message }}</small>
 										@enderror
@@ -88,7 +88,7 @@
 								<div class="col-lg-6">
 									<div class="form-group">
 										<label class="form-control-label" for="input-first-name">Price</label>
-										<input type="number" class="form-control" name="price" placeholder="Price" required value="<?php echo $product->price ?>">
+										<input type="number" class="form-control" name="price" placeholder="Price" required value="{{ old('price',$product->price) }}">
 										@error('price')
 										    <small class="text-danger">{{ $message }}</small>
 										@enderror
@@ -107,7 +107,7 @@
 												<span class="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
 											</label>
 										</div>
-										<input type="number" class="form-control" name="sale_price" <?php echo ($product->sale_price == '' ? 'readonly' : '') ?> placeholder="Sale Price" value="<?php echo $product->sale_price ?>">
+										<input type="number" class="form-control" name="sale_price" <?php echo ($product->sale_price == '' ? 'readonly' : '') ?> placeholder="Sale Price" value="{{ old('sale_price',$product->sale_price) }}">
 										@error('sale_price')
 										    <small class="text-danger">{{ $message }}</small>
 										@enderror
@@ -118,7 +118,7 @@
 								<div class="col-lg-6">
 									<div class="form-group">
 										<label class="form-control-label" for="input-first-name">Location</label>
-										<input type="search" class="form-control" id="google-address" autocomplete="off" name="address" placeholder="Address" required value="<?php echo $product->address ?>">
+										<input type="search" class="form-control" id="google-address" autocomplete="off" name="address" placeholder="Address" required value="{{ old('address',$product->address) }}">
 										@error('address')
 										    <small class="text-danger">{{ $message }}</small>
 										@enderror
@@ -164,7 +164,7 @@
 								<div class="col-lg-6">
 									<div class="form-group">
 										<label class="form-control-label" for="input-first-name">Lattitude</label>
-										<input type="text" class="form-control" id="google-lat" name="lat" placeholder="Address" readonly="" value="<?php echo $product->lat ?>">
+										<input type="text" class="form-control" id="google-lat" name="lat" placeholder="Address" readonly="" value="{{ old('lat',$product->lat) }}">
 										@error('lat')
 										    <small class="text-danger">{{ $message }}</small>
 										@enderror
@@ -173,7 +173,7 @@
 								<div class="col-lg-6">
 									<div class="form-group">
 										<label class="form-control-label" for="input-first-name">Longitude</label>
-										<input type="text" class="form-control" id="google-lng" name="lng" placeholder="Address" readonly="" value="<?php echo $product->lng ?>">
+										<input type="text" class="form-control" id="google-lng" name="lng" placeholder="Address" readonly="" value="{{ old('lng',$product->lng) }}">
 										@error('lng')
 										    <small class="text-danger">{{ $message }}</small>
 										@enderror
