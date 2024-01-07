@@ -36,24 +36,20 @@
 						{{ @csrf_field() }}
 						<h6 class="heading-small text-muted mb-4">Product information</h6>
 						<div class="pl-lg-4">
-							<div class="form-group">
-								<?php 
-								/** Pluck use to get normal array from associative array ***/
-								$selectedCategories = Arr::pluck($product->categories, 'id');
-								?>
-								<label class="form-control-label" for="input-first-name">Category</label>
-								<select class="form-control" name="category[]" multiple required>
-							      	<?php foreach($categories as $c): ?>
-							      		<option value="<?php echo $c->id ?>"
-							      			<?php echo $selectedCategories && in_array($c->id, $selectedCategories)  ? 'selected' : '' ?>
-							      		>
-							      			<?php echo $c->title ?>	
-							      		</option>
-							  		<?php endforeach; ?>
-							    </select>
-								@error('category')
-								    <small class="text-danger">{{ $message }}</small>
-								@enderror
+							<div class="row">
+								<div class="col-lg-12">
+									<div class="form-group">
+										<label class="form-control-label" for="input-username">Category</label>
+										<select class="form-control" name="category[]" multiple required>
+											@foreach($categories as $c)
+												<option {{ in_array($c->id, old('category', $product->categories->pluck('id')->toArray())) ? 'selected' : '' }} value="{{ $c->id }}">{{ $c->title }}</option>
+											@endforeach
+										</select>
+										@error('category')
+											<small class="text-danger">{{ $message }}</small>
+										@enderror
+									</div>
+								</div>
 							</div>
 							<div class="row">
 								<div class="col-lg-12">
@@ -70,7 +66,7 @@
 								<div class="col-lg-12">
 									<div class="form-group">
 										<label class="form-control-label" for="input-emails">Tag</label>
-										<input type="text" class="form-control tag-it" name="tags" required placeholder="info@example.com" value="{{ old('tags',implode(', ', $product->tags)) }}">
+										<input type="text" class="form-control tag-it" name="tags" placeholder="info@example.com" value="{{ old('tags',implode(', ', $product->tags)) }}">
 										@error('tags.*')
 											<small class="text-danger">{{ $message }}</small>
 										@enderror

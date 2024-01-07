@@ -59,7 +59,7 @@
 								<div class="col-lg-12">
 									<div class="form-group">
 										<label class="form-control-label" for="input-tags">Tag</label>
-										<input type="text" class="form-control tag-it" name="tags" required placeholder="Enter tags here." value="{{ old('tags') }}">
+										<input type="text" class="form-control tag-it" name="tags" placeholder="Enter tags here." value="{{ old('tags') }}">
 										@error('tags.*')
 											<small class="text-danger">{{ $message }}</small>
 										@enderror

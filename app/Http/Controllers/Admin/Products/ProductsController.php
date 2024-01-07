@@ -205,7 +205,7 @@ class ProductsController extends AppController
 	                'address' => 'required',
 	                'lat' => 'nullable',
 	                'lng' => 'nullable',
-					'tags' => ['required', 'array'],
+					'tags' => ['nullable', 'array'],
 					'tags.*' => ['string','max:20',],
 	            ]
 	        );
@@ -297,7 +297,6 @@ class ProductsController extends AppController
     		$request->session()->flash('error', 'Permission denied.');
     		return redirect()->route('admin.dashboard');
     	}
-
     	$product = Products::get($id);
     	if($product)
     	{
@@ -314,19 +313,22 @@ class ProductsController extends AppController
 							'service_minutes' => ['nullable', 'numeric', 'min:0', 'max:59'],
 							'price' => ['required', 'numeric', 'min:0'],
 							'sale_price' => ['nullable', 'numeric', 'min:0'],
-							'category' => 'required',
-							'brand' => 'required',
+							'category' => [
+								'required',
+								'array',
+								Rule::exists('product_categories', 'id')
+							],
+							'brand' => ['required', 'array', Rule::exists('brands', 'id')],
 							'address' => 'required',
 							'lat' => 'nullable',
 							'lng' => 'nullable',
-							'tags' => ['required', 'array'],
+							'tags' => ['nullable', 'array'],
 							'tags.*' => ['string','max:20',],
 		            ]
 		        );
 		        if(!$validator->fails())
 		        {
 		        	unset($data['_token']);
-	        		
 	        		/** ONLY IN CASE OF MULTIPLE IMAGE USE THIS **/
 	        		if(isset($data['image']) && $data['image'])
 	        		{
@@ -346,6 +348,9 @@ class ProductsController extends AppController
 		        	if(isset($data['category']) && $data['category']) {
 		        		$categories = $data['category'];
 		        	}
+					if(isset($data['brand']) && $data['brand']) {
+						$brands = $data['brand'];
+					}
 		        	unset($data['category']);
 		        	unset($data['brand']);
 

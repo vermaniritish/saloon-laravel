@@ -27,6 +27,7 @@ class ProductsResource extends JsonResource
             'lat' => $this->lat,
             'lng' => $this->lng,
             'image' => $this->image,
+            'tag' => $this->tags,
             'brands' => BrandsResource::collection($this->brands)->values(),
             'categories' => ProductCategoriesResource::collection($this->whenLoaded('categories'))
     ];
