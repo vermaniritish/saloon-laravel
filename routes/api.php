@@ -40,3 +40,6 @@ Route::apiResources(
     'orders' => OrdersController::class,
     ]
 );
+
+Route::get('/user/{id}/orders', [OrdersController::class,'getCustomerOrders'])
+    ->name('api.orders.getCustomerOrders');

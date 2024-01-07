@@ -8,6 +8,7 @@ use App\Models\Admin\Settings;
 use App\Models\API\Addresses;
 use App\Models\API\Coupons;
 use App\Models\API\Products;
+use App\Models\API\Users;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -221,5 +222,20 @@ class OrdersController extends BaseController
         $check_order->delete();
 
         return $this->success([], Response::HTTP_OK, trans('ORDER_DELETED'));
+    }
+
+    /**
+     * Fetch Orders as per customer.
+     *
+     * @param  string  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getCustomerOrders(Request $request, $id){
+        $check_user = Users::whereId($id)->exists();
+        if (!$check_user) {
+            return $this->error(trans('USER_NOT_FOUND'), Response::HTTP_NOT_FOUND);
+        }
+        $check_order = Orders::whereCustomerId($id)->first();
+        return $this->success(new OrdersResource($check_order), Response::HTTP_OK);
     }
 }

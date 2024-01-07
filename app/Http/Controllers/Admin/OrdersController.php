@@ -271,9 +271,7 @@ class OrdersController extends AppController
     		$request->session()->flash('error', 'Permission denied.');
     		return redirect()->route('admin.dashboard');
     	}
-
     	$page = Orders::get($id);
-		$history = OrderStatusHistory::where('order_id', $id)->get();
     	if($page)
     	{
 	    	return view("admin/orders/view", [

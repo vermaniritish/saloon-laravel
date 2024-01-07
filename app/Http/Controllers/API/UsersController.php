@@ -605,4 +605,8 @@ class UsersController extends AppController
 			    ], 400);
 		}
 	}
+
+	function listOrders(){
+		
+	}
 }

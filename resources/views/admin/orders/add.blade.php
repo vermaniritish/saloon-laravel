@@ -235,7 +235,13 @@
 												</tr>
 											</thead>
 											<tbody>
-											
+												<tr v-for="(product, index) in productsData" :key="index">
+													<td>@{{ index + 1 }}</td>
+													<td>@{{ product.title }}</td>
+													<td>@{{ product.rate.toFixed(2) }}</td>
+													<td><input type="number" v-on:change="updateQuantity(index)"  v-model="product.quantity" min="1"></td>
+													<td>@{{ (product.rate * product.quantity).toFixed(2) }}</td>
+												</tr>
 											</tbody>
 										</table>
 									</div>
