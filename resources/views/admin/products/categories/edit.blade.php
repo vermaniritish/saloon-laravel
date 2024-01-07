@@ -38,7 +38,7 @@
 								<div class="col-lg-12">
 									<div class="form-group">
 										<label class="form-control-label" for="input-first-name">Title</label>
-										<input type="text" class="form-control" name="title" required placeholder="Title" value="{{  $category->title }}">
+										<input type="text" class="form-control" name="title" required placeholder="Title" value="{{ old('title',$category->title) }}">
 										@error('title')
 										    <small class="text-danger">{{ $message }}</small>
 										@enderror
