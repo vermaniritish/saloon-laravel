@@ -35,13 +35,16 @@
 							<form id="order-form" method="post" action="<?php echo route('admin.orders.add') ?>" class="form-validation d-none">
 								<!--!! CSRF FIELD !!-->
 								{{ @csrf_field() }}
+								@if (isset($page) && $page->id)
+									<pre id="edit-form" class="d-none">{{ $page }}</pre>
+								@endif
 								<h6 class="heading-small text-muted mb-4">Order information</h6>
 								<div class="pl-lg-4">			
 									<div class="row">
 										<div class="col-md-6">
 											<div class="form-group">
 												<label class="form-control-label">Customers</label>
-												<select class="form-control no-selectpicker" name="customer_id" required>
+												<select v-model="selectedCustomer" class="form-control no-selectpicker" name="customer_id" required>
 													<option value="">Select</option>
 													<?php 
 														foreach($users as $s): 
@@ -106,11 +109,13 @@
 										</div>
 									</div>
 									<div class="row">
-									<div class="col-md-6" id="contractor">
+									<div class="col-md-6">
 										<div class="form-group">
 											<div class="custom-control p-0">
 												<label class="custom-toggle">
-													<input type="checkbox" v-model="manualAddress" name="manual_address" value="1">
+													<input type="hidden" name="manual_address" value="0">
+													<input type="checkbox" v-model="manualAddress" name="manual_address" value="1"
+													<?php echo old('manual_address') != '0' ? 'checked' : ''; ?>>
 													<span class="custom-toggle-slider rounded-circle" data-label-off="No"
 														data-label-on="Yes"></span>
 												</label>
@@ -145,31 +150,17 @@
 											</div>
 										</div>
 									</div>
-									<div class="row">
-										<div v-if="!manualAddress" class="col-md-6">
+									<div id="address-form" class="row">
+										<div class="col-md-6">
 											<div class="form-group">
 												<label class="form-control-label" for="input-first-name">Addresses</label>
-												<select class="form-control no-selectpicker" name="address_id" :required ="manualAddress">
-													<option value="">Select</option>
-													<?php foreach($address as $c): ?>
-														<?php
-															$addressLabel = implode('-', [
-																$c->address,
-																$c->state,
-																$c->city,
-																$c->area,
-															]);
-														?>
-														<option 
-															value="<?php echo $c->id ?>"
-															<?php echo old('address_id') && in_array($c->id, old('address_id'))  ? 'selected' : '' ?>
-														>
-															<?php echo $addressLabel ?>	
-														</option>
-													<?php endforeach; ?>
+												<select v-model="selectedAddress" class="form-control no-selectpicker" name="address_id" :required="manualAddress">
+												<option v-for="address in customerAddresses" :key="address.id" :value="address.id">
+													@{{ address.address }}
+												</option>
 												</select>
 												@error('address_id')
-													<small class="text-danger">{{ $message }}</small>
+												<small class="text-danger">{{ $message }}</small>
 												@enderror
 											</div>
 										</div>
@@ -285,9 +276,9 @@
 									</div>
 									</div>
 								<hr class="my-4" />
-								<button href="#" class="btn btn-sm py-2 px-3 btn-primary float-right">
-									<i class="fa fa-save"></i> Submit
-								</button>
+								<button type="button" class="btn btn-primary finish-steps float-right"
+								v-on:click="submitForm()"><i class="fa fa-spin fa-spinner" v-if="loading"></i><i v-else
+								class="fa fa-save"></i> Save </button>
 							</form>
 						</div>
 					</div>

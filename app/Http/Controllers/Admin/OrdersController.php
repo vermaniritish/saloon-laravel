@@ -148,15 +148,18 @@ class OrdersController extends AppController
     	{
     		$data = $request->toArray();
     		unset($data['_token']);
+            $data['productsData'] = json_decode($data['productsData'], true);
+			$productData = [];
+			$productData = $data['productsData'];
     		$validator = Validator::make(
-	            $request->toArray(),
+	            $data,
 	            [
 					'customer_id' => ['required', Rule::exists(User::class,'id')],
 					'product_id' => ['required', 'array'],
     				'product_id.*' => ['required', Rule::exists(Products::class,'id')],
 					'booking_date' => ['required', 'date'],
 					'booking_time' => ['required', 'after_or_equal:today'],
-					'manual_address' => ['required','boolean'],
+					'manual_address' => ['nullable','boolean'],
 					'address' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:255'],
 					'state' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:40'],
 					'city' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:30'],
@@ -168,15 +171,15 @@ class OrdersController extends AppController
 					'discount' => ['required', 'numeric'],
 					'tax' => ['required', 'numeric'],
 					'total_amount' => ['required', 'numeric'],
+					'productsData' => ['required', 'array'],
+					'productsData.*.id' => ['required', Rule::exists(Products::class, 'id')],
+					'productsData.*.quantity' => ['required', 'integer', 'min:1'],
 	            ]
 	        );
 	        if(!$validator->fails())
-	        {
-				$products = [];
-	        	if(isset($data['product_id']) && $data['product_id']) {
-	        		$products = $data['product_id'];
-	        	}
+	        {   
 				unset($data['product_id']);
+				unset($data['productsData']);
 				$formattedDateTime = date('Y-m-d H:i:s', strtotime($request->get('booking_date')));
 				$data['booking_date'] = $formattedDateTime;
 				$customerId = $request->input('customer_id');
@@ -201,23 +204,30 @@ class OrdersController extends AppController
 					$order_prefix = (int)Settings::get('order_prefix');
 					$data['prefix_id'] = $order->id + $order_prefix;
 					Orders::modify($order->id,$data);
-					if(!empty($products))
-	        		{  
-	        			Orders::handleProducts($order->id, $products);
-	        		}
-	        		$request->session()->flash('success', 'Order created successfully.');
-	        		return redirect()->route('admin.orders');
+					if (!empty($productData)) {
+						Orders::handleProducts($order->id, $productData);
+					}
+					$request->session()->flash('success', trans('ORDER_CREATED'));
+					return Response()->json([
+						'status' => true,
+						'message' => trans('ORDER_CREATED'),
+						'id' => $order->id
+					]);
 	        	}
 	        	else
 	        	{
-	        		$request->session()->flash('error', 'Order could not be save. Please try again.');
-		    		return redirect()->back()->withErrors($validator)->withInput();
+					return Response()->json([
+						'status' => false,
+						'message' => 'Order could not be saved. Please try again.'
+					], 400);
 	        	}
 		    }
 		    else
 		    {
-		    	$request->session()->flash('error', 'Please provide valid inputs.');
-		    	return redirect()->back()->withErrors($validator)->withInput();
+				return Response()->json([
+					'status' => false,
+					'message' => current(current($validator->errors()->getMessages()))
+				], 400);
 		    }
 		}
 		$users = Users::getAll(
@@ -334,9 +344,48 @@ class OrdersController extends AppController
 			    	return redirect()->back()->withErrors($validator)->withInput();
 			    }
 			}
-
-			return view("admin/orders/edit", [
-    			'page' => $page
+			$users = Users::getAll(
+				[
+					'users.id',
+					'users.first_name',
+					'users.last_name',
+					'users.status',
+				],
+				[
+				],
+				'concat(users.first_name, users.last_name) desc'
+			);
+			$productCategories = ProductCategories::with('products')
+			->get(['id', 'title']); 
+			$address = Addresses::getAll(
+				[
+					'addresses.id',
+					'addresses.address',
+					'addresses.city',
+					'addresses.area',
+					'addresses.state',
+				],
+				[
+				]
+			);
+			$coupons = Coupons::getAll(
+				[
+					'coupons.id',
+					'coupons.title',
+					'coupons.is_percentage',
+					'coupons.amount',
+				],
+				[
+				]
+			);
+			return view("admin/orders/add", [
+    			'page' => $page,
+				'users' => $users,
+				'productCategories' => $productCategories,
+				'address' => $address,
+				'coupons' => $coupons,
+				'paymentType' => Orders::getStaticData()['paymentType'],
+				'tax_percentage' => Settings::get('tax_percentage')
     		]);
 		}
 		else
@@ -453,4 +502,15 @@ class OrdersController extends AppController
 	{
 		return response()->json(Orders::getStaticData()['status']);
 	}
+
+	public function getAddress($customerId)
+	{
+		$addresses = Addresses::select(['id','address'])->whereUserId($customerId)->get();
+	
+		return response()->json([
+			'status' => true,
+			'addresses' => $addresses,
+		]);
+	}
+	
 }

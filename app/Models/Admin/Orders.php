@@ -60,21 +60,23 @@ class Orders extends AppModel
         ];
     }
 
-    public static function handleProducts($id, $products)
+    public static function handleProducts($id, $productsData)
     {
         OrderProductRelation::where('order_id', $id)->delete();
-        foreach($products as $c)
-        {
+        foreach ($productsData as $productData) {
             $relation = new OrderProductRelation();
-            $product = Products::where('id',$c)->first();
-            $relation->product_title = $product->title;
-            $relation->product_description = $product->description;
-            $relation->amount = $product->price;
-            $relation->service_hours = $product->service_hours;
-            $relation->service_minutes = $product->service_minutes;
-            $relation->order_id = $id;
-            $relation->product_id = $c;
-            $relation->save();
+            $product = Products::find($productData['id']);
+            if ($product) {
+                $relation->product_title = $product->title;
+                $relation->product_description = $product->description;
+                $relation->amount = $product->price;
+                $relation->service_hours = $product->service_hours;
+                $relation->service_minutes = $product->service_minutes;
+                $relation->order_id = $id;
+                $relation->product_id = $product->id;
+                $relation->quantity = $productData['quantity'];
+                $relation->save();
+            }
         }
     }
 
