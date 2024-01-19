@@ -148,9 +148,8 @@ class CouponsController extends AppController
     		$validator = Validator::make(
 	            $request->toArray(),
 	            [
-					dd('divya'),
 	                'title' => ['required'],
-					'coupon_code' => ['required', Rule::unique('coupons','coupon_code')],
+					'coupon_code' => ['required', Rule::unique('coupons','coupon_code')->whereNull('deleted_at')],
 					'max_use' => ['required', 'integer'],
 					'end_date' => ['required', 'after_or_equal:today'],
 	                'description' => 'nullable',
@@ -225,7 +224,7 @@ class CouponsController extends AppController
 		            $request->toArray(),
 		            [
 						'title' => ['required'],
-						'coupon_code' => ['required', Rule::unique('coupons','coupon_code')->ignore($id,'id')],
+						'coupon_code' => ['required', Rule::unique('coupons','coupon_code')->ignore($id)->whereNull('deleted_at')],
 						'max_use' => ['required', 'integer'],
 						'end_date' => ['required', 'after_or_equal:today'],
 						'description' => 'nullable',

@@ -315,7 +315,7 @@ class OrdersController extends AppController
 		            $request->toArray(),
 		            [
 						'title' => ['required'],
-						'coupon_code' => ['required', Rule::unique('coupons','coupon_code')->ignore($page->id)],
+						'coupon_code' => ['required', Rule::unique('coupons','coupon_code')->ignore($page->id)->whereNull('deleted_at')],
 						'max_use' => ['required', 'integer'],
 						'end_date' => ['required', 'after_or_equal:today'],
 						'description' => 'nullable',
