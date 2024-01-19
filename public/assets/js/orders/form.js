@@ -15,19 +15,26 @@ let order = new Vue({
         selectedCustomer: null,
         selectedAddress: null,
         loading: false,
-        url: ''
+        url: '',
+        selectedPaymentType: ''
     },
     mounted: function() {
         this.mounting = false;
         this.initBasics();
         document.getElementById('order-form').classList.remove('d-none');
-        this.initBasics
+        this.initBasics();
+        this.initEditValues();
     },
     methods: {
         initEditValues: function () {
             if ($('#edit-form').length > 0) {
                 let data = JSON.parse($('#edit-form').text());
+                console.log(data);
                 this.url = admin_url + '/order/' + data.id + '/edit';
+                this.selectedCustomer = data.customer_id;
+                this.selectedAddress = data.address_id;
+                this.selectedPaymentType = data.payment_type;
+                this.selectedCouponId = data.coupon_code_id;
                 this.subtotal = data.subtotal;
                 this.discount = data.discount;
                 this.manualAddress = data.manual_address ? true : false;

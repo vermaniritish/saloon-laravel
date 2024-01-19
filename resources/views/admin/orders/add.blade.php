@@ -167,7 +167,7 @@
 										<div class="col-md-6">
 											<div class="form-group">
 												<label class="form-control-label" for="input-first-name">Payment Type</label>
-												<select class="form-control no-selectpicker" name="payment_type" required>
+												<select v-model="selectedPaymentType" class="form-control no-selectpicker" name="payment_type" required>
 													<option value="">Select</option>
 													<?php foreach($paymentType as $c): ?>
 														<option 

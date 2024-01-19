@@ -29,6 +29,16 @@ class Orders extends AppModel
     {
         return $this->belongsTo(Admins::class, 'created_by', 'id');
     }
+    
+    /**
+    * Order -> Products belongsToMany relation
+    *
+    * @return Products
+    */
+    public function products()
+    {
+        return $this->belongsToMany(Products::class, 'order_products', 'order_id', 'product_id');
+    }
 
     /**
     * Get resize images
@@ -209,7 +219,14 @@ class Orders extends AppModel
                             'first_name',
                             'last_name'
                         ]);
-                }
+                },
+                'products' => function($query) {
+                    $query->select([
+                            'id',
+                            'first_name',
+                            'last_name'
+                        ]);
+                },
             ])
             ->first();
 
