@@ -10,7 +10,7 @@
 					<div class="col-lg-6 col-5 text-right">
 					<?php if(Permissions::hasPermission('staff', 'create')): ?>
 						<a href="<?php echo route('admin.staff.add') ?>" class="btn btn-neutral">
-						<i class="fas fa-plus"></i> <i class="fas fa-plus"></i> New</a>
+						<i class="fas fa-plus"></i> New</a>
 					<?php endif; ?>	
 						@include('admin.staff.filters')
 					</div>

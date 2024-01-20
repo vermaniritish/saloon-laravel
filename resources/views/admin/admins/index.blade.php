@@ -8,7 +8,7 @@
 						<h6 class="h2 text-white d-inline-block mb-0">Manage Admins</h6>
 					</div>
 					<div class="col-lg-6 col-5 text-right">
-						<a href="<?php echo route('admin.admins.add') ?>" class="btn btn-neutral"><i class="fas fa-plus"></i> New</a>
+						<a href="<?php echo route('admin.admins.add') ?>" class="btn btn-neutral">New</a>
 						@include('admin.admins.filters')
 					</div>
 				</div>
