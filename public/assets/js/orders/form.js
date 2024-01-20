@@ -16,7 +16,8 @@ let order = new Vue({
         selectedAddress: null,
         loading: false,
         url: '',
-        selectedPaymentType: ''
+        selectedPaymentType: '',
+        selectedStaff: ''
     },
     mounted: function() {
         this.mounting = false;

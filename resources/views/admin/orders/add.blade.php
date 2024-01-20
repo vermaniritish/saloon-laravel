@@ -109,20 +109,64 @@
 										</div>
 									</div>
 									<div class="row">
-									<div class="col-md-6">
-										<div class="form-group">
-											<div class="custom-control p-0">
-												<label class="custom-toggle">
-													<input type="hidden" name="manual_address" value="0">
-													<input type="checkbox" v-model="manualAddress" name="manual_address" value="1"
-													<?php echo old('manual_address') != '0' ? 'checked' : ''; ?>>
-													<span class="custom-toggle-slider rounded-circle" data-label-off="No"
-														data-label-on="Yes"></span>
-												</label>
-												<label class="custom-control-label">Manual Address ?</label>
+										<div class="col-md-6">
+											<div class="form-group">
+												<label class="form-control-label" for="input-first-name">Payment Type</label>
+												<select v-model="selectedPaymentType" class="form-control no-selectpicker" name="payment_type" required>
+													<option value="">Select</option>
+													<?php foreach($paymentType as $c): ?>
+														<option 
+															value="<?php echo $c ?>"
+															<?php echo old('payment_type') && in_array($c, old('payment_type'))  ? 'selected' : '' ?>
+														>
+															<?php echo $c ?>	
+														</option>
+													<?php endforeach; ?>
+												</select>
+												@error('payment_type')
+													<small class="text-danger">{{ $message }}</small>
+												@enderror
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="form-group">
+												<label class="form-control-label">Staff</label>
+												<select v-model="selectedStaff" class="form-control no-selectpicker" name="staff_id" required>
+													<option value="">Select</option>
+													<?php 
+														foreach($staff as $s): 
+														$content =  $s->first_name . " " . $s->last_name . "<small class='badge badge-".($s->status ? "success" : "danger")."'>".($s->status ? "Active" : "Inactive")."</small>";
+													?>
+													<option 
+														value="<?php echo $s->id ?>" 
+														<?php echo old('staff_id') == $s->id  ? 'selected' : '' ?>
+														data-content="<?php echo $content ?>"
+													>
+														<?php echo $s->name; ?>		
+													</option>
+													<?php endforeach; ?>
+												</select>
+												@error('staff_id')
+												<small class="text-danger">{{ $message }}</small>
+												@enderror
 											</div>
 										</div>
 									</div>
+									<div class="row">
+										<div class="col-md-6">
+											<div class="form-group">
+												<div class="custom-control p-0">
+													<label class="custom-toggle">
+														<input type="hidden" name="manual_address" value="0">
+														<input type="checkbox" v-model="manualAddress" name="manual_address" value="1"
+														<?php echo old('manual_address') != '0' ? 'checked' : ''; ?>>
+														<span class="custom-toggle-slider rounded-circle" data-label-off="No"
+															data-label-on="Yes"></span>
+													</label>
+													<label class="custom-control-label">Manual Address ?</label>
+												</div>
+											</div>
+										</div>
 									</div>
 									<div v-if="manualAddress" class="row">
 										<div class="col-md-6">
@@ -161,25 +205,6 @@
 												</select>
 												@error('address_id')
 												<small class="text-danger">{{ $message }}</small>
-												@enderror
-											</div>
-										</div>
-										<div class="col-md-6">
-											<div class="form-group">
-												<label class="form-control-label" for="input-first-name">Payment Type</label>
-												<select v-model="selectedPaymentType" class="form-control no-selectpicker" name="payment_type" required>
-													<option value="">Select</option>
-													<?php foreach($paymentType as $c): ?>
-														<option 
-															value="<?php echo $c ?>"
-															<?php echo old('payment_type') && in_array($c, old('payment_type'))  ? 'selected' : '' ?>
-														>
-															<?php echo $c ?>	
-														</option>
-													<?php endforeach; ?>
-												</select>
-												@error('payment_type')
-													<small class="text-danger">{{ $message }}</small>
 												@enderror
 											</div>
 										</div>

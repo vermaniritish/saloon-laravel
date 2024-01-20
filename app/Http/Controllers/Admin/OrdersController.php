@@ -27,6 +27,7 @@ use App\Models\Admin\OrderStatusHistory;
 use App\Models\Admin\ProductCategories;
 use App\Models\Admin\Products;
 use App\Models\Admin\Settings;
+use App\Models\Admin\Staff;
 use App\Models\Admin\Users;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
@@ -155,6 +156,7 @@ class OrdersController extends AppController
 	            $data,
 	            [
 					'customer_id' => ['required', Rule::exists(User::class,'id')],
+					'staff_id' => ['required', Rule::exists(Staff::class,'id')],
 					'product_id' => ['required', 'array'],
     				'product_id.*' => ['required', Rule::exists(Products::class,'id')],
 					'booking_date' => ['required', 'date'],
@@ -241,6 +243,17 @@ class OrdersController extends AppController
 			],
 			'concat(users.first_name, users.last_name) desc'
 		);
+		$staff = Staff::getAll(
+			[
+				'staff.id',
+				'staff.first_name',
+				'staff.last_name',
+				'staff.status',
+			],
+			[
+			],
+			'concat(staff.first_name, staff.last_name) desc'
+		);
 		$productCategories = ProductCategories::with('products')
 		->get(['id', 'title']); 
 	    $address = Addresses::getAll(
@@ -270,7 +283,8 @@ class OrdersController extends AppController
 			'address' => $address,
 			'coupons' => $coupons,
 			'paymentType' => Orders::getStaticData()['paymentType'],
-			'tax_percentage' => Settings::get('tax_percentage')
+			'tax_percentage' => Settings::get('tax_percentage'),
+			'staff' => $staff
 	    ]);
     }
 
@@ -303,7 +317,6 @@ class OrdersController extends AppController
     		$request->session()->flash('error', 'Permission denied.');
     		return redirect()->route('admin.dashboard');
     	}
-
     	$page = Orders::get($id);
 
     	if($page)
@@ -378,6 +391,17 @@ class OrdersController extends AppController
 				[
 				]
 			);
+			$staff = Staff::getAll(
+				[
+					'staff.id',
+					'staff.first_name',
+					'staff.last_name',
+					'staff.status',
+				],
+				[
+				],
+				'concat(staff.first_name, staff.last_name) desc'
+			);
 			return view("admin/orders/add", [
     			'page' => $page,
 				'users' => $users,
@@ -385,7 +409,8 @@ class OrdersController extends AppController
 				'address' => $address,
 				'coupons' => $coupons,
 				'paymentType' => Orders::getStaticData()['paymentType'],
-				'tax_percentage' => Settings::get('tax_percentage')
+				'tax_percentage' => Settings::get('tax_percentage'),
+				'staff' => $staff
     		]);
 		}
 		else

@@ -26,6 +26,15 @@
 		<?php echo $row->aadhar_card_number ?>
 	</td>
 	<td>
+		<div class="custom-control">
+			<label class="custom-toggle">
+				<?php $switchUrl =  route('admin.actions.switchUpdate', ['relation' => 'staff', 'field' => 'status', 'id' => $row->id]); ?>
+				<input type="checkbox" name="status" onchange="switch_action('<?php echo $switchUrl ?>', this)" value="1" <?php echo ($row->status ? 'checked' : '') ?>>
+				<span class="custom-toggle-slider rounded-circle" data-label-off="OFF" data-label-on="ON"></span>
+			</label>
+		</div>
+	</td>
+	<td>
 		<?php echo _dt($row->created) ?>
 	</td>
 	<td class="text-right">

@@ -222,9 +222,8 @@ class Orders extends AppModel
                 },
                 'products' => function($query) {
                     $query->select([
-                            'id',
-                            'first_name',
-                            'last_name'
+                            'products.id',
+                            'title',
                         ]);
                 },
             ])

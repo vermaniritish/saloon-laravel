@@ -64,13 +64,65 @@
 									<td><?php echo $page->id ?></td>
 								</tr>
 								<tr>
-									<th>Title</th>
-									<td><?php echo $page->title ?></td>
+									<th>Staff Name</th>
+									<td><?php echo $page->first_name. ' ' .$page->last_name ?></td>
 								</tr>
 								<tr>
-									<td colspan="2">
-										<h2>Description</h2>
-										<?php echo $page->description ?>
+									<th>Phone Number</th>
+									<td><?php echo $page->phone_number ?></td>
+								</tr>
+								<tr>
+									<th>Email</th>
+									<td><?php echo $page->email ?></td>
+								</tr>
+								<tr>
+									<th>Aadhar Card Number</th>
+									<td><?php echo $page->aadhar_card_number ?></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="card">
+					<div class="card-header">
+						<div class="row align-items-center">
+							<div class="col">
+								<h3 class="mb-0">Orders Assigned</h3>
+							</div>
+						</div>
+					</div>
+					<div class="table-responsive small-max-card-table">
+						<!-- Projects table -->
+						<table class="table align-items-center table-flush">
+							<thead class="thead-light">
+								<tr>
+									<th scope="col">Date</th>
+									<th scope="col">Visitors</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<th scope="row">
+										05-01-2021
+									</th>
+									<td>
+										340
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										05-01-2021
+									</th>
+									<td>
+										340
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">
+										05-01-2021
+									</th>
+									<td>
+										340
 									</td>
 								</tr>
 							</tbody>
@@ -135,7 +187,6 @@
 						</table>
 					</div>
 				</div>
-
 				<div class="card">
 					<div class="card-header">
 						<div class="row align-items-center">
