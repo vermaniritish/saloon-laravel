@@ -198,7 +198,7 @@
 									<div v-else id="address-form" class="row">
 										<div class="col-md-6">
 											<div class="form-group">
-												<label class="form-control-label" for="input-addresses">Addresses</label>
+												<label class="form-control-label" for="input-addresses">Address</label>
 												<select v-model="selectedAddress" class="form-control no-selectpicker" name="address_id" :required="!manualAddress">
 												<option v-for="address in customerAddresses" :key="address.id" :value="address.id">
 													@{{ address.address }}
