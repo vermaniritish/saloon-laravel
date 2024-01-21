@@ -9,7 +9,7 @@ let order = new Vue({
         selectedCouponId: '',
         tax: 0,
         totalAmount: 0,
-        manualAddress: 0,
+        manualAddress: false,
         productsData: [],
         customerAddresses: [],
         selectedCustomer: null,
@@ -17,7 +17,13 @@ let order = new Vue({
         loading: false,
         url: '',
         selectedPaymentType: '',
-        selectedStaff: ''
+        selectedStaff: '',
+        bookingDate: '',
+        bookingTime: '',
+        address: '',
+        city: '',
+        state: '',
+        area: ''
     },
     mounted: function() {
         this.mounting = false;
@@ -41,6 +47,21 @@ let order = new Vue({
                 this.manualAddress = data.manual_address ? true : false;
                 this.notifiedActionId = data.notified_action_id ? data.notified_action_id.map(item => item.id) : [];
                 this.selectedPrimeMover = data.prime_mover_name ? data.prime_mover_name : '';
+                this.bookingDate = data.booking_date;
+                this.bookingTime = data.booking_time;
+                this.selectedStaff = data.staff_id;
+                this.address = data.address;
+                this.city = data.city;
+                this.state = data.state;
+                this.area = data.area;
+                this.selectedProducts = data && data.products && data.products.length > 0 ? data.products.map(product => product.id) : [];
+                this.productsData = data && data.products && data.products.length > 0 ? data.products.map(product => ({
+                    id: product.id,
+                    title: product.title,
+                    rate: parseFloat(product.amount),
+                    quantity: parseInt(product.quantity),
+                })) : [];
+                this.updateTotal();
             }
             else {
                 this.url = admin_url + '/order/add';
@@ -111,17 +132,30 @@ let order = new Vue({
             return this.subtotal;
         },
         updateAddresses: async function() {
-            customerId = this.selectedCustomer
-            let response = await fetch(admin_url + "/order/getAddress/customer/" + customerId);
-            response = await response.json();
-            if(response && response.status)
-            {
-                this.customerAddresses = response.addresses;
+            if(!this.manualAddress){
+                customerId = this.selectedCustomer
+                let response = await fetch(admin_url + "/order/getAddress/customer/" + customerId);
+                response = await response.json();
+                if(response && response.status)
+                {
+                    this.customerAddresses = response.addresses;
+                    setTimeout(function () {
+                        $("#address-form select").selectpicker("refresh");
+                    }, 50);
+                } else{
+                    set_notification('error', response.message);
+                }
+            }
+        },
+        handleSelectpicker: function(){
+            if(!this.manualAddress){ 
+                console.log('refresh');
                 setTimeout(function () {
                     $("#address-form select").selectpicker("refresh");
                 }, 50);
-            } else{
-                set_notification('error', response.message);
+            }else{
+                console.log('destroy');
+                    $("#address-form select").selectpicker("destroy");
             }
         },
         submitForm: async function() {

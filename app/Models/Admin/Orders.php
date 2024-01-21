@@ -224,6 +224,8 @@ class Orders extends AppModel
                     $query->select([
                             'products.id',
                             'title',
+                            'amount',
+                            'quantity'
                         ]);
                 },
             ])

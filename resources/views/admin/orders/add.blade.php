@@ -92,7 +92,7 @@
 										<div class="col-md-6">
 											<div class="form-group">
 												<label class="form-control-label" for="input-first-name">Booking Date</label>
-												<input class="form-control" type="date" name="booking_date" required placeholder="Coupon End Date" value="{{ old('booking_date') }}">
+												<input class="form-control" type="date" name="booking_date" required placeholder="Coupon End Date" v-model="bookingDate" value="{{ old('booking_date') }}">
 												@error('booking_date')
 													<small class="text-danger">{{ $message }}</small>
 												@enderror
@@ -101,7 +101,7 @@
 										<div class="col-md-6">
 											<div class="form-group">
 												<label class="form-control-label" for="input-first-name">Booking Time</label>
-												<input class="form-control" type="time" name="booking_time" required placeholder="Coupon End Date" value="{{ old('booking_time') }}">
+												<input class="form-control" type="time" name="booking_time" required placeholder="Coupon End Date" v-model="bookingTime" value="{{ old('booking_time') }}">
 												@error('booking_time')
 													<small class="text-danger">{{ $message }}</small>
 												@enderror
@@ -158,8 +158,9 @@
 												<div class="custom-control p-0">
 													<label class="custom-toggle">
 														<input type="hidden" name="manual_address" value="0">
-														<input type="checkbox" v-model="manualAddress" name="manual_address" value="1"
-														<?php echo old('manual_address') != '0' ? 'checked' : ''; ?>>
+														<input type="checkbox" name="manual_address" value="1" v-model="manualAddress" v-on:change="handleSelectpicker()"
+														<?php echo old('manual_address') != '0' ? 'checked' : ''; ?>
+														>
 														<span class="custom-toggle-slider rounded-circle" data-label-off="No"
 															data-label-on="Yes"></span>
 													</label>
@@ -172,33 +173,33 @@
 										<div class="col-md-6">
 											<div class="form-group">
 												<label class="form-control-label" for="input-manual-address">Address</label>
-												<input type="text" class="form-control" name="address" :required ="manualAddress">
+												<input type="text" class="form-control" v-model="address" name="address" :required ="manualAddress">
 											</div>
 										</div>
 										<div class="col-md-6">
 											<div class="form-group">
 												<label class="form-control-label" for="input-manual-address">State</label>
-												<input type="text" class="form-control" name="state" :required ="manualAddress">
+												<input type="text" class="form-control" v-model="state" name="state" :required ="manualAddress">
 											</div>
 										</div>
 										<div class="col-md-6">
 											<div class="form-group">
 												<label class="form-control-label" for="input-manual-address">City</label>
-												<input type="text" class="form-control" name="city" :required ="manualAddress">
+												<input type="text" class="form-control" v-model="city" name="city" :required ="manualAddress">
 											</div>
 										</div>
 										<div class="col-md-6">
 											<div class="form-group">
 												<label class="form-control-label" for="input-manual-address">Area</label>
-												<input type="text" class="form-control" name="area" :required ="manualAddress">
+												<input type="text" class="form-control" v-model="area" name="area" :required ="manualAddress">
 											</div>
 										</div>
 									</div>
-									<div id="address-form" class="row">
+									<div v-else id="address-form" class="row">
 										<div class="col-md-6">
 											<div class="form-group">
-												<label class="form-control-label" for="input-first-name">Addresses</label>
-												<select v-model="selectedAddress" class="form-control no-selectpicker" name="address_id" :required="manualAddress">
+												<label class="form-control-label" for="input-addresses">Addresses</label>
+												<select v-model="selectedAddress" class="form-control no-selectpicker" name="address_id" :required="!manualAddress">
 												<option v-for="address in customerAddresses" :key="address.id" :value="address.id">
 													@{{ address.address }}
 												</option>
@@ -211,7 +212,7 @@
 									</div>
 									<div class="row">
 										<div class="col-md-6">
-										<div class="form-group">
+											<div class="form-group">
 												<label class="form-control-label">Coupon Code</label>
 												<select class="form-control no-selectpicker"
 												v-model="selectedCouponId" 
