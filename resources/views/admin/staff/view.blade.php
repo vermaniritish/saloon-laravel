@@ -96,35 +96,35 @@
 						<table class="table align-items-center table-flush">
 							<thead class="thead-light">
 								<tr>
-									<th scope="col">Date</th>
-									<th scope="col">Visitors</th>
+									<th scope="col" style="width: 15%;">Order Id</th>
+									<th scope="col" style="width: 15%;">Total Amount</th>
+									<th scope="col" style="width: 70%;">Products</th>
 								</tr>
 							</thead>
 							<tbody>
-								<tr>
-									<th scope="row">
-										05-01-2021
-									</th>
-									<td>
-										340
-									</td>
-								</tr>
-								<tr>
-									<th scope="row">
-										05-01-2021
-									</th>
-									<td>
-										340
-									</td>
-								</tr>
-								<tr>
-									<th scope="row">
-										05-01-2021
-									</th>
-									<td>
-										340
-									</td>
-								</tr>
+								@forelse ($orders as $order)
+									<tr>
+										<th scope="row">
+											{{ $order->id }}
+										</th>
+										<td>
+											{{ $order->total_amount }}
+										</td>
+										<td>
+											@foreach ($order->products as $index => $product)
+												@if ($index > 0)
+													,&nbsp;{{-- Add space after each comma --}}
+												@endif
+												{{ $product->title }}
+												<i class="fas fa-info-circle" data-toggle="tooltip" data-placement="top" title="{{ $product->title }} - Amount: {{ $product->amount }}, Quantity: {{ $product->quantity }}"></i>
+											@endforeach
+										</td>
+									</tr>
+								@empty
+									<tr>
+										<td colspan="3">No orders found</td>
+									</tr>
+								@endforelse
 							</tbody>
 						</table>
 					</div>

@@ -21,7 +21,7 @@ class Orders extends AppModel
     use SoftDeletes;
 
     /**
-    * Pages -> Admins belongsTO relation
+    * Order -> Admins belongsTO relation
     * 
     * @return Admins
     */
@@ -38,6 +38,16 @@ class Orders extends AppModel
     public function products()
     {
         return $this->belongsToMany(Products::class, 'order_products', 'order_id', 'product_id');
+    }
+
+    /**
+    * Order -> Staff hasOne relation
+    * 
+    * @return Staff
+    */
+    public function staff()
+    {
+        return $this->hasOne(Staff::class, 'staff_id');
     }
 
     /**

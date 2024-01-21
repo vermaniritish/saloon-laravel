@@ -19,6 +19,7 @@ use App\Models\Admin\Admins;
 use Illuminate\Validation\Rule;
 use App\Libraries\FileSystem;
 use App\Http\Controllers\Admin\AppController;
+use App\Models\Admin\Orders;
 use App\Models\Admin\Staff;
 
 class StaffController extends AppController
@@ -191,10 +192,20 @@ class StaffController extends AppController
     	}
 
     	$page = Staff::get($id);
+		$orders = Orders::select('id', 'total_amount')
+						->where('staff_id', $id)
+						->whereNull('deleted_at')
+						->with([
+							'products' => function ($query) {
+								$query->select('products.id', 'title', 'amount', 'quantity');
+							},
+						])
+						->get();	
     	if($page)
     	{
 	    	return view("admin/staff/view", [
-    			'page' => $page
+    			'page' => $page,
+				'orders' => $orders
     		]);
 		}
 		else
