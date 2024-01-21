@@ -30216,3 +30216,22 @@ ul.tagit input[type="text"] {
     background-color: inherit;
     outline: none;
 }
+.remarks-block {
+    overflow-y: auto;
+    max-height: 600px;
+}
+.scroll-block {
+    overflow-y: auto;
+}
+.scroll-block::-webkit-scrollbar, .remarks-block::-webkit-scrollbar
+{
+    width: 5px;
+    background-color: #F5F5F5;
+}
+
+.scroll-block::-webkit-scrollbar-thumb, .remarks-block::-webkit-scrollbar-thumb
+{
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: #e9ecef;
+}

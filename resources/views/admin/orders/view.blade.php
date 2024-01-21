@@ -1,5 +1,9 @@
 @extends('layouts.adminlayout')
 @section('content')
+<?php
+	use App\Models\Admin\Settings;
+	$currency = Settings::get('currency_symbol'); 
+?>
 	<div class="header bg-primary pb-6">
 		<div class="container-fluid">
 			<div class="header-body">
@@ -97,6 +101,52 @@
 								</tr>
 							</tbody>
 						</table>
+					</div>
+				</div>
+				<div class="card">
+					<div class="card-header">
+						<div class="row align-items-center">
+							<div class="col">
+								<h3 class="mb-0">Products</h3>
+							</div>
+						</div>
+					</div>
+					<div class="p-0 card-body remarks-block">
+						<div class="table-responsive small-max-card-table">
+							<!-- Projects table -->
+							<table class="table align-items-center table-flush">
+								<thead class="thead-light">
+									<tr>
+										<th scope="col" style="width: 20%;">Id</th>
+										<th scope="col" style="width: 20%;">Product</th>
+										<th scope="col" style="width: 30%;">Quantity</th>
+										<th scope="col" style="width: 30%;">Price</th>
+									</tr>
+								</thead>
+								<tbody>
+									@forelse ($page->products as $product)
+										<tr>
+											<td scope="row">
+												<a href="<?php echo route('admin.products.view', ['id' => $product->id]) ?>"><?php echo $product->id; ?></a>
+											</td>
+											<td>
+												{{ $product->title }}
+											</td>
+											<td>
+												{{ $product->quantity }}
+											</td>
+											<td>
+												{{ $currency }} {{ $product->amount }}
+											</td>
+										</tr>
+									@empty
+										<tr>
+											<td colspan="3">No orders found</td>
+										</tr>
+									@endforelse
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</div>
 			</div>

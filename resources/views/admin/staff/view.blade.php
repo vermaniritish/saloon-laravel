@@ -1,5 +1,9 @@
 @extends('layouts.adminlayout')
 @section('content')
+<?php
+	use App\Models\Admin\Settings;
+	$currency = Settings::get('currency_symbol'); 
+?>
 	<div class="header bg-primary pb-6">
 		<div class="container-fluid">
 			<div class="header-body">
@@ -91,42 +95,70 @@
 							</div>
 						</div>
 					</div>
-					<div class="table-responsive small-max-card-table">
-						<!-- Projects table -->
-						<table class="table align-items-center table-flush">
-							<thead class="thead-light">
-								<tr>
-									<th scope="col" style="width: 15%;">Order Id</th>
-									<th scope="col" style="width: 15%;">Total Amount</th>
-									<th scope="col" style="width: 70%;">Products</th>
-								</tr>
-							</thead>
-							<tbody>
-								@forelse ($orders as $order)
+					<div class="card-body">
+						<form action="<?php echo route('admin.staff') ?>" id="filters-form">
+							<div class="row">
+								<div class="col-md-4">
+									<div class="form-group">
+										<label for="fromDate">From Date:</label>
+										<input type="date" class="form-control" v-model="fromDate" name="order_created[0]" id="fromDate">
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="form-group">
+										<label for="toDate">To Date:</label>
+										<input type="date" class="form-control" name="order_created[1]" v-model="toDate" id="toDate">
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="form-group">
+										<label> </label>
+										<button type="submit" class="btn btn-primary mt-4">Filter</button>
+									</div>
+								</div>
+							</div>
+						</form>
+						<div class="table-responsive small-max-card-table">
+							<!-- Projects table -->
+							<table class="table align-items-center table-flush">
+								<thead class="thead-light">
 									<tr>
-										<th scope="row">
-											{{ $order->id }}
-										</th>
-										<td>
-											{{ $order->total_amount }}
-										</td>
-										<td>
-											@foreach ($order->products as $index => $product)
-												@if ($index > 0)
-													,&nbsp;{{-- Add space after each comma --}}
-												@endif
-												{{ $product->title }}
-												<i class="fas fa-info-circle" data-toggle="tooltip" data-placement="top" title="{{ $product->title }} - Amount: {{ $product->amount }}, Quantity: {{ $product->quantity }}"></i>
-											@endforeach
-										</td>
+										<th scope="col" style="width: 15%;">Order Id</th>
+										<th scope="col" style="width: 15%;">Total Amount</th>
+										<th scope="col" style="width: 50%;">Products</th>
+										<th scope="col" style="width: 20%;">Created</th>
 									</tr>
-								@empty
-									<tr>
-										<td colspan="3">No orders found</td>
-									</tr>
-								@endforelse
-							</tbody>
-						</table>
+								</thead>
+								<tbody>
+									@forelse ($orders as $order)
+										<tr>
+											<th scope="row">
+												<a href="<?php echo route('admin.orders.view', ['id' => $order->id]) ?>"><?php echo $order->id; ?></a>
+											</th>
+											<td>
+												{{ $order->total_amount }}
+											</td>
+											<td>
+												@foreach ($order->products as $index => $product)
+													@if ($index > 0)
+														,&nbsp;{{-- Add space after each comma --}}
+													@endif
+													{{ $product->title }}
+													<i class="fas fa-info-circle" data-toggle="tooltip" data-placement="top" title="Amount: {{$currency}} {{ $product->amount }}, Quantity: {{ $product->quantity }}"></i>
+												@endforeach
+											</td>
+											<td>
+												{{ _dt($order->created) }}
+											</td>
+										</tr>
+									@empty
+										<tr>
+											<td colspan="3">No orders found</td>
+										</tr>
+									@endforelse
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</div>
 			</div>

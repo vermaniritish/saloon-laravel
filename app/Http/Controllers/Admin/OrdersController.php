@@ -318,7 +318,6 @@ class OrdersController extends AppController
     		return redirect()->route('admin.dashboard');
     	}
     	$page = Orders::get($id);
-
     	if($page)
     	{
 	    	if($request->isMethod('post'))

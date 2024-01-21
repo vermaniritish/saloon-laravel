@@ -21,6 +21,7 @@ use App\Libraries\FileSystem;
 use App\Http\Controllers\Admin\AppController;
 use App\Models\Admin\Orders;
 use App\Models\Admin\Staff;
+use Carbon\Carbon;
 
 class StaffController extends AppController
 {
@@ -190,9 +191,8 @@ class StaffController extends AppController
     		$request->session()->flash('error', 'Permission denied.');
     		return redirect()->route('admin.dashboard');
     	}
-
     	$page = Staff::get($id);
-		$orders = Orders::select('id', 'total_amount')
+		$orders = Orders::select('id', 'total_amount', 'created')
 						->where('staff_id', $id)
 						->whereNull('deleted_at')
 						->with([
