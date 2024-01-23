@@ -79,15 +79,11 @@ class OrdersController extends AppController
     		$admins = $admins ? implode(',', $admins) : 0;
     		$where[] = 'orders.created_by IN ('.$admins.')';
     	}
-
 		if($request->has('status') && $request->get('status')) 
 		{
-			$where['orders.status'] = $request->get('driver_id');
+			$where['orders.status'] = $request->get('status');
 		}
-
     	$listing = Orders::getListing($request, $where);
-
-
     	if($request->ajax())
     	{
 		    $html = view(

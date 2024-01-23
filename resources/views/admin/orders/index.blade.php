@@ -16,21 +16,23 @@
 					</div>
 				</div>
 			</div>
+			<form id="filterForm" action="{{ route('admin.orders') }}" method="get">
+				<input type="hidden" name="status" id="statusInput" value="">
+			</form>	
 			<div class="row">
 				<div class="col-md-12 mb-3">
 					<ul class="nav nav-pills">
 						<li class="nav-item">
-							<a class="nav-link active" id="all-tab" data-toggle="pill" href="#all">All</a>
+							<a class="nav-link{{ empty(request('status')) ? ' active' : '' }}" id="all-tab" data-toggle="pill" href="#all" onclick="submitForm('')">All</a>
 						</li>
 						@foreach($status as $statusKey => $statusData)
 							<li class="nav-item">
-								<a class="nav-link" id="{{ strtolower($statusKey) }}-tab" data-toggle="pill" href="#{{ strtolower($statusKey) }}">{{ $statusData['label'] }}</a>
+								<a class="nav-link{{ request('status') === $statusKey ? ' active' : '' }}" data-value="{{ $statusKey }}" id="{{ strtolower($statusKey) }}-tab" data-toggle="pill" href="#{{ strtolower($statusKey) }}" onclick="submitForm('{{ $statusKey }}')">{{ $statusData['label'] }}</a>
 							</li>
 						@endforeach
 					</ul>
 					<div class="tab-content">
-						<div class="tab-pane fade show active" id="all">
-						</div>
+						<!-- Your tab content goes here -->
 					</div>
 				</div>
 			</div>
