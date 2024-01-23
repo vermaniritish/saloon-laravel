@@ -191,11 +191,22 @@ class StaffController extends AppController
     		$request->session()->flash('error', 'Permission denied.');
     		return redirect()->route('admin.dashboard');
     	}
+		$fromDate = now()->startOfMonth()->toDateString();
+		$toDate = now()->endOfMonth()->toDateString();
+		if ($request->filled('order_created')) {
+			$customDateRange = $request->input('order_created');
+			$fromDate = $customDateRange[0];
+			$toDate = $customDateRange[1];
+		}	
     	$page = Staff::get($id);
 		$orders = Orders::select('id', 'total_amount', 'created','status','status_by')
 						->with('statusBy')
 						->where('staff_id', $id)
 						->whereNull('deleted_at')
+						->where(function ($query) use ($fromDate, $toDate) {
+							$query->whereDate('created', '>=', $fromDate)
+								->whereDate('created', '<=', $toDate);
+						})
 						->with([
 							'products' => function ($query) {
 								$query->select('products.id', 'title', 'amount', 'quantity');

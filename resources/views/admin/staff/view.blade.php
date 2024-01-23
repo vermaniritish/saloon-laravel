@@ -97,18 +97,18 @@
 							</div>
 						</div>
 						<div class="card-body">
-							<form action="<?php echo route('admin.staff') ?>" id="filters-form">
+							<form action="<?php echo route('admin.staff.view',['id' => $page->id]) ?>" method="GET" id="filters-form">
 								<div class="row">
 									<div class="col-md-4">
 										<div class="form-group">
 											<label class="form-control-label" for="fromDate">From Date:</label>
-											<input type="date" class="form-control" v-model="fromDate" name="order_created[0]" id="fromDate">
+											<input type="date" class="form-control" name="order_created[0]" value="{{ isset($_GET['order_created'][0]) ? $_GET['order_created'][0] : '' }}" placeholder="DD-MM-YYYY" >
 										</div>
 									</div>
 									<div class="col-md-4">
 										<div class="form-group">
 											<label class="form-control-label" for="toDate">To Date:</label>
-											<input type="date" class="form-control" name="order_created[1]" v-model="toDate" id="toDate">
+											<input type="date" class="form-control" name="order_created[1]" id="toDate" value="{{ isset($_GET['order_created'][1]) ? $_GET['order_created'][1] : '' }}" placeholder="DD-MM-YYYY" >
 										</div>
 									</div>
 									<div class="col-md-4">
