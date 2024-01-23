@@ -202,9 +202,6 @@ class ProductsController extends AppController
 					'sale_price' => ['nullable', 'numeric', 'min:0'],
 	                'category' => 'required',
 	                'brand' => 'required',
-	                'address' => 'required',
-	                'lat' => 'nullable',
-	                'lng' => 'nullable',
 					'tags' => ['nullable', 'array'],
 					'tags.*' => ['string','max:20',],
 	            ]
@@ -319,9 +316,6 @@ class ProductsController extends AppController
 								Rule::exists('product_categories', 'id')
 							],
 							'brand' => ['required', 'array', Rule::exists('brands', 'id')],
-							'address' => 'required',
-							'lat' => 'nullable',
-							'lng' => 'nullable',
 							'tags' => ['nullable', 'array'],
 							'tags.*' => ['string','max:20',],
 		            ]

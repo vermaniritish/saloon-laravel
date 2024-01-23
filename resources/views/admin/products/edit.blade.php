@@ -65,17 +65,6 @@
 							<div class="row">
 								<div class="col-lg-12">
 									<div class="form-group">
-										<label class="form-control-label" for="input-emails">Tag</label>
-										<input type="text" class="form-control tag-it" name="tags" placeholder="info@example.com" value="{{ old('tags',implode(', ', $product->tags)) }}">
-										@error('tags.*')
-											<small class="text-danger">{{ $message }}</small>
-										@enderror
-									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-lg-12">
-									<div class="form-group">
 										<label class="form-control-label">Description</label>
 										<textarea rows="2" id="editor1" class="form-control" placeholder="Description" required name="description">{{ old('description', $product->description) }}</textarea>
 										@error('description')
@@ -117,15 +106,6 @@
 							<div class="row">
 								<div class="col-lg-6">
 									<div class="form-group">
-										<label class="form-control-label" for="input-first-name">Location</label>
-										<input type="search" class="form-control" id="google-address" autocomplete="off" name="address" placeholder="Address" required value="{{ old('address',$product->address) }}">
-										@error('address')
-										    <small class="text-danger">{{ $message }}</small>
-										@enderror
-									</div>
-								</div>
-								<div class="col-lg-6">
-									<div class="form-group">
 										<label class="form-control-label" for="input-username">Brand</label>
 										<select class="form-control" name="brand[]" required multiple>
 											@foreach ($brands as $key => $value)
@@ -161,21 +141,12 @@
 								</div>
 							</div>
 							<div class="row">
-								<div class="col-lg-6">
+								<div class="col-lg-12">
 									<div class="form-group">
-										<label class="form-control-label" for="input-first-name">Lattitude</label>
-										<input type="text" class="form-control" id="google-lat" name="lat" placeholder="Address" readonly="" value="{{ old('lat',$product->lat) }}">
-										@error('lat')
-										    <small class="text-danger">{{ $message }}</small>
-										@enderror
-									</div>
-								</div>
-								<div class="col-lg-6">
-									<div class="form-group">
-										<label class="form-control-label" for="input-first-name">Longitude</label>
-										<input type="text" class="form-control" id="google-lng" name="lng" placeholder="Address" readonly="" value="{{ old('lng',$product->lng) }}">
-										@error('lng')
-										    <small class="text-danger">{{ $message }}</small>
+										<label class="form-control-label" for="input-emails">Tag</label>
+										<input type="text" class="form-control tag-it" name="tags" placeholder="info@example.com" value="{{ old('tags',implode(', ', $product->tags)) }}">
+										@error('tags.*')
+											<small class="text-danger">{{ $message }}</small>
 										@enderror
 									</div>
 								</div>
