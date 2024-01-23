@@ -8,7 +8,7 @@
 						<h6 class="h2 text-white d-inline-block mb-0">Manage Shops</h6>
 					</div>
 					<div class="col-lg-6 col-5 text-right">
-						<a href="<?php echo route('admin.shops') ?>" class="btn text-white"><i class="fa fa-arrow-left"></i> Back</a>
+						<a href="<?php echo route('admin.shops') ?>" class="btn btn-neutral"><i class="fa fa-arrow-left"></i> Back</a>
 						<div class="dropdown" data-toggle="tooltip" data-title="More Actions">
 							<a class="btn btn-neutral" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 								<i class="fas fa-ellipsis-v"></i>

@@ -8,7 +8,7 @@
 						<h6 class="h2 text-white d-inline-block mb-0">Activity Logs</h6>
 					</div>
 					<div class="col-lg-6 col-5 text-right">
-						<a href="<?php echo route('admin.activities.logs') ?>" class="btn text-white"><i class="fa fa-arrow-left"></i> Back</a>
+						<a href="<?php echo route('admin.activities.logs') ?>" class="btn btn-neutral"><i class="fa fa-arrow-left"></i> Back</a>
 					</div>
 				</div>
 			</div>

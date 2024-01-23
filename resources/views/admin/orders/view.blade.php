@@ -93,6 +93,28 @@ use App\Models\Admin\Settings;
 									<td><?php echo ($page->payment_type) ?></td>
 								</tr>
 								<tr>
+									<th>Status</th>
+									<td>	
+										<div class="dropdown">
+											<?php $statusData = $status[$page->status] ?? null; ?>
+											<?php if ($statusData): ?>
+												<button class="btn btn-sm dropdown-toggle" style="<?php echo $statusData['styles']; ?>"
+														type="button" id="statusDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+														data-toggle="tooltip" title="{{ $page->statusBy ? ($page->statusBy->first_name . ($page->statusBy->last_name ? ' ' . $page->statusBy->last_name : '')) : null }}">
+													{{ $statusData['label'] }}
+												</button>
+												<input type="hidden" id="Currentstatus" value={{ $page->status }} >
+												<div class="dropdown-menu dropdown-menu-left" aria-labelledby="statusDropdown">
+													<?php $switchUrl = route('admin.order.switchStatus', ['field' => 'status', 'id' => $page->id]); ?>
+													<?php foreach ($status as $statusKey => $statusData): ?>
+														<a class="dropdown-item" href="javascript:;" data-value="<?php echo $statusKey; ?>" onclick="switch_diary_page_action('<?php echo $switchUrl; ?>', this)">{{ ucfirst($statusData['label']) }}</a>
+													<?php endforeach; ?>
+												</div>
+											<?php endif; ?>
+										</div>
+									</td>
+								</tr>
+								<tr>
 									<th>Created On</th>
 									<td><?php echo _dt($page->created) ?></td>
 								</tr>
@@ -167,69 +189,43 @@ use App\Models\Admin\Settings;
 					<div class="card-header">
 						<div class="row align-items-center">
 							<div class="col">
-								<h3 class="mb-0">Other Information</h3>
+								<h3 class="mb-0">Assign Staff</h3>
 							</div>
 						</div>
 					</div>
 					<div class="card-body">
-						<div class="table-responsive">
-							<!-- Projects table -->
-							<table class="table align-items-center table-flush">
-								<tbody>
-									<tr>
-										<th scope="row">
-											Status
-										</th>
-										<td>
-											<div class="dropdown">
-												<?php $statusData = $status[$page->status] ?? null; ?>
-												<?php if ($statusData): ?>
-													<button class="btn btn-sm dropdown-toggle" style="<?php echo $statusData['styles']; ?>"
-															type="button" id="statusDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-															data-toggle="tooltip" title="{{ $page->statusBy ? ($page->statusBy->first_name . ($page->statusBy->last_name ? ' ' . $page->statusBy->last_name : '')) : null }}">
-														{{ $statusData['label'] }}
-													</button>
-													<input type="hidden" id="Currentstatus" value={{ $page->status }} >
-													<div class="dropdown-menu dropdown-menu-left" aria-labelledby="statusDropdown">
-														<?php $switchUrl = route('admin.order.switchStatus', ['field' => 'status', 'id' => $page->id]); ?>
-														<?php foreach ($status as $statusKey => $statusData): ?>
-															<a class="dropdown-item" href="javascript:;" data-value="<?php echo $statusKey; ?>" onclick="switch_diary_page_action('<?php echo $switchUrl; ?>', this)">{{ ucfirst($statusData['label']) }}</a>
-														<?php endforeach; ?>
-													</div>
-												<?php endif; ?>
-											</div>
-										</td>
-									</tr>
-									<tr>
-										<th>
-											Staff
-										</th>
-										<td>
-											<div class="form-group">
-												<select class="form-control" name="staff_id" required>
-													<option value="">Select</option>
-													<?php 
-														foreach($staff as $s): 
-														$content =  $s->first_name . " " . $s->last_name . "<small class='badge badge-".($s->status ? "success" : "danger")."'>".($s->status ? "Active" : "Inactive")."</small>";
-													?>
-													<option 
-														value="<?php echo $s->id ?>" 
-														<?php echo old('staff_id') == $s->id  ? 'selected' : '' ?>
-														data-content="<?php echo $content ?>"
-													>
-														<?php echo $s->name; ?>		
-													</option>
-													<?php endforeach; ?>
-												</select>
-												@error('staff_id')
-													<small class="text-danger">{{ $message }}</small>
-												@enderror
-											</div>
-										</td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
+						<form method="post" id="" action="<?php echo route('admin.orders.selectStaff', ['id' => $page->id]); ?>" class="form-validation" enctype="multipart/form-data">
+							<!--!! CSRF FIELD !!-->
+							{{ @csrf_field() }}	
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group">
+									<label class="form-control-label">Staff</label>
+										<select class="form-control" name="staff_id" required>
+											<option value="">Select</option>
+											<?php 
+												foreach($staff as $s): 
+												$content =  $s->first_name . " " . $s->last_name . "<small class='badge badge-".($s->status ? "success" : "danger")."'>".($s->status ? "Active" : "Inactive")."</small>";
+											?>
+											<option 
+												value="<?php echo $s->id ?>" 
+												<?php echo old('staff_id') == $s->id  ? 'selected' : '' ?>
+												data-content="<?php echo $content ?>"
+											>
+												<?php echo $s->name; ?>		
+											</option>
+											<?php endforeach; ?>
+										</select>
+										@error('staff_id')
+											<small class="text-danger">{{ $message }}</small>
+										@enderror
+									</div>
+								</div>
+							</div>
+							<button type="submit" class="btn btn-sm py-2 px-3 btn-primary float-right">
+								<i class="fa fa-save"></i> Submit
+							</button>
+						</form>
 					</div>
 				</div>
 				<div class="card">

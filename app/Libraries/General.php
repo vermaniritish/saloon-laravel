@@ -147,7 +147,7 @@ class General
 			'subject' => $subject,
 			'description' => $message,
 			'from' => $from,
-			'to' => $to,
+			'to' => is_array($to) ? implode(', ', $to) : $to,
 			'cc' => $cc,
 			'bcc' => $bcc,
 			'open' => 0,

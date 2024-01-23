@@ -8,7 +8,7 @@
 						<h6 class="h2 text-white d-inline-block mb-0">Manage Blogs</h6>
 					</div>
 					<div class="col-lg-6 col-5 text-right">
-						<a href="<?php echo route('admin.blogs') ?>" class="btn text-white"><i class="fa fa-arrow-left"></i> Back</a>
+						<a href="<?php echo route('admin.blogs') ?>" class="btn btn-neutral"><i class="fa fa-arrow-left"></i> Back</a>
 						<a href="#" class="btn btn-neutral" target="_blank"><i class="fa fa-eye"></i> View Blog</a>
 						<div class="dropdown" data-toggle="tooltip" data-title="More Actions">
 							<a class="btn btn-neutral" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

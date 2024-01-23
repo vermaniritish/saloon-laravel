@@ -68,7 +68,7 @@ class Orders extends AppModel
     */
     public function staff()
     {
-        return $this->hasOne(Staff::class, 'staff_id');
+        return $this->hasOne(Staff::class, 'id','staff_id');
     }
 
     /**

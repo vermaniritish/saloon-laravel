@@ -21,6 +21,9 @@ Route::get('/order/{id}/edit', [OrdersController::class, 'edit'])
 Route::post('/order/{id}/edit', [OrdersController::class, 'edit'])
     ->name('admin.orders.edit');
 
+Route::post('/order/{id}/select-staff', [OrdersController::class, 'selectStaff'])
+        ->name('admin.orders.selectStaff');
+    
 Route::post('/order/bulkActions/{action}', [OrdersController::class, 'bulkActions'])
     ->name('admin.orders.bulkActions');
 

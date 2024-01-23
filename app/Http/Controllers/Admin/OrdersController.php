@@ -21,6 +21,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 use App\Libraries\FileSystem;
 use App\Http\Controllers\Admin\AppController;
+use App\Libraries\General;
 use App\Models\Admin\Addresses;
 use App\Models\Admin\OrderProductRelation;
 use App\Models\Admin\Orders;
@@ -435,7 +436,7 @@ class OrdersController extends AppController
     	$admin = Orders::find($id);
     	if($admin->delete())
     	{
-    		$request->session()->flash('success', 'Coupon deleted successfully.');
+    		$request->session()->flash('success', 'Order deleted successfully.');
     		return redirect()->route('admin.orders');
     	}
     	else
@@ -493,7 +494,7 @@ class OrdersController extends AppController
 
 	function switchStatus(Request $request, $field, $id)
 	{
-		if (!Permissions::hasPermission('diary_pages', 'update')) {
+		if (!Permissions::hasPermission('orders', 'update')) {
 		$request->session()->flash('error', 'Permission denied.');
 		return redirect()->route('admin.dashboard');
 		}
@@ -542,5 +543,57 @@ class OrdersController extends AppController
 			'addresses' => $addresses,
 		]);
 	}
-	
+
+	function selectStaff(Request $request, $id)
+	{
+		if (!Permissions::hasPermission('orders', 'update')) {
+		$request->session()->flash('error', 'Permission denied.');
+		return redirect()->route('admin.dashboard');
+		}
+		$data = $request->toArray();
+		$validator = Validator::make(
+		$request->toArray(),
+		[
+			'staff_id' => ['required', Rule::exists(Staff::class,'id')]
+		]
+		);
+		if (!$validator->fails()) {
+			$order = Orders::find($id);
+			if($order){
+				$updated = Orders::where('id', $id)->update([
+						'staff_id' => $data['staff_id'],
+					]);
+				if ($updated) {
+					$codes = [
+						'{order_number}' => $order->id,
+						'{customer_name}' => $order->customer_name,
+						'{customer_email}' => $order->email,
+						'{customer_contact}' => $order->customer ? $order->customer->phonenumber : null,
+                        '{address}' => $order->address.','.$order->area.','.$order->city.','.$order->state,
+                        '{booking_date}' => _d($order->booking_date),
+                        '{total_amount}' => $order->total_amount,
+                        '{payment_type}' => $order->payment_type,
+                       	'{company_name}' => Settings::get('company_name'),
+						'{staff_name}' =>  $order->staff ? $order->staff->first_name.' '.$order->staff->last_name : null,
+						'{staff_email}' =>  $order->staff ? $order->staff->email : null,
+						'{staff_contact}' =>  $order->staff ? $order->staff->phone_number : null,
+					];
+					General::sendTemplateEmail($order->customer->email, 'staff-assigned', $codes);
+					General::sendTemplateEmail($order->staff->email, 'order-assigned', $codes);
+					
+					$request->session()->flash('success', 'Staff assigned successfully.');
+			    	return redirect()->back()->withErrors($validator)->withInput();
+				} else {
+					$request->session()->flash('error', 'Staff could not be assigned successfully.');
+			    	return redirect()->back()->withErrors($validator)->withInput();
+				}
+			}else{
+				$request->session()->flash('error', trans('ORDER_NOT_FOUND'));
+				return redirect()->back()->withErrors($validator)->withInput();
+			}
+		} else {
+			$request->session()->flash('error', 'Please provide valid inputs.');
+			return redirect()->back()->withErrors($validator)->withInput();
+		}
+	}	
 }
