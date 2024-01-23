@@ -8,7 +8,7 @@
 						<h6 class="h2 text-white d-inline-block mb-0">Manage Customers</h6>
 					</div>
 					<div class="col-lg-6 col-5 text-right">
-						<a href="<?php echo route('admin.users') ?>" class="btn text-white"><i class="fa fa-arrow-left"></i> Back</a>
+						<a href="<?php echo route('admin.users') ?>" class="btn btn-neutral"><i class="fa fa-arrow-left"></i> Back</a>
 						<div class="dropdown" data-toggle="tooltip" data-title="More Actions">
 							<a class="btn btn-neutral" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 								<i class="fas fa-ellipsis-v"></i>
@@ -98,7 +98,7 @@
 						</div>
 					</div>
 					<div class="table-responsive">
-<!--!!!!! DO NOT REMOVE listing-table, mark_all  CLASSES. INCLUDE THIS IN ALL TABLES LISTING PAGES !!!!!-->
+						<!--!!!!! DO NOT REMOVE listing-table, mark_all  CLASSES. INCLUDE THIS IN ALL TABLES LISTING PAGES !!!!!-->
 						<table class="table align-items-center table-flush listing-table">
 							<thead class="thead-light">
 								<tr>

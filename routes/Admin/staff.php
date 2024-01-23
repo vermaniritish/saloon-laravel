@@ -25,3 +25,5 @@ Route::post('/staff/bulkActions/{action}', [StaffController::class, 'bulkActions
 
 Route::get('/staff/{id}/delete', [StaffController::class, 'delete'])
     ->name('admin.staff.delete');
+
+Route::post('/staff/{id}/add-doc', [StaffController::class,'addDocument'])->name('admin.staff.addDocument');

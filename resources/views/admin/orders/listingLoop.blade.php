@@ -1,3 +1,7 @@
+<?php
+	use App\Models\Admin\Settings;
+	$currency = Settings::get('currency_symbol'); 
+?>
 <?php foreach($listing->items() as $k => $row): ?>
 <tr>
 	<td>
@@ -14,16 +18,36 @@
 		</span>
 	</td>
 	<td>
-		<?php echo $row->customer_name ?>
+		<?php echo $row->customer_name ?? 'N/A'; ?>
+		<?php echo $row->customer ? ' - ' . $row->customer->phonenumber : ''; ?>
 	</td>
 	<td>
-		<?php echo _d($row->booking_date) ?>
+		<?php echo _d($row->booking_date) . ' ' . _time($row->booking_time); ?>
 	</td>
 	<td>
 		<?php echo $row->address ?>
 	</td>
 	<td>
-		<?php echo $row->total_amount ?>
+		<?php echo $currency . ' ' .$row->total_amount ?>
+	</td>
+	<td>
+	<div class="dropdown">
+		<?php $statusData = $status[$row->status] ?? null; ?>
+		<?php if ($statusData): ?>
+			<button class="btn btn-sm dropdown-toggle" style="<?php echo $statusData['styles']; ?>"
+					type="button" id="statusDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+					data-toggle="tooltip" title="{{ $row->statusBy ? ($row->statusBy->first_name . ($row->statusBy->last_name ? ' ' . $row->statusBy->last_name : '')) : null }}">
+				{{ $statusData['label'] }}
+			</button>
+			<input type="hidden" id="Currentstatus" value={{ $row->status }} >
+			<div class="dropdown-menu dropdown-menu-left" aria-labelledby="statusDropdown">
+				<?php $switchUrl = route('admin.order.switchStatus', ['field' => 'status', 'id' => $row->id]); ?>
+				<?php foreach ($status as $statusKey => $statusData): ?>
+					<a class="dropdown-item" href="javascript:;" data-value="<?php echo $statusKey; ?>" onclick="switch_diary_page_action('<?php echo $switchUrl; ?>', this)">{{ ucfirst($statusData['label']) }}</a>
+				<?php endforeach; ?>
+			</div>
+		<?php endif; ?>
+	</div>
 	</td>
 	<td>
 		<?php echo _dt($row->created) ?>

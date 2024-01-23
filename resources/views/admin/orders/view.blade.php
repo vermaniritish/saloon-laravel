@@ -1,7 +1,9 @@
 @extends('layouts.adminlayout')
 @section('content')
 <?php
-	use App\Models\Admin\Settings;
+
+use App\Models\Admin\Permissions;
+use App\Models\Admin\Settings;
 	$currency = Settings::get('currency_symbol'); 
 ?>
 	<div class="header bg-primary pb-6">
@@ -69,23 +71,14 @@
 								</tr>
 								<tr>
 									<th>Customer Name</th>
-									<td><?php echo $page->customer_name ?></td>
+									<td>
+										<?php echo $page->customer_name ?? 'N/A'; ?>
+										<?php echo $page->customer ? ' - ' . $page->customer->phonenumber : ''; ?>
+									</td>
 								</tr>
 								<tr>
 									<th>Address</th>
-									<td><?php echo $page->address ?></td>
-								</tr>
-								<tr>
-									<th>State</th>
-									<td><?php echo $page->state ?></td>
-								</tr>
-								<tr>
-									<th>City</th>
-									<td><?php echo $page->city ?></td>
-								</tr>
-								<tr>
-									<th>Area</th>
-									<td><?php echo $page->area ?></td>
+									<td><?php echo implode(', ', array_filter([$page->address, $page->state, $page->city, $page->area])); ?></td>
 								</tr>
 								<tr>
 									<th>Booking Date</th>
@@ -99,56 +92,36 @@
 									<th>Payment Type</th>
 									<td><?php echo ($page->payment_type) ?></td>
 								</tr>
+								<tr>
+									<th>Created On</th>
+									<td><?php echo _dt($page->created) ?></td>
+								</tr>
 							</tbody>
 						</table>
 					</div>
 				</div>
-				<div class="card">
-					<div class="card-header">
-						<div class="row align-items-center">
-							<div class="col">
-								<h3 class="mb-0">Products</h3>
+				<?php if(Permissions::hasPermission('products', 'listing')): ?>
+					<div class="card listing-block">
+						<div class="card-header">
+							<div class="row align-items-center">
+								<div class="col-md-8">
+									<h3 class="mb-0">Ordered Product's</h3>
+								</div>
+								<div class="col-md-4">
+									<div class="input-group input-group-alternative input-group-merge">
+										<div class="input-group-prepend">
+											<span class="input-group-text"><i class="fas fa-search"></i></span>
+										</div>
+										<input class="form-control listing-search" placeholder="Search" type="text" value="<?php echo (isset($_GET['search']) && $_GET['search'] ? $_GET['search'] : '') ?>">
+									</div>
+								</div>
 							</div>
 						</div>
-					</div>
-					<div class="p-0 card-body remarks-block">
-						<div class="table-responsive small-max-card-table">
-							<!-- Projects table -->
-							<table class="table align-items-center table-flush">
-								<thead class="thead-light">
-									<tr>
-										<th scope="col" style="width: 20%;">Id</th>
-										<th scope="col" style="width: 20%;">Product</th>
-										<th scope="col" style="width: 30%;">Quantity</th>
-										<th scope="col" style="width: 30%;">Price</th>
-									</tr>
-								</thead>
-								<tbody>
-									@forelse ($page->products as $product)
-										<tr>
-											<td scope="row">
-												<a href="<?php echo route('admin.products.view', ['id' => $product->id]) ?>"><?php echo $product->id; ?></a>
-											</td>
-											<td>
-												{{ $product->title }}
-											</td>
-											<td>
-												{{ $product->quantity }}
-											</td>
-											<td>
-												{{ $currency }} {{ $product->amount }}
-											</td>
-										</tr>
-									@empty
-										<tr>
-											<td colspan="3">No orders found</td>
-										</tr>
-									@endforelse
-								</tbody>
-							</table>
+						<div class="card-body p-0">
+							@include('admin.orders.orderedProducts.index',['listing' => $listing])
 						</div>
 					</div>
-				</div>
+				<?php endif; ?>
 			</div>
 			<div class="col-xl-4 order-xl-1">
 				<?php if($page->image): ?>
@@ -198,98 +171,64 @@
 							</div>
 						</div>
 					</div>
-					<div class="table-responsive">
-						<!-- Projects table -->
-						<table class="table align-items-center table-flush">
-							<tbody>
-								<tr>
-									<th scope="row">
-										Status
-									</th>
-									<td>
-										<div class="dropdown">
-											<?php $statusData = $status[$page->status] ?? null; ?>
-											<?php if ($statusData): ?>
-												<button class="btn btn-sm dropdown-toggle" style="<?php echo $statusData['styles']; ?>"
-														type="button" id="statusDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-														data-toggle="tooltip" title="{{ $page->statusBy ? ($page->statusBy->first_name . ($page->statusBy->last_name ? ' ' . $page->statusBy->last_name : '')) : null }}">
-													{{ $statusData['label'] }}
-												</button>
-												<input type="hidden" id="Currentstatus" value={{ $page->status }} >
-												<div class="dropdown-menu dropdown-menu-left" aria-labelledby="statusDropdown">
-													<?php $switchUrl = route('admin.order.switchStatus', ['field' => 'status', 'id' => $page->id]); ?>
-													<?php foreach ($status as $statusKey => $statusData): ?>
-														<a class="dropdown-item" href="javascript:;" data-value="<?php echo $statusKey; ?>" onclick="switch_diary_page_action('<?php echo $switchUrl; ?>', this)">{{ ucfirst($statusData['label']) }}</a>
+					<div class="card-body">
+						<div class="table-responsive">
+							<!-- Projects table -->
+							<table class="table align-items-center table-flush">
+								<tbody>
+									<tr>
+										<th scope="row">
+											Status
+										</th>
+										<td>
+											<div class="dropdown">
+												<?php $statusData = $status[$page->status] ?? null; ?>
+												<?php if ($statusData): ?>
+													<button class="btn btn-sm dropdown-toggle" style="<?php echo $statusData['styles']; ?>"
+															type="button" id="statusDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+															data-toggle="tooltip" title="{{ $page->statusBy ? ($page->statusBy->first_name . ($page->statusBy->last_name ? ' ' . $page->statusBy->last_name : '')) : null }}">
+														{{ $statusData['label'] }}
+													</button>
+													<input type="hidden" id="Currentstatus" value={{ $page->status }} >
+													<div class="dropdown-menu dropdown-menu-left" aria-labelledby="statusDropdown">
+														<?php $switchUrl = route('admin.order.switchStatus', ['field' => 'status', 'id' => $page->id]); ?>
+														<?php foreach ($status as $statusKey => $statusData): ?>
+															<a class="dropdown-item" href="javascript:;" data-value="<?php echo $statusKey; ?>" onclick="switch_diary_page_action('<?php echo $switchUrl; ?>', this)">{{ ucfirst($statusData['label']) }}</a>
+														<?php endforeach; ?>
+													</div>
+												<?php endif; ?>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<th>
+											Staff
+										</th>
+										<td>
+											<div class="form-group">
+												<select class="form-control" name="staff_id" required>
+													<option value="">Select</option>
+													<?php 
+														foreach($staff as $s): 
+														$content =  $s->first_name . " " . $s->last_name . "<small class='badge badge-".($s->status ? "success" : "danger")."'>".($s->status ? "Active" : "Inactive")."</small>";
+													?>
+													<option 
+														value="<?php echo $s->id ?>" 
+														<?php echo old('staff_id') == $s->id  ? 'selected' : '' ?>
+														data-content="<?php echo $content ?>"
+													>
+														<?php echo $s->name; ?>		
+													</option>
 													<?php endforeach; ?>
-												</div>
-											<?php endif; ?>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<th scope="row">
-										Created By
-									</th>
-									<td>
-										<?php echo isset($page->owner) ? $page->owner->first_name . ' ' . $page->owner->last_name : "-" ?>
-									</td>
-								</tr>
-								<tr>
-									<th scope="row">
-										Created On
-									</th>
-									<td>
-										<?php echo _dt($page->created) ?>
-									</td>
-								</tr>
-								<tr>
-									<th scope="row">
-										Last Modified
-									</th>
-									<td>
-										<?php echo _dt($page->modified) ?>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
-				<div class="card">
-					<div class="card-header">
-						<div class="row align-items-center">
-							<div class="col-7">
-								<h3 class="mb-0"><span id="total-comments"></span> Comments</h3>
-							</div>
-							<div class="col text-right">
-								<button type="button" onclick="$('#post-comments').slideToggle();" class="btn btn-sm btn-primary add-fault-log"><i class="fa fa-plus"></i> Add Comment</button>
-							</div>
-						</div>
-					</div>
-					<div class="post-comments px-2 pt-3" id="post-comments" style="display:none">
-						<input type="hidden" value="<?php echo $page && $page->id ? $page->id : '' ?>" />
-						<div class="row post-block">
-							<div class="col-md-12">
-								<div class="form-group">
-									<textarea class="form-control" placeholder="Enter your comment." maxlength="255" name="remarks"></textarea>
-									<small class="text-right autofill d-none"><a href="javascript:;">Auto-fill Response</a></small>
-								</div>
-								<?php if($page && $page->id): ?>
-								<div class="form-group text-right">
-									<small class="text-danger d-none error"></small>
-									<button type="button" id="save-comment" class="btn btn-sm btn-primary text-uppercase">comment</button>
-								</div>
-								<?php endif; ?>
-							</div>
-						</div>
-					</div>
-					<div class="app px-2">
-						<div class="bg-white rounded-3 shadow-sm p-1">
-							<div class="remarks-block">
-								<div class="py-2" id="trip-comments" data-id="<?php echo $page && $page->id ? $page->id : '' ?>" data-module="order">
-									<p class="text-center"><i class="fa fa-spin fa-spinner"></i></p>
-								</div>
-								<p class="text-center"><a href="javascript:;" class="btn btn-sm btn-primary load-more-remarks d-none">Load More</a></p>
-							</div>
+												</select>
+												@error('staff_id')
+													<small class="text-danger">{{ $message }}</small>
+												@enderror
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
 						</div>
 					</div>
 				</div>
@@ -329,6 +268,45 @@
 							</div>
 							<div class="dropdown-divider"></div>
 						@endforeach
+					</div>
+				</div>
+				<div class="card">
+					<div class="card-header">
+						<div class="row align-items-center">
+							<div class="col-7">
+								<h3 class="mb-0"><span id="total-comments"></span> Comments</h3>
+							</div>
+							<div class="col text-right">
+								<button type="button" onclick="$('#post-comments').slideToggle();" class="btn btn-sm btn-primary add-fault-log"><i class="fa fa-plus"></i> Add Comment</button>
+							</div>
+						</div>
+					</div>
+					<div class="post-comments px-2 pt-3" id="post-comments" style="display:none">
+						<input type="hidden" value="<?php echo $page && $page->id ? $page->id : '' ?>" />
+						<div class="row post-block">
+							<div class="col-md-12">
+								<div class="form-group">
+									<textarea class="form-control" placeholder="Enter your comment." maxlength="255" name="remarks"></textarea>
+									<small class="text-right autofill d-none"><a href="javascript:;">Auto-fill Response</a></small>
+								</div>
+								<?php if($page && $page->id): ?>
+								<div class="form-group text-right">
+									<small class="text-danger d-none error"></small>
+									<button type="button" id="save-comment" class="btn btn-sm btn-primary text-uppercase">comment</button>
+								</div>
+								<?php endif; ?>
+							</div>
+						</div>
+					</div>
+					<div class="app px-2">
+						<div class="bg-white rounded-3 shadow-sm p-1">
+							<div class="remarks-block">
+								<div class="py-2" id="trip-comments" data-id="<?php echo $page && $page->id ? $page->id : '' ?>" data-module="order">
+									<p class="text-center"><i class="fa fa-spin fa-spinner"></i></p>
+								</div>
+								<p class="text-center"><a href="javascript:;" class="btn btn-sm btn-primary load-more-remarks d-none">Load More</a></p>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

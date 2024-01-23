@@ -5,6 +5,7 @@ namespace App\Models\Admin;
 use App\Models\AppModel;
 use Illuminate\Http\Request;
 use App\Libraries\General;
+use App\Models\User;
 use App\Traits\LogsCauserInfo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
@@ -28,6 +29,26 @@ class Orders extends AppModel
     public function owner()
     {
         return $this->belongsTo(Admins::class, 'created_by', 'id');
+    }
+
+    /**
+    * Order -> Admins belongsTO relation
+    * 
+    * @return Admins
+    */
+    public function customer()
+    {
+        return $this->belongsTo(User::class, 'customer_id', 'id');
+    }
+
+    /**
+    * Order -> Admins belongsTO relation
+    * 
+    * @return Admins
+    */
+    public function statusBy()
+    {
+        return $this->belongsTo(Admins::class, 'status_by', 'id');
     }
     
     /**
@@ -141,7 +162,7 @@ class Orders extends AppModel
         $listing = Orders::select([
                 'orders.*',
                 'owner.first_name as owner_first_name',
-                'owner.last_name as owner_last_name'
+                'owner.last_name as owner_last_name',
             ])
             ->leftJoin('admins as owner', 'owner.id', '=', 'orders.created_by')
             ->orderBy($orderBy, $direction);
@@ -224,6 +245,19 @@ class Orders extends AppModel
         $record = Orders::where('id', $id)
             ->with([
                 'owner' => function($query) {
+                    $query->select([
+                            'id',
+                            'first_name',
+                            'last_name'
+                        ]);
+                },
+                'customer' => function($query) {
+                    $query->select([
+                            'id',
+                            'phonenumber',
+                        ]);
+                },
+                'statusBy' => function($query) {
                     $query->select([
                             'id',
                             'first_name',

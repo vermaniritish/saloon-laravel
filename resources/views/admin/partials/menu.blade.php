@@ -163,37 +163,7 @@
     <ul class="navbar-nav mb-md-3">
         <?php if(AdminAuth::isAdmin()): ?>
         <?php $active = strpos(request()->route()->getAction()['as'], 'admin.settings.home') > -1 || strpos(request()->route()->getAction()['as'], 'admin.searchSugessions') > -1; ?>
-        <li class="nav-item">
-            <a class="nav-link<?php echo ($active ? ' active' : '') ?>" href="#home_activites" data-toggle="collapse">
-                <i class="fa fa-pager"></i>
-                <span class="nav-link-text">Home Settings</span>
-            </a>
-            <ul class="list-unstyled submenu collapse<?php echo ($active ? ' show' : '') ?>" id="home_activites">
-                <li class="nav-item">
-                    <a class="nav-link<?php echo (request()->route()->getAction()['as'] == 'admin.settings.home' ? ' active' : '') ?>" href="<?php echo route('admin.settings.home') ?>">
-                        <span class="badge badge-dot mr-4">
-                            <i class="bg-gray"></i>
-                            <span class="status">Home Page</span>
-                        </span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link<?php echo (request()->route()->getAction()['as'] == 'admin.searchSugessions' ? ' active' : '') ?>" href="<?php echo route('admin.searchSugessions') ?>">
-                        <span class="badge badge-dot mr-4">
-                            <i class="bg-gray"></i>
-                            <span class="status">Search Sugessions</span>
-                        </span>
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <?php $active = strpos(request()->route()->getAction()['as'], 'admin.settings.footerLinks') > -1; ?>
-        <li class="nav-item">
-            <a class="nav-link<?php echo $active ? ' active' : '' ?>" href="<?php echo route('admin.settings.footerLinks') ?>">
-                <i class="fa fa-link"></i>
-                <span class="nav-link-text">Footer Links</span>
-            </a>
-        </li>
+
         <?php $active = strpos(request()->route()->getAction()['as'], 'admin.emailTemplates') > -1; ?>
         <li class="nav-item">
             <a class="nav-link<?php echo $active ? ' active' : '' ?>" href="<?php echo route('admin.emailTemplates') ?>">

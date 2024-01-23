@@ -192,7 +192,8 @@ class StaffController extends AppController
     		return redirect()->route('admin.dashboard');
     	}
     	$page = Staff::get($id);
-		$orders = Orders::select('id', 'total_amount', 'created')
+		$orders = Orders::select('id', 'total_amount', 'created','status','status_by')
+						->with('statusBy')
 						->where('staff_id', $id)
 						->whereNull('deleted_at')
 						->with([
@@ -200,12 +201,13 @@ class StaffController extends AppController
 								$query->select('products.id', 'title', 'amount', 'quantity');
 							},
 						])
-						->get();	
+						->get();
     	if($page)
     	{
 	    	return view("admin/staff/view", [
     			'page' => $page,
-				'orders' => $orders
+				'orders' => $orders,
+				'status' => Orders::getStaticData()['status'],
     		]);
 		}
 		else
@@ -375,4 +377,55 @@ class StaffController extends AppController
 	        ], 200);	
     	}
     }
+
+    function addDocument(Request $request, $id)
+    {
+        if(!Permissions::hasPermission('staff', 'create'))
+        {
+            $request->session()->flash('error', 'Permission denied.');
+            return redirect()->route('admin.dashboard');
+        }
+        $staff = Staff::findOrFail($id);
+        $data = $request->toArray();
+        unset($data['_token']);
+        $validator = Validator::make(
+            $request->toArray(),
+            [
+                'title' => ['required'],
+                'file' =>['required', 'json'],          
+            ]
+        );
+        if (!$validator->fails()) {
+            if($staff){
+                $data['staff_id'] = $staff->id;
+                $staffDocument = StaffDocuments::create($data);
+                if($staffDocument){
+                    Reminder::createOrUpdateReminder($staffDocument, 'user-documents');
+                    return Response()->json([
+                        'status' => true,
+                        'message' => 'Document added successfully.',
+                        'id' => $id
+                    ]);
+                }
+                else {
+                    return Response()->json([
+                        'status' => false,
+                        'message' => 'Document could not be saved. Please try again.'
+                    ], 400);
+                }
+            }
+            else {
+                return Response()->json([
+                    'status' => false,
+                    'message' => 'User not found.'
+                ], 400);
+            }   
+        }   else {
+            return Response()->json([
+                'status' => false,
+                'message' => current(current($validator->errors()->getMessages()))
+            ], 400);
+        }
+    }
+
 }

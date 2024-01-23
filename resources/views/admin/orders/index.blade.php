@@ -16,13 +16,31 @@
 					</div>
 				</div>
 			</div>
+			<div class="row">
+				<div class="col-md-12 mb-3">
+					<ul class="nav nav-pills">
+						<li class="nav-item">
+							<a class="nav-link active" id="all-tab" data-toggle="pill" href="#all">All</a>
+						</li>
+						@foreach($status as $statusKey => $statusData)
+							<li class="nav-item">
+								<a class="nav-link" id="{{ strtolower($statusKey) }}-tab" data-toggle="pill" href="#{{ strtolower($statusKey) }}">{{ $statusData['label'] }}</a>
+							</li>
+						@endforeach
+					</ul>
+					<div class="tab-content">
+						<div class="tab-pane fade show active" id="all">
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 	<!-- Page content -->
 	<div class="container-fluid mt--6">
 		<div class="row">
 			<div class="col">
-<!--!!!!! DO NOT REMOVE listing-block CLASS. INCLUDE THIS IN PARENT DIV OF TABLE ON LISTING PAGES !!!!!-->
+				<!--!!!!! DO NOT REMOVE listing-block CLASS. INCLUDE THIS IN PARENT DIV OF TABLE ON LISTING PAGES !!!!!-->
 				<div class="card listing-block">
 					<!--!! FLAST MESSAGES !!-->
 					@include('admin.partials.flash_messages')
@@ -82,7 +100,7 @@
 						</div>
 					</div>
 					<div class="table-responsive">
-<!--!!!!! DO NOT REMOVE listing-table, mark_all  CLASSES. INCLUDE THIS IN ALL TABLES LISTING PAGES !!!!!-->
+					<!--!!!!! DO NOT REMOVE listing-table, mark_all  CLASSES. INCLUDE THIS IN ALL TABLES LISTING PAGES !!!!!-->
 						<table class="table align-items-center table-flush listing-table">
 							<thead class="thead-light">
 								<tr>
@@ -92,7 +110,7 @@
 											<label class="custom-control-label" for="mark_all"></label>
 										</div>
 									</th>
-									<th class="sort" width="15%">
+									<th class="sort" width="5%">
 										<!--- MAKE SURE TO USE PROPOER FIELD IN data-field AND PROPOER DIRECTION IN data-sort -->
 										Id
 										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'orders.id' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
@@ -103,7 +121,7 @@
 										<i class="fas fa-sort" data-field="orders.id" data-sort="asc"></i>
 										<?php endif; ?>
 									</th>
-									<th class="sort" width="15%">
+									<th class="sort" width="20%">
 										Customer Name
 										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'orders.customer_name' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
 										<i class="fas fa-sort-down active" data-field="orders.customer_name" data-sort="asc"></i>
@@ -114,7 +132,7 @@
 										<?php endif; ?>
 									</th>
 									<th class="sort" width="15%">
-										Booking Date
+										Booking Datetime
 										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'orders.booking_date' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
 										<i class="fas fa-sort-down active" data-field="orders.booking_date" data-sort="asc"></i>
 										<?php elseif(isset($_GET['sort']) && $_GET['sort'] == 'orders.booking_date' && isset($_GET['direction']) && $_GET['direction'] == 'desc'): ?>
@@ -125,6 +143,16 @@
 									</th>
 									<th class="sort" width="15%">
 										Address
+										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'orders.address' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
+										<i class="fas fa-sort-down active" data-field="orders.address" data-sort="asc"></i>
+										<?php elseif(isset($_GET['sort']) && $_GET['sort'] == 'orders.address' && isset($_GET['direction']) && $_GET['direction'] == 'desc'): ?>
+										<i class="fas fa-sort-up active" data-field="orders.address" data-sort="desc"></i>
+										<?php else: ?>
+										<i class="fas fa-sort" data-field="orders.address"></i>
+										<?php endif; ?>
+									</th>
+									<th class="sort" width="10%">
+										Amount
 										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'orders.total_amount' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
 										<i class="fas fa-sort-down active" data-field="orders.total_amount" data-sort="asc"></i>
 										<?php elseif(isset($_GET['sort']) && $_GET['sort'] == 'orders.total_amount' && isset($_GET['direction']) && $_GET['direction'] == 'desc'): ?>
@@ -133,14 +161,14 @@
 										<i class="fas fa-sort" data-field="orders.total_amount"></i>
 										<?php endif; ?>
 									</th>
-									<th class="sort" width="15%">
-										Amount
-										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'orders.total_amount' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
-										<i class="fas fa-sort-down active" data-field="orders.total_amount" data-sort="asc"></i>
-										<?php elseif(isset($_GET['sort']) && $_GET['sort'] == 'orders.total_amount' && isset($_GET['direction']) && $_GET['direction'] == 'desc'): ?>
-										<i class="fas fa-sort-up active" data-field="orders.total_amount" data-sort="desc"></i>
+									<th class="sort" width="10%">
+										Status
+										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'orders.status' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
+										<i class="fas fa-sort-down active" data-field="orders.status" data-sort="asc"></i>
+										<?php elseif(isset($_GET['sort']) && $_GET['sort'] == 'orders.status' && isset($_GET['direction']) && $_GET['direction'] == 'desc'): ?>
+										<i class="fas fa-sort-up active" data-field="orders.status" data-sort="desc"></i>
 										<?php else: ?>
-										<i class="fas fa-sort" data-field="orders.total_amount"></i>
+										<i class="fas fa-sort" data-field="orders.status"></i>
 										<?php endif; ?>
 									</th>
 									<th class="sort" width="15%">

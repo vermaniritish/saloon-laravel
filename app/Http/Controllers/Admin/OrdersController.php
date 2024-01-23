@@ -22,6 +22,7 @@ use Illuminate\Support\Str;
 use App\Libraries\FileSystem;
 use App\Http\Controllers\Admin\AppController;
 use App\Models\Admin\Addresses;
+use App\Models\Admin\OrderProductRelation;
 use App\Models\Admin\Orders;
 use App\Models\Admin\OrderStatusHistory;
 use App\Models\Admin\ProductCategories;
@@ -79,6 +80,11 @@ class OrdersController extends AppController
     		$where[] = 'orders.created_by IN ('.$admins.')';
     	}
 
+		if($request->has('status') && $request->get('status')) 
+		{
+			$where['orders.status'] = $request->get('driver_id');
+		}
+
     	$listing = Orders::getListing($request, $where);
 
 
@@ -106,6 +112,7 @@ class OrdersController extends AppController
 	    	return view(
 	    		"admin/orders/index", 
 	    		[
+					'status' => Orders::getStaticData()['status'],
 	    			'listing' => $listing,
 	    			'admins' => $filters['admins']
 	    		]
@@ -156,7 +163,6 @@ class OrdersController extends AppController
 	            $data,
 	            [
 					'customer_id' => ['required', Rule::exists(User::class,'id')],
-					'staff_id' => ['required', Rule::exists(Staff::class,'id')],
 					'product_id' => ['required', 'array'],
     				'product_id.*' => ['required', Rule::exists(Products::class,'id')],
 					'booking_date' => ['required', 'date'],
@@ -238,21 +244,11 @@ class OrdersController extends AppController
 				'users.first_name',
 				'users.last_name',
 				'users.status',
+				'users.phonenumber',
 			],
 			[
 			],
 			'concat(users.first_name, users.last_name) desc'
-		);
-		$staff = Staff::getAll(
-			[
-				'staff.id',
-				'staff.first_name',
-				'staff.last_name',
-				'staff.status',
-			],
-			[
-			],
-			'concat(staff.first_name, staff.last_name) desc'
 		);
 		$productCategories = ProductCategories::with('products')
 		->get(['id', 'title']); 
@@ -284,7 +280,6 @@ class OrdersController extends AppController
 			'coupons' => $coupons,
 			'paymentType' => Orders::getStaticData()['paymentType'],
 			'tax_percentage' => Settings::get('tax_percentage'),
-			'staff' => $staff
 	    ]);
     }
 
@@ -296,12 +291,27 @@ class OrdersController extends AppController
     		return redirect()->route('admin.dashboard');
     	}
     	$page = Orders::get($id);
+		$where = ['order_products.order_id' => $id];
+		$listing = OrderProductRelation::getListing($request, $where);
+		$staff = Staff::getAll(
+			[
+				'staff.id',
+				'staff.first_name',
+				'staff.last_name',
+				'staff.status',
+			],
+			[
+			],
+			'concat(staff.first_name, staff.last_name) desc'
+		);
     	if($page)
     	{
 	    	return view("admin/orders/view", [
     			'page' => $page,
 				'status' => Orders::getStaticData()['status'],
-				'history' => OrderStatusHistory::where('order_id', $id)->get()
+				'history' => OrderStatusHistory::where('order_id', $id)->get(),
+				'listing' => $listing,
+				'staff' => $staff
     		]);
 		}
 		else

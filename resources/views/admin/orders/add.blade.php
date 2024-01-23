@@ -48,7 +48,7 @@
 													<option value="">Select</option>
 													<?php 
 														foreach($users as $s): 
-														$content =  $s->first_name . " " . $s->last_name . "<small class='badge badge-".($s->status ? "success" : "danger")."'>".($s->status ? "Active" : "Inactive")."</small>";
+														$content = $s->first_name . " " . $s->last_name . " - " . $s->phonenumber . "<small class='badge badge-".($s->status ? "success" : "danger")."'>".($s->status ? "Active" : "Inactive")."</small>";
 													?>
 													<option 
 														value="<?php echo $s->id ?>" 
@@ -125,29 +125,6 @@
 												</select>
 												@error('payment_type')
 													<small class="text-danger">{{ $message }}</small>
-												@enderror
-											</div>
-										</div>
-										<div class="col-md-6">
-											<div class="form-group">
-												<label class="form-control-label">Staff</label>
-												<select v-model="selectedStaff" class="form-control no-selectpicker" name="staff_id" required>
-													<option value="">Select</option>
-													<?php 
-														foreach($staff as $s): 
-														$content =  $s->first_name . " " . $s->last_name . "<small class='badge badge-".($s->status ? "success" : "danger")."'>".($s->status ? "Active" : "Inactive")."</small>";
-													?>
-													<option 
-														value="<?php echo $s->id ?>" 
-														<?php echo old('staff_id') == $s->id  ? 'selected' : '' ?>
-														data-content="<?php echo $content ?>"
-													>
-														<?php echo $s->name; ?>		
-													</option>
-													<?php endforeach; ?>
-												</select>
-												@error('staff_id')
-												<small class="text-danger">{{ $message }}</small>
 												@enderror
 											</div>
 										</div>

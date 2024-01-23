@@ -15,7 +15,7 @@
 		
 	</td>
 	<td>
-		<?php echo $row->name ?>
+		<?php echo $row->name. ' - ' . $row->phonenumber ?>
 	</td>
 	<td>
 		<?php echo $row->seller ? 'Seller' : 'Customer' ?>
