@@ -74,6 +74,19 @@ class OrdersController extends AppController
     			];
     	}
 
+		if($request->get('booking_date'))
+    	{
+    		$createdOn = $request->get('booking_date');
+    		if(isset($createdOn[0]) && !empty($createdOn[0]))
+    			$where['orders.booking_date >= ?'] = [
+    				date('Y-m-d 00:00:00', strtotime($createdOn[0]))
+    			];
+    		if(isset($createdOn[1]) && !empty($createdOn[1]))
+    			$where['orders.booking_date <= ?'] = [
+    				date('Y-m-d 23:59:59', strtotime($createdOn[1]))
+    			];
+    	}
+
     	if($request->get('admins'))
     	{
     		$admins = $request->get('admins');

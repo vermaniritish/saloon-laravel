@@ -6,8 +6,21 @@
 		<i class="fas fa-filter"></i> Filters
 	</a>
 	<div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-		<form action="<?php echo route('admin.coupons') ?>" id="filters-form">
+		<form action="<?php echo route('admin.orders') ?>" id="filters-form">
 			<a href="javascript:;" class="float-right px-2 closeit"><i class="fa fa-times-circle"></i></a>
+			<div class="dropdown-item">
+				<div class="row">
+					<div class="col-md-6">
+						<label class="form-control-label">Booking Date</label>
+						<input class="form-control" type="date" name="booking_date[0]" value="<?php echo (isset($_GET['booking_date'][0]) && !empty($_GET['booking_date'][0]) ? $_GET['booking_date'][0] : '' ) ?>" placeholder="DD-MM-YYYY" >
+					</div>
+					<div class="col-md-6">
+						<label class="form-control-label">&nbsp;</label>
+						<input class="form-control" type="date" name="booking_date[1]" value="<?php echo (isset($_GET['booking_date'][1]) && !empty($_GET['booking_date'][1]) ? $_GET['booking_date'][1] : '' ) ?>" placeholder="DD-MM-YYYY">
+					</div>
+				</div>
+			</div>
+			<div class="dropdown-divider"></div>
 			<div class="dropdown-item">
 				<div class="row">
 					<div class="col-md-12">
@@ -34,7 +47,7 @@
 				</div>
 			</div>
 			<div class="dropdown-divider"></div>
-			<a href="<?php echo route('admin.coupons') ?>" class="btn btn-sm py-2 px-3 float-left">
+			<a href="<?php echo route('admin.orders') ?>" class="btn btn-sm py-2 px-3 float-left">
 				Reset All
 			</a>
 			<button href="#" class="btn btn-sm py-2 px-3 btn-primary float-right">
