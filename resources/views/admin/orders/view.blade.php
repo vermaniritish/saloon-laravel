@@ -167,11 +167,11 @@ use App\Models\Admin\Settings;
 							<tbody>
 								<tr>
 									<th>Subtotal</th>
-									<td><?php echo $page->subtotal ?></td>
+									<td><?php echo $currency.' '.$page->subtotal ?></td>
 								</tr>
 								<tr>
 									<th>Discount</th>
-									<td><?php echo $page->discount ?></td>
+									<td><?php echo $currency.' '.$page->discount ?></td>
 								</tr>
 								<tr>
 									<th>Tax & Charges</th>
@@ -179,7 +179,20 @@ use App\Models\Admin\Settings;
 								</tr>
 								<tr>
 									<th>Total Amount</th>
-									<td><?php echo $page->total_amount ?></td>
+									<td><?php echo $currency.' '.$page->total_amount ?></td>
+								</tr>
+								<tr>
+									<th>Applied Coupon</th>
+									<td>
+										<?php if ($page->coupon): ?>
+											<a href="{{ route('admin.coupons.view', ['id' => $page->coupon->id]) }}">
+												{{ $page->coupon->title }}
+											</a>
+										<?php else: ?>
+											Coupon not applied.
+										<?php endif; ?>
+									</td>
+
 								</tr>
 							</tbody>
 						</table>

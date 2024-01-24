@@ -72,6 +72,15 @@ class Orders extends AppModel
     }
 
     /**
+    * Order -> Staff hasOne relation
+    * 
+    * @return Staff
+    */
+    public function coupon()
+    {
+        return $this->hasOne(Coupons::class, 'id','coupon_code_id');
+    }
+    /**
     * Get resize images
     *
     * @return array
