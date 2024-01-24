@@ -547,47 +547,85 @@ class OrdersController extends AppController
 	function selectStaff(Request $request, $id)
 	{
 		if (!Permissions::hasPermission('orders', 'update')) {
-		$request->session()->flash('error', 'Permission denied.');
-		return redirect()->route('admin.dashboard');
+			$request->session()->flash('error', 'Permission denied.');
+			return redirect()->route('admin.dashboard');
 		}
+	
 		$data = $request->toArray();
 		$validator = Validator::make(
-		$request->toArray(),
-		[
-			'staff_id' => ['required', Rule::exists(Staff::class,'id')]
-		]
-		);
-		if (!$validator->fails()) {
-			$order = Orders::find($id);
-			if($order){
-				$updated = Orders::where('id', $id)->update([
+			$request->toArray(),
+			[
+				'staff_id' => ['required', Rule::exists(Staff::class, 'id')],
+				]
+			);
+			
+			if (!$validator->fails()) {
+				$order = Orders::find($id);
+			if ($order) {
+				$oldStaffId = $order->staff_id;
+				if(!$oldStaffId){
+					$updated = Orders::where('id', $id)->update([
 						'staff_id' => $data['staff_id'],
 					]);
-				if ($updated) {
+					$order = $order->fresh();
 					$codes = [
 						'{order_number}' => $order->id,
 						'{customer_name}' => $order->customer_name,
-						'{customer_email}' => $order->email,
+						'{customer_email}' => $order->customer->email,
 						'{customer_contact}' => $order->customer ? $order->customer->phonenumber : null,
-                        '{address}' => $order->address.','.$order->area.','.$order->city.','.$order->state,
-                        '{booking_date}' => _d($order->booking_date),
-                        '{total_amount}' => Settings::get('currency') .' '. $order->total_amount,
-                        '{payment_type}' => $order->payment_type,
-                       	'{company_name}' => Settings::get('company_name'),
+						'{address}' => $order->address.','.$order->area.','.$order->city.','.$order->state,
+						'{booking_date}' => _d($order->booking_date),
+						'{total_amount}' => Settings::get('currency') .' '. $order->total_amount,
+						'{payment_type}' => $order->payment_type,
+						'{company_name}' => Settings::get('company_name'),
 						'{staff_name}' =>  $order->staff ? $order->staff->first_name.' '.$order->staff->last_name : null,
 						'{staff_email}' =>  $order->staff ? $order->staff->email : null,
 						'{staff_contact}' =>  $order->staff ? $order->staff->phone_number : null,
 					];
-					General::sendTemplateEmail($order->customer->email, 'staff-assigned', $codes);
-					General::sendTemplateEmail($order->staff->email, 'order-assigned', $codes);
-					
+					if ($updated) {
+						General::sendTemplateEmail($order->customer->email, 'staff-assigned', $codes);
+						General::sendTemplateEmail($order->staff->email, 'order-assigned', $codes);
+					}
+				} else{
+					$updated = Orders::where('id', $id)->update([
+						'staff_id' => $data['staff_id'],
+					]);
+					$order = $order->fresh();
+					$codes = [
+						'{order_number}' => $order->id,
+						'{customer_name}' => $order->customer_name,
+						'{customer_email}' => $order->customer->email,
+						'{customer_contact}' => $order->customer ? $order->customer->phonenumber : null,
+						'{address}' => $order->address.','.$order->area.','.$order->city.','.$order->state,
+						'{booking_date}' => _d($order->booking_date),
+						'{total_amount}' => Settings::get('currency') .' '. $order->total_amount,
+						'{payment_type}' => $order->payment_type,
+						'{company_name}' => Settings::get('company_name'),
+						'{staff_name}' =>  $order->staff ? $order->staff->first_name.' '.$order->staff->last_name : null,
+						'{staff_email}' =>  $order->staff ? $order->staff->email : null,
+						'{staff_contact}' =>  $order->staff ? $order->staff->phone_number : null,
+					];
+					if ($oldStaffId != $data['staff_id']) {
+						$oldStaff = Staff::find($oldStaffId);
+						if ($oldStaff) {
+							General::sendTemplateEmail($oldStaff->email, 'order-unassigned', $codes);
+							General::sendTemplateEmail($order->customer->email, 'staff-reassigned', $codes);
+						}
+						$newStaff = Staff::find($data['staff_id']);
+						if ($newStaff) {
+							General::sendTemplateEmail($newStaff->email, 'staff-reassigned', $codes);
+						}
+					}
+				}
+				if ($updated) {
 					$request->session()->flash('success', 'Staff assigned successfully.');
-			    	return redirect()->back()->withErrors($validator)->withInput();
+					return redirect()->back()->withErrors($validator)->withInput();
 				} else {
 					$request->session()->flash('error', 'Staff could not be assigned successfully.');
-			    	return redirect()->back()->withErrors($validator)->withInput();
+					return redirect()->back()->withErrors($validator)->withInput();
 				}
-			}else{
+			} 
+			else {
 				$request->session()->flash('error', trans('ORDER_NOT_FOUND'));
 				return redirect()->back()->withErrors($validator)->withInput();
 			}
@@ -595,5 +633,5 @@ class OrdersController extends AppController
 			$request->session()->flash('error', 'Please provide valid inputs.');
 			return redirect()->back()->withErrors($validator)->withInput();
 		}
-	}	
+	}
 }
