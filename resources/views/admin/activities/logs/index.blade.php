@@ -25,7 +25,7 @@
 					<!-- Card header -->
 					<div class="card-header border-0">
 						<div class="heading">
-							<h3 class="mb-0">Here Is Your Email Logs!</h3>
+							<h3 class="mb-0">Here Is Your Activity Logs!</h3>
 						</div>
 						<div class="actions">
 							<div class="input-group input-group-alternative input-group-merge">

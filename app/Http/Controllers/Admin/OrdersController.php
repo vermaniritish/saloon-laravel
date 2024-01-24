@@ -571,7 +571,7 @@ class OrdersController extends AppController
 						'{customer_contact}' => $order->customer ? $order->customer->phonenumber : null,
                         '{address}' => $order->address.','.$order->area.','.$order->city.','.$order->state,
                         '{booking_date}' => _d($order->booking_date),
-                        '{total_amount}' => $order->total_amount,
+                        '{total_amount}' => Settings::get('currency') .' '. $order->total_amount,
                         '{payment_type}' => $order->payment_type,
                        	'{company_name}' => Settings::get('company_name'),
 						'{staff_name}' =>  $order->staff ? $order->staff->first_name.' '.$order->staff->last_name : null,

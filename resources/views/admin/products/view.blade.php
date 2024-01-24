@@ -93,8 +93,8 @@
 									<th>Duration of Service</th>
 									<td>
 										<?php
-										if (isset($product->service_hours) && $product->service_hours > 0) {
-											echo $product->service_hours . ':' . $product->service_minutes;
+										if (isset($product->duration_of_service) && $product->duration_of_service) {
+											echo $product->duration_of_service;
 										} else {
 											echo 'Not specified';
 										}

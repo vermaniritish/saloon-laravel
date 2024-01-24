@@ -111,8 +111,7 @@ class Orders extends AppModel
                 $relation->product_title = $product->title;
                 $relation->product_description = $product->description;
                 $relation->amount = $product->price;
-                $relation->service_hours = $product->service_hours;
-                $relation->service_minutes = $product->service_minutes;
+                $relation->duration_of_service = $product->duration_of_service ? $product->duration_of_service : null;
                 $relation->order_id = $id;
                 $relation->product_id = $product->id;
                 $relation->quantity = $productData['quantity'];

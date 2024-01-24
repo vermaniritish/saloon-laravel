@@ -209,7 +209,7 @@ use App\Models\Admin\Settings;
 											?>
 											<option 
 												value="<?php echo $s->id ?>" 
-												<?php echo old('staff_id') == $s->id  ? 'selected' : '' ?>
+												<?php echo old('staff_id', $page->staff_id) == $s->id  ? 'selected' : '' ?>
 												data-content="<?php echo $content ?>"
 											>
 												<?php echo $s->name; ?>		
