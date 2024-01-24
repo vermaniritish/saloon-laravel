@@ -196,8 +196,7 @@ class ProductsController extends AppController
 	            [
 	                'title' => 'required',
 	                'description' => 'nullable',
-					'service_hours' => ['nullable', 'numeric', 'min:0', 'max:23'],
-					'service_minutes' => ['nullable', 'numeric', 'min:0', 'max:59'],
+					'duration_of_service' => ['nullable'],
 					'price' => ['required', 'numeric', 'min:0'],
 					'sale_price' => ['nullable', 'numeric', 'min:0'],
 	                'category' => 'required',
@@ -306,8 +305,7 @@ class ProductsController extends AppController
 			            [
 							'title' => 'required',
 							'description' => 'nullable',
-							'service_hours' => ['nullable', 'numeric', 'min:0', 'max:23'],
-							'service_minutes' => ['nullable', 'numeric', 'min:0', 'max:59'],
+							'duration_of_service' => ['nullable'],
 							'price' => ['required', 'numeric', 'min:0'],
 							'sale_price' => ['nullable', 'numeric', 'min:0'],
 							'category' => [

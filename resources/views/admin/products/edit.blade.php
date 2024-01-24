@@ -118,30 +118,18 @@
 										@enderror
 									</div>
 								</div>
-							</div>
-							<div class="row">
-								<div class="col-lg-12">
+								<div class="col-lg-6">
 									<div class="form-group">
-										<label class="form-control-label" for="input-username">Duration Of Service</label>
-										<div class="input-group">
-											<div class="col-md-6 pl-0">
-												<input value="{{ old('service_hours', $product->service_hours) }}" type="number" class="form-control" name="service_hours" placeholder="Enter hours" min="0" max="24">
-											</div>
-											<div class="col-md-6 pr-0">
-												<input value="{{ old('service_minutes', $product->service_minutes) }}" type="number" class="form-control" name="service_minutes" placeholder="Enter minutes" min="0" max="59">
-											</div>
-										</div>
-										@error('service_hours')
-											<small class="text-danger">{{ $message }}</small>
-										@enderror
-										@error('service_minutes')
+										<label class="form-control-label" for="input-email">Duration Of Service</label>
+										<input type="time" id="input-email" class="form-control" name="duration_of_service"  value="{{ old('duration_of_service', $page->duration_of_service) }}">
+										@error('duration_of_service')
 											<small class="text-danger">{{ $message }}</small>
 										@enderror
 									</div>
 								</div>
 							</div>
 							<div class="row">
-								<div class="col-lg-12">
+								<div class="col-lg-6">
 									<div class="form-group">
 										<label class="form-control-label" for="input-emails">Tag</label>
 										<input type="text" class="form-control tag-it" name="tags" placeholder="info@example.com" value="{{ old('tags',implode(', ', $product->tags)) }}">
