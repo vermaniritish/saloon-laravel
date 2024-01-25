@@ -1184,7 +1184,6 @@ DROP TABLE IF EXISTS `staff_documents`;
 CREATE TABLE `staff_documents` (
   `id` int NOT NULL AUTO_INCREMENT,
   `staff_id` int DEFAULT NULL,
-  `doc_type` varchar(255) NOT NULL,
   `title` varchar(255) NOT NULL,
   `expiry_date` date DEFAULT NULL,
   `file` text,

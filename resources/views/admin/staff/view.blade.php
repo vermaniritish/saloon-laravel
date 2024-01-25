@@ -372,7 +372,7 @@
 									</div>
 									<hr class="my-4">
 									<div class="upload-image-section" data-type="file" data-multiple="true"
-										data-path="user-documents">
+										data-path="staff-documents">
 										<div class="upload-section">
 											<div class="button-ref mb-3">
 												<button class="btn btn-icon btn-primary btn-lg" type="button">
@@ -400,7 +400,7 @@
 							<hr class="my-4">
 							<div class="modal-footer">
 								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-								<a href="javascript:;" class="btn btn-primary float-right" v-on:click ="saveDocumentInfo()">
+								<a href="javascript:;" class="btn btn-primary float-right" v-on:click="saveDocumentInfo({{ $page->id }})">
 									<i class="fa fa-spin fa-spinner" v-if="loading"></i>
 									<i v-else class="fa fa-save"></i> Save
 								</a>
