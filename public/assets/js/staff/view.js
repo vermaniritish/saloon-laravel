@@ -14,7 +14,7 @@ let staff = new Vue({
                 });
                 response = await response.json();
                 if(response.status){
-                    window.resetTableNSearch($('.listing-table'));
+                    window.location.reload()
                     set_notification('success', response.message)
                 }else{
                     set_notification('error', response.message);

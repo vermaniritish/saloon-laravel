@@ -1,7 +1,9 @@
 @extends('layouts.adminlayout')
 @section('content')
 <?php
-	use App\Models\Admin\Settings;
+
+use App\Models\Admin\Permissions;
+use App\Models\Admin\Settings;
 	$currency = Settings::get('currency_symbol'); 
 ?>
 	<div class="header bg-primary pb-6">
@@ -208,26 +210,21 @@
 							<table class="table align-items-center table-flush listing-table">
 								<thead class="thead-light">
 									<tr>
-										<th class="checkbox-th">
-											<div class="custom-control custom-checkbox">
-												<input type="checkbox" class="custom-control-input mark_all"
-													id="mark_all">
-												<label class="custom-control-label" for="mark_all"></label>
-											</div>
-										</th>
-										<th class="sort" width="5%">
-										</th>
-										<th class="sort" width="65%">Documents <i class="fas fa-sort"
+										<th class="sort" width="10%">Title <i class="fas fa-sort"
 												data-field="resourcesDocuments.title"></i>
 										</th>
-										<th width="5%">
+										<th class="sort" width="80">Documents <i class="fas fa-sort"
+												data-field="resourcesDocuments.title"></i>
+										</th>
+										<th width="10%">
 											Actions
 										</th>
 									</tr>
 								</thead>
 								<tbody class="list">
+								@foreach($page->staffDoc as $doc)
 									@php
-										$filePaths = json_decode($page->file);
+										$filePaths = json_decode($doc->file);
 									@endphp
 									@if ($filePaths && is_array($filePaths))
 										@foreach ($filePaths as $index => $filePath)
@@ -236,19 +233,7 @@
 											@endphp
 											<tr>
 												<td>
-													<div class="custom-control custom-checkbox">
-														<input type="checkbox"
-															class="custom-control-input listing_check"
-															id="listing_check189" value="189">
-														<label class="custom-control-label"
-															for="listing_check189"></label>
-													</div>
-												</td>
-												<td style="cursor:pointer;">
-													<a href={{ url('/admin/ncr/' . ($filePath ? $filePath . '/' : '') . $page->id) }}
-														target="_blank"><i class="fa fa-file-alt"
-															style="font-size: 40px"></i>
-													</a>
+													{{$doc->title}}
 												</td>
 												<td style="cursor:pointer;">
 													<a href={{ url($filePath) }}
@@ -258,27 +243,27 @@
 													<?php if(Permissions::hasPermission('staff', 'delete')): ?>                                                        <a 
 														class="dropdown-item _delete" 
 														href="javascript:;"
-														data-link="<?php echo route('admin.ncr.documentDelete', ['id' => $page->id, 'index' => $index]) ?>"
+														data-link="<?php echo route('admin.staff.documentDelete', ['id' => $doc->id, 'index' => $index]) ?>"
 													>
 														<i class="fas fa-times text-danger"></i>
 														<span class="status text-danger">Delete</span>
 													</a>
 												<?php endif; ?>
-												
 												</td>
 											</tr>
 										@endforeach
-									@else
-										<tr>
-											<td colspan="4">No documents available</td>
-										</tr>
-									@endif
+										@else
+											<tr>
+												<td colspan="4">No documents available</td>
+											</tr>
+										@endif
+								@endforeach
 								</tbody>
 								<tfoot>
 									<tr>
 										<th align="left" colspan="20">
 											<div class="ajaxPaginationEnabled loader text-center hidden"
-												data-url="http://127.0.0.1:8002/admin/resources-documents/65/133"
+											data-url="http://127.0.0.1:8002/admin/resources-documents/65/133"
 												data-page="1" data-counter="40" data-total="2">
 												<div class="preloader pl-size-xs">
 													<div class="spinner-layer pl-indigo">
@@ -365,7 +350,7 @@
 									<div class="form-group">
 										<label class="form-control-label" for="input-username">Document Title</label>
 										<input type="text" class="form-control" name="title" required
-										placeholder="Enter your answer" v-model="title" autofocus>
+										placeholder="Enter your answer" autofocus>
 										@error('title')
 											<small class="text-danger">{{ $message }}</small>
 										@enderror

@@ -23,6 +23,7 @@ use App\Models\Admin\Orders;
 use App\Models\Admin\Staff;
 use App\Models\Admin\StaffDocuments;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\File;
 
 class StaffController extends AppController
 {
@@ -439,4 +440,33 @@ class StaffController extends AppController
         }
     }
 
+	function deleteDocument(Request $request, $id, $index)
+    {
+        if(!Permissions::hasPermission('staff', 'delete'))
+        {
+            $request->session()->flash('error', 'Permission denied.');
+            return redirect()->route('admin.dashboard');
+		}
+		$staffDoc = StaffDocuments::find($id);
+		if($staffDoc){
+			$staffDoc->file = json_decode($staffDoc->file);
+			foreach ($staffDoc->file as $document) {
+				$filePath = public_path($document[$index]); 
+				if (File::exists($filePath)) {
+					File::delete($filePath);
+				}
+			}
+			StaffDocuments::where('id', $id)->delete();
+			return Response()->json([
+				'status' => 'success',
+				'message' => 'Document deleted successfully.'
+			], 200);
+		}
+			else {
+			return Response()->json([
+				'status' => 'error',
+				'message' => 'Document not found.'
+			], 200);
+		}
+    }
 }

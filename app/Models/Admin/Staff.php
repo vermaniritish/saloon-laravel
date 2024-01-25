@@ -39,6 +39,16 @@ class Staff extends AppModel
     }
 
     /**
+     * Define a one-to-many relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function staffDoc()
+    {
+        return $this->hasMany(StaffDocuments::class,'staff_id');
+    }
+
+    /**
     * To search and get pagination listing
     * @param Request $request
     * @param $limit
