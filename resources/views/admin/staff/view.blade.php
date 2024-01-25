@@ -223,40 +223,41 @@ use App\Models\Admin\Settings;
 								</thead>
 								<tbody class="list">
 								@foreach($page->staffDoc as $doc)
-									@php
-										$filePaths = json_decode($doc->file);
-									@endphp
-									@if ($filePaths && is_array($filePaths))
-										@foreach ($filePaths as $index => $filePath)
-											@php
-												$fileName = pathinfo($filePath, PATHINFO_BASENAME);
-											@endphp
-											<tr>
-												<td>
-													{{$doc->title}}
-												</td>
+								@php
+									$filePaths = json_decode($doc->file);
+								@endphp
+									<tr>
+										<td rowspan="{{ count($filePaths) > 1 ? count($filePaths) : 1 }}">
+											{{$doc->title}}
+										</td>
+										@if ($filePaths && is_array($filePaths))
+											@foreach ($filePaths as $index => $filePath)
+												@php
+													$fileName = pathinfo($filePath, PATHINFO_BASENAME);
+												@endphp
+												@if ($index > 0)
+													<tr>
+												@endif
 												<td style="cursor:pointer;">
-													<a href={{ url($filePath) }}
-														target="_blank">{{ $fileName }}<br><small>{{ $filePath }}</small></a>
+													<a href="{{ url($filePath) }}" target="_blank">{{ $fileName }}<br><small>{{ $filePath }}</small></a>
 												</td>
 												<td class="text-right">
-													<?php if(Permissions::hasPermission('staff', 'delete')): ?>                                                        <a 
-														class="dropdown-item _delete" 
-														href="javascript:;"
-														data-link="<?php echo route('admin.staff.documentDelete', ['id' => $doc->id, 'index' => $index]) ?>"
-													>
-														<i class="fas fa-times text-danger"></i>
-														<span class="status text-danger">Delete</span>
-													</a>
-												<?php endif; ?>
+													@if(Permissions::hasPermission('staff', 'delete'))
+														<a class="dropdown-item _delete" href="javascript:;"
+														data-link="{{ route('admin.staff.documentDelete', ['id' => $doc->id, 'index' => $index]) }}">
+															<i class="fas fa-times text-danger"></i>
+															<span class="status text-danger">Delete</span>
+														</a>
+													@endif
 												</td>
-											</tr>
-										@endforeach
+												@if ($index > 0)
+													</tr>
+												@endif
+											@endforeach
 										@else
-											<tr>
-												<td colspan="4">No documents available</td>
-											</tr>
+											<td colspan="2">No documents available</td>
 										@endif
+									</tr>
 								@endforeach
 								</tbody>
 								<tfoot>
