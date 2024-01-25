@@ -362,18 +362,6 @@
 							{{ @csrf_field() }}
 							<div class="row">
 								<div class="col-md-12">
-									{{-- <div class="form-group">
-										<label class="form-control-label" for="input-username">Document Type</label>
-										<select class="form-control" name="doc_type" required>
-											@foreach ($doc_type as $option)
-												<option {{ old('doc_type') == $option ? 'selected' : '' }}
-													value="{{ $option }}">{{ $option }}</option>
-											@endforeach
-										</select>
-										@error('doc_type')
-											<small class="text-danger">{{ $message }}</small>
-										@enderror
-									</div> --}}
 									<div class="form-group">
 										<label class="form-control-label" for="input-username">Document Title</label>
 										<input type="text" class="form-control" name="title" required

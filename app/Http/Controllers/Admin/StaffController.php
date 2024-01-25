@@ -21,6 +21,7 @@ use App\Libraries\FileSystem;
 use App\Http\Controllers\Admin\AppController;
 use App\Models\Admin\Orders;
 use App\Models\Admin\Staff;
+use App\Models\Admin\StaffDocuments;
 use Carbon\Carbon;
 
 class StaffController extends AppController
@@ -411,7 +412,6 @@ class StaffController extends AppController
                 $data['staff_id'] = $staff->id;
                 $staffDocument = StaffDocuments::create($data);
                 if($staffDocument){
-                    Reminder::createOrUpdateReminder($staffDocument, 'user-documents');
                     return Response()->json([
                         'status' => true,
                         'message' => 'Document added successfully.',
