@@ -121,7 +121,7 @@
 								<div class="col-lg-6">
 									<div class="form-group">
 										<label class="form-control-label" for="input-email">Duration Of Service</label>
-										<input type="time" id="input-email" class="form-control" name="duration_of_service"  value="{{ old('duration_of_service', $page->duration_of_service) }}">
+										<input type="time" id="input-email" class="form-control" name="duration_of_service"  value="{{ old('duration_of_service', $product->duration_of_service) }}">
 										@error('duration_of_service')
 											<small class="text-danger">{{ $message }}</small>
 										@enderror

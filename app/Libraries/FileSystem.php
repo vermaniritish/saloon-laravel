@@ -221,11 +221,9 @@ class FileSystem
 				$path = FileSystem::getOnlyPath($a);
 				$allFiles[$k] = [
 					'original' => $a,
-					'large' => file_exists(public_path($path . '/L-' . $name)) ? $path . '/L-' . $name : "",
+					'large' => $a,
 					'medium' => file_exists(public_path($path . '/M-' . $name)) ? $path . '/M-' . $name : "",
 					'small' => file_exists(public_path($path . '/S-' . $name)) ? $path . '/S-' . $name : "",
-					'thumbnail' => file_exists(public_path($path . '/S-' . $name)) ? url($path . '/S-' . $name) : "",
-					'image' => file_exists(public_path($path . '/L-' . $name)) ? url($path . '/L-' . $name) : "",
 				];
 			}
 

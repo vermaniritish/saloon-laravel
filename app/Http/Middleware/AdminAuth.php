@@ -21,7 +21,7 @@ class AdminAuth extends Middleware
     public function handle($request, Closure $next, ...$guards)
     {
         $adminId = AdminAuthModal::getLoginId();
-        Activities::log($request, $adminId);
+        // Activities::log($request, $adminId);
 
         if($adminId)
         {

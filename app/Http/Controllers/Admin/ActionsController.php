@@ -67,12 +67,7 @@ class ActionsController extends AppController
 
 	    				if(isset($data['resize_large']) && $data['resize_large'])
 	    				{
-	    					FileSystem::resizeImage($file, 'L-' . $originalName, $data['resize_large']);
-	    				}
-	    				
-	    				if(isset($data['resize_medium']) && $data['resize_medium'])
-	    				{
-	    					FileSystem::resizeImage($file, 'M-' . $originalName, $data['resize_medium']);
+	    					FileSystem::resizeImage($file, $originalName, $data['resize_large']);
 	    				}
 	    				
 	    				if(isset($data['resize_small']) && $data['resize_small'])

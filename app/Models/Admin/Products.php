@@ -328,15 +328,16 @@ class Products extends AppModel
         $images = $product->getResizeImagesAttribute();
     	if($product->delete())
         {
-            SearchKeywords::where('search_keywords.product_id', $id)
-                    ->delete();
-            foreach($images as $img)
+            if($images)
             {
-                foreach($img as $i)
+                foreach($images as $img)
                 {
-                    if($i && is_dir(public_path($i)) && file_exists(public_path($i)))
+                    foreach($img as $i)
                     {
-                        unlink(public_path($i));
+                        if($i && is_dir(public_path($i)) && file_exists(public_path($i)))
+                        {
+                            unlink(public_path($i));
+                        }
                     }
                 }
             }
@@ -411,42 +412,5 @@ class Products extends AppModel
         {
             Products::createKeywords($product->id, $product->title, $product->categories);
         }
-    }
-
-    /**
-    * To create product keywords
-    * @param $id
-    * @param $where
-    */
-    public static function createKeywords($id, $title, $cateories = [])
-    {
-        SearchKeywords::where('search_keywords.product_id', $id)->delete();
-        foreach ($cateories as $key => $value) {
-            SearchKeywords::create([
-                'product_id' => $id,
-                'keywords' => ucwords($value->title)
-            ]);
-        }
-        
-
-        $keywords = explode(" ", $title);
-        $ignore = Settings::get('ignore_keywords');
-        $ignore = ($ignore ? explode(',', $ignore) : []);
-        $ignore = array_filter($ignore);
-        foreach($keywords as $k)
-        {
-            if(preg_match("/^[a-zA-Z0-9]+$/", trim($k)) && !in_array(ucfirst(trim($k)), $ignore))
-            {
-                SearchKeywords::create([
-                    'product_id' => $id,
-                    'keywords' => ucfirst($k)
-                ]);
-            }
-        }
-
-        SearchKeywords::create([
-            'product_id' => $id,
-            'keywords' => ucwords($title)
-        ]);
     }
 }
