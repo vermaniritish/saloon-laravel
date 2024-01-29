@@ -9,7 +9,7 @@
 					</div>
 					<div class="col-lg-6 col-5 text-right">
 						<?php if(Permissions::hasPermission('product_categories', 'create')): ?>
-						<a href="<?php echo route('admin.products.categories.add') ?>" class="btn btn-neutral">New</a>
+						<a href="<?php echo route('admin.products.categories.add') ?>" class="btn btn-neutral"><i class="fas fa-plus"></i> New</a>
 						<?php endif;?>
 						@include('admin.products.categories.filters')
 					</div>
@@ -77,7 +77,7 @@
 										<i class="fas fa-sort" data-field="product_categories.id" data-sort="asc"></i>
 										<?php endif; ?>
 									</th>
-									<th class="sort" width="42.5%">
+									<th class="sort" width="28.3%">
 										Category
 										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'parent.title' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
 										<i class="fas fa-sort-down active" data-field="parent.title" data-sort="asc"></i>
@@ -87,7 +87,17 @@
 										<i class="fas fa-sort" data-field="product_categories.title"></i>
 										<?php endif; ?>
 									</th>
-									<th class="sort" width="42.5%">
+									<th class="sort" width="28.3%">
+										Status
+										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'parent.status' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
+										<i class="fas fa-sort-down active" data-field="parent.status" data-sort="asc"></i>
+										<?php elseif(isset($_GET['sort']) && $_GET['sort'] == 'parent.status' && isset($_GET['direction']) && $_GET['direction'] == 'desc'): ?>
+										<i class="fas fa-sort-up active" data-field="parent.status" data-sort="desc"></i>
+										<?php else: ?>
+										<i class="fas fa-sort" data-field="product_categories.status"></i>
+										<?php endif; ?>
+									</th>
+									<th class="sort" width="28.3%">
 										Created ON
 										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'product_categories.created' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
 										<i class="fas fa-sort-down active" data-field="product_categories.created" data-sort="asc"></i>
