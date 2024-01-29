@@ -30,6 +30,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 use App\Libraries\FileSystem;
 use App\Http\Controllers\Admin\AppController;
+use App\Models\Admin\BrandProducts;
 use App\Models\Admin\Brands;
 
 class ProductsController extends AppController
@@ -82,6 +83,13 @@ class ProductsController extends AppController
     		$where[] = 'products.id IN ('.$ids.')';
     	}
 
+		if($request->get('brands'))
+    	{
+    		$ids = BrandProducts::distinct()->whereIn('brand_id', $request->get('brand'))->pluck('product_id')->toArray();
+    		$ids = !empty($ids) ? implode(',', $ids) : '0';
+    		$where[] = 'products.id IN ('.$ids.')';
+    	}
+
     	if($request->get('status'))
     	{
     		switch ($request->get('status')) {
@@ -122,6 +130,7 @@ class ProductsController extends AppController
 	    		[
 	    			'listing' => $listing,
 	    			'categories' => $filters['categories'],
+					'brands' => $filters['brands'],
 	    			'shops' => $filters['shops']
 	    		]
 	    	);
@@ -136,7 +145,6 @@ class ProductsController extends AppController
     	{
 			$categories = ProductCategories::getAllCategorySubCategory($catIds);
 		}
-
     	$shops = Shops::getAll(
     		[
     			'shops.id',
@@ -149,11 +157,21 @@ class ProductsController extends AppController
     		],
     		'concat(shops.name) desc'
     	);
-    	/** Filter Data **/
+    
+		$brands = Brands::getAll(
+			[
+				'brands.id',
+				'brands.title'
+			],
+			[
+			],
+			'brands.title desc'
+		);
 
     	return [
     		'categories' => $categories,
-    		'shops' => $shops
+    		'shops' => $shops,
+			'brands' => $brands
     	];
     }
 
@@ -241,7 +259,6 @@ class ProductsController extends AppController
 		    }
 		    else
 		    {
-				dd($validator->errors());
 		    	$request->session()->flash('error', 'Please provide valid inputs.');
 		    	return redirect()->back()->withErrors($validator)->withInput();
 		    }
@@ -252,8 +269,9 @@ class ProductsController extends AppController
 	    			'product_categories.id',
 	    			'product_categories.title'
 	    		],
-	    		[
-	    		],
+	    	    [
+					'status' => 1,
+				],
 	    		'product_categories.title desc'
 	    	);
 
@@ -262,8 +280,9 @@ class ProductsController extends AppController
 	    			'brands.id',
 	    			'brands.title'
 	    		],
-	    		[
-	    		],
+	    	    [
+					'status' => 1, 
+				],
 	    		'brands.title desc'
 	    	);
 
@@ -311,9 +330,12 @@ class ProductsController extends AppController
 							'category' => [
 								'required',
 								'array',
-								Rule::exists('product_categories', 'id')
-							],
-							'brand' => ['required', 'array', Rule::exists('brands', 'id')],
+								Rule::exists(ProductCategories::class, 'id')->where(function ($query) {
+									$query->where('status', 1);
+							})],
+							'brand' => ['required', 'array', Rule::exists(Brands::class, 'id')->where(function ($query) {
+								$query->where('status', 1);
+							})],
 							'tags' => ['nullable', 'array'],
 							'tags.*' => ['string','max:20',],
 		            ]
@@ -377,8 +399,9 @@ class ProductsController extends AppController
 	    			'product_categories.id',
 	    			'product_categories.title'
 	    		],
-	    		[
-	    		],
+				[
+					'status' => 1, 
+				],
 	    		'product_categories.title desc'
 	    	);
 
@@ -399,8 +422,9 @@ class ProductsController extends AppController
 	    			'brands.id',
 	    			'brands.title'
 	    		],
-	    		[
-	    		],
+	    	    [
+					'status' => 1, 
+				],
 	    		'brands.title desc'
 	    	);
 

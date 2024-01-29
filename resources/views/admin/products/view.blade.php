@@ -102,51 +102,21 @@
 									</td>
 								</tr>
 								<tr>
+									<th>Tags</th>
+									<td>
+										<?php echo
+										implode(', ', $product->tags) 
+										?>	
+									</td>
+								</tr>
+								<tr>
+									<th>Price</th>
+									<td><?php echo $product->price ?></td>
+								</tr>
+								<tr>
 									<td colspan="2">
 										<h2>Description</h2>
 										<?php echo $product->description ?>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
-				<div class="card">
-					<div class="card-header">
-						<div class="row align-items-center">
-							<div class="col">
-								<h3 class="mb-0">Address Information</h3>
-							</div>
-						</div>
-					</div>
-					<div class="table-responsive">
-						<!-- Projects table -->
-						<table class="table align-items-center table-flush view-table">
-							<tbody>
-								<tr>
-									<th scope="row">
-										Address
-									</th>
-									<td>
-										<?php if($product->address): ?>
-										<a href="https://www.google.com/maps/place/<?php echo urlencode($product->address) . ($product->lat && $product->lng ? '/@'.$product->lat.','.$product->lng.',14z' : '') ?>" target="_blank"><?php echo $product->address ?></a>
-										<?php endif; ?>
-									</td>
-								</tr>
-								<tr>
-									<th scope="row">
-										Lattitude
-									</th>
-									<td>
-										<?php echo $product->lat ?>
-									</td>
-								</tr>
-								<tr>
-									<th scope="row">
-										Logitude
-									</th>
-									<td>
-										<?php echo $product->lng ?>
 									</td>
 								</tr>
 							</tbody>

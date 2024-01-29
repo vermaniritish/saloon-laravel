@@ -44,7 +44,7 @@ class Coupons extends AppModel
 
     public static function getListing(Request $request, $where = [])
     {
-        $orderBy = $request->get('sort') ? $request->get('sort') : 'coupons.id';
+        $orderBy = $request->get('sort') ? $request->get('sort') : 'coupons.end_date';
         $direction = $request->get('direction') ? $request->get('direction') : 'desc';
         $page = $request->get('page') ? $request->get('page') : 1;
         $limit = self::$paginationLimit;

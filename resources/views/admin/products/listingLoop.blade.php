@@ -1,3 +1,7 @@
+<?php
+	use App\Models\Admin\Settings;
+	$currency = Settings::get('currency_symbol'); 
+?>
 <?php foreach($listing->items() as $k => $row): ?>
 <tr>
 	<td>
@@ -17,7 +21,13 @@
 		<?php echo $row->title ?>
 	</td>
 	<td>
-		<?php echo $row->address ?>
+    	<?php 
+        	$categoryTitles = $row->categories->pluck('title')->implode(', ');
+        	echo $categoryTitles;
+    	?>
+	</td>
+	<td>
+	<?php echo $currency . ' ' .$row->price ?>
 	</td>
 	<td>
 		<div class="custom-control">

@@ -29,6 +29,25 @@
 			<div class="dropdown-divider"></div>
 			<div class="dropdown-item">
 				<div class="row">
+					<div class="col-md-12">
+						<label class="form-control-label">Brand</label>
+						<select class="form-control" name="brand[]" multiple>
+					      	<?php foreach($brands as $c): ?>
+					      		<option 
+					      			value="<?php echo $c->id ?>"
+					      			<?php echo isset($_GET['brand']) && in_array($c->id, $_GET['brand'])  ? 'selected' : '' ?>
+					      		>
+					      			<?php echo $c->title ?>	
+					      		</option>
+					  		<?php endforeach; ?>
+				    	</select>
+					</div>
+				</div>
+			</div>
+			<div class="dropdown-divider"></div>
+
+			<div class="dropdown-item">
+				<div class="row">
 					<div class="col-md-6">
 						<label class="form-control-label">Created On</label>
 						<input class="form-control" type="date" name="created_on[0]" value="<?php echo (isset($_GET['created_on'][0]) && !empty($_GET['created_on'][0]) ? $_GET['created_on'][0] : '' ) ?>" placeholder="DD-MM-YYYY" >

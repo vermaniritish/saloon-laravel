@@ -174,7 +174,9 @@ class OrdersController extends AppController
 	            [
 					'customer_id' => ['required', Rule::exists(User::class,'id')],
 					'product_id' => ['required', 'array'],
-    				'product_id.*' => ['required', Rule::exists(Products::class,'id')],
+    				'product_id.*' => ['required', Rule::exists(Products::class, 'id')->where(function ($query) {
+						$query->where('status', 1);
+					})],
 					'booking_date' => ['required', 'date'],
 					'booking_time' => ['required', 'after_or_equal:today'],
 					'manual_address' => ['nullable','boolean'],
@@ -184,13 +186,17 @@ class OrdersController extends AppController
 					'area' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:40'],
 					'address_id' => ['exclude_if:manual_address,true','required_if:manual_address,false',Rule::exists(Addresses::class,'id')],
 					'payment_type' => ['required'], 
-					'coupon_code_id' => ['nullable',Rule::exists(Coupons::class,'id')], 
+					'coupon_code_id' => ['nullable', Rule::exists(Coupons::class, 'id')->where(function ($query) {
+						$query->where('status', 1);
+					})],
 					'subtotal' => ['required', 'numeric'],
 					'discount' => ['required', 'numeric'],
 					'tax' => ['required', 'numeric'],
 					'total_amount' => ['required', 'numeric'],
 					'productsData' => ['required', 'array'],
-					'productsData.*.id' => ['required', Rule::exists(Products::class, 'id')],
+					'productsData.*.id' => ['required', Rule::exists(Products::class, 'id')->where(function ($query) {
+						$query->where('status', 1);
+					})],
 					'productsData.*.quantity' => ['required', 'integer', 'min:1'],
 	            ]
 	        );
@@ -260,8 +266,12 @@ class OrdersController extends AppController
 			],
 			'concat(users.first_name, users.last_name) desc'
 		);
-		$productCategories = ProductCategories::with('products')
-		->get(['id', 'title']); 
+		$productCategories = ProductCategories::with(['products' => function ($query) {
+			$query->where('status', 1);
+		}])
+		->where('status', 1)
+		->get(['id', 'title']);
+		
 	    $address = Addresses::getAll(
 			[
 				'addresses.id',
@@ -387,8 +397,11 @@ class OrdersController extends AppController
 				],
 				'concat(users.first_name, users.last_name) desc'
 			);
-			$productCategories = ProductCategories::with('products')
-			->get(['id', 'title']); 
+			$productCategories = ProductCategories::with(['products' => function ($query) {
+				$query->where('status', 1);
+			}])
+			->where('status', 1)
+			->get(['id', 'title']);
 			$address = Addresses::getAll(
 				[
 					'addresses.id',
