@@ -17,9 +17,6 @@
 		<?php echo $row->title ?>
 	</td>
 	<td>
-		<?php echo $row->owner_first_name . ' ' . $row->owner_last_name ?>
-	</td>
-	<td>
 		<div class="custom-control">
 			<label class="custom-toggle">
 				<?php $switchUrl =  route('admin.actions.switchUpdate', ['relation' => 'brands', 'field' => 'status', 'id' => $row->id]); ?>

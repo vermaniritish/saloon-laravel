@@ -75,7 +75,7 @@
 													<span class="status text-danger">Delete</span>
 											</a>
 										<?php endif; ?>
-									</div>
+										coupon_code		</div>
 								</div>
 							<?php endif; ?>
 						</div>
@@ -102,7 +102,7 @@
 										<i class="fas fa-sort" data-field="coupons.id" data-sort="asc"></i>
 										<?php endif; ?>
 									</th>
-									<th width="26%" class="sort">
+									<th width="15%" class="sort">
 										Title
 										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'coupons.title' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
 										<i class="fas fa-sort-down active" data-field="coupons.title" data-sort="asc"></i>
@@ -112,17 +112,47 @@
 										<i class="fas fa-sort" data-field="coupons.title"></i>
 										<?php endif; ?>
 									</th>
-									<th width="18%" class="sort">
-										Created By
-										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'owner.first_name' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
-										<i class="fas fa-sort-down active" data-field="owner.first_name" data-sort="asc"></i>
-										<?php elseif(isset($_GET['sort']) && $_GET['sort'] == 'owner.first_name' && isset($_GET['direction']) && $_GET['direction'] == 'desc'): ?>
-										<i class="fas fa-sort-up active" data-field="owner.first_name" data-sort="desc"></i>
+									<th width="10%" class="sort">
+										Code
+										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'coupons.coupon_code' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
+										<i class="fas fa-sort-down active" data-field="coupons.coupon_code" data-sort="asc"></i>
+										<?php elseif(isset($_GET['sort']) && $_GET['sort'] == 'coupons.coupon_code' && isset($_GET['direction']) && $_GET['direction'] == 'desc'): ?>
+										<i class="fas fa-sort-up active" data-field="coupons.coupon_code" data-sort="desc"></i>
 										<?php else: ?>
-										<i class="fas fa-sort" data-field="owner.first_name"></i>
+										<i class="fas fa-sort" data-field="coupons.coupon_code"></i>
 										<?php endif; ?>
 									</th>
-									<th  width="18%" class="sort">
+									<th width="10%" class="sort">
+										Amount
+										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'coupons.amount' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
+										<i class="fas fa-sort-down active" data-field="coupons.amount" data-sort="asc"></i>
+										<?php elseif(isset($_GET['sort']) && $_GET['sort'] == 'coupons.amount' && isset($_GET['direction']) && $_GET['direction'] == 'desc'): ?>
+										<i class="fas fa-sort-up active" data-field="coupons.amount" data-sort="desc"></i>
+										<?php else: ?>
+										<i class="fas fa-sort" data-field="coupons.amount"></i>
+										<?php endif; ?>
+									</th>
+									<th width="10%" class="sort">
+										Max Use
+										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'coupons.max_use' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
+										<i class="fas fa-sort-down active" data-field="coupons.max_use" data-sort="asc"></i>
+										<?php elseif(isset($_GET['sort']) && $_GET['sort'] == 'coupons.max_use' && isset($_GET['direction']) && $_GET['direction'] == 'desc'): ?>
+										<i class="fas fa-sort-up active" data-field="coupons.max_use" data-sort="desc"></i>
+										<?php else: ?>
+										<i class="fas fa-sort" data-field="coupons.max_use"></i>
+										<?php endif; ?>
+									</th>
+									<th width="12.5%" class="sort">
+										End Date
+										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'coupons.end_date' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
+										<i class="fas fa-sort-down active" data-field="coupons.end_date" data-sort="asc"></i>
+										<?php elseif(isset($_GET['sort']) && $_GET['sort'] == 'coupons.end_date' && isset($_GET['direction']) && $_GET['direction'] == 'desc'): ?>
+										<i class="fas fa-sort-up active" data-field="coupons.end_date" data-sort="desc"></i>
+										<?php else: ?>
+										<i class="fas fa-sort" data-field="coupons.end_date"></i>
+										<?php endif; ?>
+									</th>
+									<th  width="10%" class="sort">
 										Status
 										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'coupons.status' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
 										<i class="fas fa-sort-down active" data-field="coupons.status" data-sort="asc"></i>
@@ -132,7 +162,7 @@
 										<i class="fas fa-sort" data-field="coupons.status"></i>
 										<?php endif; ?>
 									</th>
-									<th width="18%" class="sort">
+									<th width="12.5%" class="sort">
 										Created ON
 										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'coupons.created' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
 										<i class="fas fa-sort-down active" data-field="coupons.created" data-sort="asc"></i>

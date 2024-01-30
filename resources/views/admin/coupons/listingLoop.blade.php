@@ -17,7 +17,16 @@
 		<?php echo $row->title ?>
 	</td>
 	<td>
-		<?php echo $row->owner_first_name . ' ' . $row->owner_last_name ?>
+		<?php echo $row->coupon_code ?>
+	</td>
+	<td>
+		<?php echo $row->amount ?>
+	</td>
+	<td>
+		<?php echo $row->max_use ?>
+	</td>
+	<td>
+		<?php echo _d($row->end_date) ?>
 	</td>
 	<td>
 		<div class="custom-control">
