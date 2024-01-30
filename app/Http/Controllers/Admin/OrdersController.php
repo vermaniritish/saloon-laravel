@@ -291,6 +291,7 @@ class OrdersController extends AppController
 				'coupons.amount',
 			],
 			[
+				'status' => 1, 
 			]
 		);
 	    return view("admin/orders/add", [
@@ -421,6 +422,7 @@ class OrdersController extends AppController
 					'coupons.amount',
 				],
 				[
+					'status' => 1, 
 				]
 			);
 			$staff = Staff::getAll(
