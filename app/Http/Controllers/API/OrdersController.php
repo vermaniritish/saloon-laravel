@@ -44,22 +44,37 @@ class OrdersController extends BaseController
         $input = $request->validate([
             'customer_id' => ['required', Rule::exists(User::class, 'id')],
             'product_id' => ['required', 'array'],
-            'product_id.*' => ['required', Rule::exists(Products::class, 'id')],
+            'product_id.*' => ['required', Rule::exists(Products::class, 'id')->where(function ($query) {
+                $query->where('status', 1);
+            })],
             'booking_date' => ['required', 'date'],
             'booking_time' => ['required', 'after_or_equal:today'],
             'address_id' => ['exclude_if:manual_address,true','required_if:manual_address,false',Rule::exists(Addresses::class, 'id')],
             'payment_type' => ['required'],
-            'coupon_code_id' => ['nullable',Rule::exists(Coupons::class, 'id')],
+            'coupon_code_id' => ['nullable', Rule::exists(Coupons::class, 'id')->where(function ($query) {
+                $query->where('status', 1);
+            })],
             'manual_address' => ['required','boolean'],
             'address' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:255'],
             'state' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:40'],
             'city' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:30'],
             'area' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:40'],
+            'productsData' => ['required', 'array'],
+            'productsData.*.id' => ['required', Rule::exists(Products::class, 'id')->where(function ($query) {
+                $query->where('status', 1);
+            })],
+            'productsData.*.quantity' => ['required', 'integer', 'min:1'],
         ]);
-
         $formattedDateTime = date('Y-m-d H:i:s', strtotime($request->get('booking_date')));
         $input['booking_date'] = $formattedDateTime;
-        $subtotal = Products::findMany($input['product_id'])->pluck('price')->sum();
+        $subtotal = 0;
+        $productIds = collect($input['productsData'])->pluck('id');
+        $products = Products::findMany($productIds);
+        $subtotal = $products->sum(function ($product) use ($input) {
+            $quantity = collect($input['productsData'])->firstWhere('id', $product->id)['quantity'] ?? 0;
+            return $product->price * $quantity;
+        });
+        $discount = 0;
        if(isset($input['coupon_code_id']) && $input['coupon_code_id']){
            $coupon = Coupons::where('id', $input['coupon_code_id'])->first(['amount','is_percentage']);
            if($coupon && $coupon->is_percentage) {
@@ -76,11 +91,10 @@ class OrdersController extends BaseController
         $input['total_amount'] = $subtotal - $discount + $input['tax'];
         $input['discount'] = $discount;
         $input['subtotal'] = $subtotal;
-        $products = [];
-        if(isset($input['product_id']) && $input['product_id']) {
-            $products = $input['product_id'];
-        }
+        $productData = [];
+    	$productData = $input['productsData'];
         unset($input['product_id']);
+        unset($input['productsData']);
         $user = User::find($input['customer_id']);
         if($user) {
             $input['customer_name'] = $user->first_name . ' ' . $user->last_name;
@@ -101,8 +115,8 @@ class OrdersController extends BaseController
             $order_prefix = (int)Settings::get('order_prefix');
             $data['prefix_id'] = $order->id + $order_prefix;
             Orders::modify($order->id,$data);
-            if(!empty($products)) {
-                Orders::handleProducts($order->id, $products);
+            if(!empty($productData)) {
+                Orders::handleProducts($order->id, $productData);
             }
             return $this->success([], Response::HTTP_OK, trans('ORDER_CREATED'));
         }

@@ -2,12 +2,13 @@
 
 namespace App\Models\API;
 
+use App\Models\Admin\Coupons as AdminCoupons;
 use App\Models\AppModel;
 use App\Models\Scopes\Active;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Coupons extends AppModel
+class Coupons extends AdminCoupons
 {
     use HasFactory;
 

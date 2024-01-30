@@ -115,7 +115,7 @@ class Orders extends AppModel
         OrderProductRelation::where('order_id', $id)->delete();
         foreach ($productsData as $productData) {
             $relation = new OrderProductRelation();
-            $product = Products::find($productData['id']);
+            $product = Products::where('id',$productData['id'])->first()->get(); 
             if ($product) {
                 $relation->product_title = $product->title;
                 $relation->product_description = $product->description;
