@@ -251,6 +251,9 @@ class OrdersController extends BaseController
             return $this->error(trans('USER_NOT_FOUND'), Response::HTTP_NOT_FOUND);
         }
         $check_order = Orders::whereCustomerId($id)->first();
+        if (!$check_order) {
+            return $this->error(trans('ORDER_NOT_FOUND'), Response::HTTP_NOT_FOUND);
+        }
         return $this->success(new OrdersResource($check_order), Response::HTTP_OK);
     }
 }
