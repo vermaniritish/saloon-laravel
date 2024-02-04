@@ -44,12 +44,6 @@ class ProductKeywords extends Command
         ])
         ->with(['categories'])
         ->get();
-
-        foreach($products as $p)
-        {
-            Products::createKeywords($p->id, $p->title, $p->categories);
-        }
-
         die('done');
     }
 }

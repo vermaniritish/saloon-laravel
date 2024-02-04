@@ -224,8 +224,6 @@ class Addresses extends AppModel
     	$product->modified = date('Y-m-d H:i:s');
 	    if($product->save())
 	    {
-            Addresses::createKeywords($product->id, $product->title, $product->categories);
-
             if(isset($data['title']) && $data['title'])
             {
                 $product->slug = Str::slug($product->title) . '-' . General::encode($product->id);

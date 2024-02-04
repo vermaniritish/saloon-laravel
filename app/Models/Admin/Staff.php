@@ -224,8 +224,6 @@ class Staff extends AppModel
     	$staff->modified = date('Y-m-d H:i:s');
 	    if($staff->save())
 	    {
-            Staff::createKeywords($staff->id, $staff->title, $staff->categories);
-
             if(isset($data['title']) && $data['title'])
             {
                 $staff->slug = Str::slug($staff->title) . '-' . General::encode($staff->id);

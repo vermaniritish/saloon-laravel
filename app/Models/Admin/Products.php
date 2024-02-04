@@ -249,8 +249,6 @@ class Products extends AppModel
     	$product->modified = date('Y-m-d H:i:s');
 	    if($product->save())
 	    {
-            Products::createKeywords($product->id, $product->title, $product->categories);
-
             if(isset($data['title']) && $data['title'])
             {
                 $product->slug = Str::slug($product->title) . '-' . General::encode($product->id);
@@ -282,8 +280,6 @@ class Products extends AppModel
     	$product->modified = date('Y-m-d H:i:s');
 	    if($product->save())
 	    {
-            Products::createKeywords($product->id, $product->title, $product->categories);
-
             if(isset($data['title']) && $data['title'])
             {
                 $product->slug = Str::slug($product->title) . '-' . General::encode($product->id);
@@ -386,12 +382,6 @@ class Products extends AppModel
     	    $relation->modified = date('Y-m-d H:i:s');
             $relation->save();
         }
-
-        $product = Products::find($id);
-        if($product)
-        {
-            Products::createKeywords($product->id, $product->title, $product->categories);
-        }
     }
 
     public static function handleCategories($id, $categories)
@@ -408,9 +398,5 @@ class Products extends AppModel
         }
 
         $product = Products::find($id);
-        if($product)
-        {
-            Products::createKeywords($product->id, $product->title, $product->categories);
-        }
     }
 }
