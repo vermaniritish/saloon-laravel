@@ -45,14 +45,14 @@ class OrdersController extends BaseController
             'customer_id' => ['required', Rule::exists(User::class, 'id')],
             'product_id' => ['required', 'array'],
             'product_id.*' => ['required', Rule::exists(Products::class, 'id')->where(function ($query) {
-                $query->where('status', 1);
+                $query->where('status', 1)->whereNull('deleted_at');
             })],
             'booking_date' => ['required', 'date'],
             'booking_time' => ['required', 'after_or_equal:today'],
             'address_id' => ['exclude_if:manual_address,true','required_if:manual_address,false',Rule::exists(Addresses::class, 'id')],
             'payment_type' => ['required'],
             'coupon_code_id' => ['nullable', Rule::exists(Coupons::class, 'id')->where(function ($query) {
-                $query->where('status', 1);
+                $query->where('status', 1)->whereNull('deleted_at');
             })],
             'manual_address' => ['required','boolean'],
             'address' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:255'],
@@ -61,12 +61,13 @@ class OrdersController extends BaseController
             'area' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:40'],
             'productsData' => ['required', 'array'],
             'productsData.*.id' => ['required', Rule::exists(Products::class, 'id')->where(function ($query) {
-                $query->where('status', 1);
+                $query->where('status', 1)->whereNull('deleted_at');
             })],
             'productsData.*.quantity' => ['required', 'integer', 'min:1'],
         ]);
         $formattedDateTime = date('Y-m-d H:i:s', strtotime($request->get('booking_date')));
         $input['booking_date'] = $formattedDateTime;
+        $data['created_by_admin'] = false;
         $subtotal = 0;
         $productIds = collect($input['productsData'])->pluck('id');
         $products = Products::findMany($productIds);

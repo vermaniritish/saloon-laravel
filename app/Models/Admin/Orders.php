@@ -22,6 +22,15 @@ class Orders extends AppModel
     use SoftDeletes;
 
     /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'created_by_admin' => 'boolean',
+    ];
+
+    /**
     * Order -> Admins belongsTO relation
     * 
     * @return Admins
@@ -115,7 +124,7 @@ class Orders extends AppModel
         OrderProductRelation::where('order_id', $id)->delete();
         foreach ($productsData as $productData) {
             $relation = new OrderProductRelation();
-            $product = Products::where('id',$productData['id'])->first()->get(); 
+            $product = Products::find($productData['id']);
             if ($product) {
                 $relation->product_title = $product->title;
                 $relation->product_description = $product->description;

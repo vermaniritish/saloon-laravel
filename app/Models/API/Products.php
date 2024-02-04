@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Libraries\FileSystem;
+use App\Models\Scopes\Active;
 
 class Products extends AdminProducts
 {
@@ -17,6 +18,15 @@ class Products extends AdminProducts
     protected $primaryKey = 'id';
     public $timestamps = false;
     
+    /**
+	 * The "booted" method of the model.
+	 *
+	 * @return void
+	 */
+	protected static function booted() {
+		static::addGlobalScope(new Active);
+	}
+
     /**
      * Define a one-to-one relationship.
      *

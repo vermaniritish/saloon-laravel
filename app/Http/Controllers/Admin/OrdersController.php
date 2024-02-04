@@ -175,7 +175,7 @@ class OrdersController extends AppController
 					'customer_id' => ['required', Rule::exists(User::class,'id')],
 					'product_id' => ['required', 'array'],
     				'product_id.*' => ['required', Rule::exists(Products::class, 'id')->where(function ($query) {
-						$query->where('status', 1);
+						$query->where('status', 1)->whereNull('deleted_at');
 					})],
 					'booking_date' => ['required', 'date'],
 					'booking_time' => ['required', 'after_or_equal:today'],
@@ -187,7 +187,7 @@ class OrdersController extends AppController
 					'address_id' => ['exclude_if:manual_address,true','required_if:manual_address,false',Rule::exists(Addresses::class,'id')],
 					'payment_type' => ['required'], 
 					'coupon_code_id' => ['nullable', Rule::exists(Coupons::class, 'id')->where(function ($query) {
-						$query->where('status', 1);
+						$query->where('status', 1)->whereNull('deleted_at');
 					})],
 					'subtotal' => ['required', 'numeric'],
 					'discount' => ['required', 'numeric'],
@@ -195,7 +195,7 @@ class OrdersController extends AppController
 					'total_amount' => ['required', 'numeric'],
 					'productsData' => ['required', 'array'],
 					'productsData.*.id' => ['required', Rule::exists(Products::class, 'id')->where(function ($query) {
-						$query->where('status', 1);
+						$query->where('status', 1)->whereNull('deleted_at');
 					})],
 					'productsData.*.quantity' => ['required', 'integer', 'min:1'],
 	            ]
@@ -206,6 +206,7 @@ class OrdersController extends AppController
 				unset($data['productsData']);
 				$formattedDateTime = date('Y-m-d H:i:s', strtotime($request->get('booking_date')));
 				$data['booking_date'] = $formattedDateTime;
+				$data['created_by_admin'] = true;
 				$customerId = $request->input('customer_id');
 				$user = User::find($customerId);
 				if($user){

@@ -257,8 +257,12 @@ use App\Models\Admin\Settings;
 										<?php
 											$admin = \App\Models\Admin\Admins::find($change->created_by);
 										?>
-										<?php $image = $admin->image ? $admin->getResizeImagesAttribute() : []; ?>
-										<img alt="Image placeholder" src="<?php echo isset($image['medium']) ? url($image['medium']) : url('assets/img/noprofile.jpg'); ?>">
+										@if($admin)
+											<?php $image = $admin->image ? $admin->getResizeImagesAttribute() : []; ?>
+											<img alt="Image placeholder" src="<?php echo isset($image['medium']) ? url($image['medium']) : url('assets/img/noprofile.jpg'); ?>">
+										@else
+											<img alt="Image placeholder" src="{{ url('assets/img/noprofile.jpg') }}">
+										@endif
 									</span>
 								</div>
 								<div class="col ml--1">
