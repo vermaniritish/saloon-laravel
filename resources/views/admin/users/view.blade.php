@@ -81,11 +81,11 @@
 					</div>
 				</div>
 				<?php if(Permissions::hasPermission('products', 'listing')): ?>
-				<div class="card listing-block">
-					<div class="card-header">
-						<div class="row align-items-center">
+					<div class="card listing-block">
+						<div class="card-header">
+							<div class="row align-items-center">
 								<div class="col-md-8">
-									<h3 class="mb-0">Customer's Products</h3>
+									<h3 class="mb-0">Customer's Product</h3>
 								</div>
 								<div class="col-md-4">
 									<div class="input-group input-group-alternative input-group-merge">
@@ -95,113 +95,12 @@
 										<input class="form-control listing-search" placeholder="Search" type="text" value="<?php echo (isset($_GET['search']) && $_GET['search'] ? $_GET['search'] : '') ?>">
 									</div>
 								</div>
+							</div>
+						</div>
+						<div class="card-body p-0">
+							@include('admin.users.customerProducts.index',['listing' => $listing])
 						</div>
 					</div>
-					<div class="table-responsive">
-						<!--!!!!! DO NOT REMOVE listing-table, mark_all  CLASSES. INCLUDE THIS IN ALL TABLES LISTING PAGES !!!!!-->
-						<table class="table align-items-center table-flush listing-table">
-							<thead class="thead-light">
-								<tr>
-									<th 
-										class="checkbox-th"
-										width="5%" 
-									>
-										<div class="custom-control custom-checkbox">
-											<input type="checkbox" class="custom-control-input mark_all" id="mark_all">
-											<label class="custom-control-label" for="mark_all"></label>
-										</div>
-									</th>
-									<th 
-										class="sort"
-										width="5%"
-									>
-										<!--- MAKE SURE TO USE PROPOER FIELD IN data-field AND PROPOER DIRECTION IN data-sort -->
-										Id
-										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'products.id' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
-										<i class="fas fa-sort-down active" data-field="products.id" data-sort="asc"></i>
-										<?php elseif(isset($_GET['sort']) && $_GET['sort'] == 'products.id' && isset($_GET['direction']) && $_GET['direction'] == 'desc'): ?>
-										<i class="fas fa-sort-up active" data-field="products.id" data-sort="desc"></i>
-										<?php else: ?>
-										<i class="fas fa-sort" data-field="products.id" data-sort="asc"></i>
-										<?php endif; ?>
-									</th>
-									<th 
-										class="sort"
-										width="10%" 
-									>
-										Owner
-										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'shop_owner_name' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
-										<i class="fas fa-sort-down active" data-field="shop_owner_name" data-sort="asc"></i>
-										<?php elseif(isset($_GET['sort']) && $_GET['sort'] == 'shop_owner_name' && isset($_GET['direction']) && $_GET['direction'] == 'desc'): ?>
-										<i class="fas fa-sort-up active" data-field="shop_owner_name" data-sort="desc"></i>
-										<?php else: ?>
-										<i class="fas fa-sort" data-field="shop_owner_name"></i>
-										<?php endif; ?>
-									</th>
-									<th class="sort" width="18%">
-										Title
-										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'products.title' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
-										<i class="fas fa-sort-down active" data-field="products.title" data-sort="asc"></i>
-										<?php elseif(isset($_GET['sort']) && $_GET['sort'] == 'products.title' && isset($_GET['direction']) && $_GET['direction'] == 'desc'): ?>
-										<i class="fas fa-sort-up active" data-field="products.title" data-sort="desc"></i>
-										<?php else: ?>
-										<i class="fas fa-sort" data-field="products.title"></i>
-										<?php endif; ?>
-									</th>				
-									<th class="sort" width="18%" >
-										Address
-										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'products.address' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
-										<i class="fas fa-sort-down active" data-field="products.address" data-sort="asc"></i>
-										<?php elseif(isset($_GET['sort']) && $_GET['sort'] == 'products.address' && isset($_GET['direction']) && $_GET['direction'] == 'desc'): ?>
-										<i class="fas fa-sort-up active" data-field="products.address" data-sort="desc"></i>
-										<?php else: ?>
-										<i class="fas fa-sort" data-field="products.address"></i>
-										<?php endif; ?>
-									</th>									
-									<th class="sort" width="7%" >
-										Status
-										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'products.status' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
-										<i class="fas fa-sort-down active" data-field="products.status" data-sort="asc"></i>
-										<?php elseif(isset($_GET['sort']) && $_GET['sort'] == 'products.status' && isset($_GET['direction']) && $_GET['direction'] == 'desc'): ?>
-										<i class="fas fa-sort-up active" data-field="products.status" data-sort="desc"></i>
-										<?php else: ?>
-										<i class="fas fa-sort" data-field="products.status"></i>
-										<?php endif; ?>
-									</th>
-									<th class="sort" width="10%" >
-										Created ON
-										<?php if(isset($_GET['sort']) && $_GET['sort'] == 'products.created' && isset($_GET['direction']) && $_GET['direction'] == 'asc'): ?>
-										<i class="fas fa-sort-down active" data-field="products.created" data-sort="asc"></i>
-										<?php elseif(isset($_GET['sort']) && $_GET['sort'] == 'products.created' && isset($_GET['direction']) && $_GET['direction'] == 'desc'): ?>
-										<i class="fas fa-sort-up active" data-field="products.created" data-sort="desc"></i>
-										<?php else: ?>
-										<i class="fas fa-sort" data-field="products.created"></i>
-										<?php endif; ?>
-									</th>
-									<th width="10%">
-										Actions
-									</th>
-								</tr>
-							</thead>
-							<tbody class="list">
-								<?php if(!empty($listing->items())): ?>
-									@include('admin.products.listingLoop')
-								<?php else: ?>
-									<td align="left" colspan="7">
-		                            	No records found!
-		                            </td>
-								<?php endif; ?>
-							</tbody>
-							<tfoot>
-		                        <tr>
-		                            <th align="left" colspan="20">
-		                            	@include('admin.partials.pagination', ["pagination" => $listing])
-		                            </th>
-		                        </tr>
-		                    </tfoot>
-						</table>
-					</div>
-				</div>
 				<?php endif; ?>
 			</div>
 			<div class="col-xl-4 order-xl-1">

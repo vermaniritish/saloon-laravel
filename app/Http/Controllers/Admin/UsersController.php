@@ -332,7 +332,6 @@ class UsersController extends AppController
 	    	}
 
 	    	$listing = Products::getListing($request, $where);
-
 	    	if($request->ajax())
 	    	{
 			    $html = view(
