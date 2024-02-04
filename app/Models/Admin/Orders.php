@@ -67,7 +67,8 @@ class Orders extends AppModel
     */
     public function products()
     {
-        return $this->belongsToMany(Products::class, 'order_products', 'order_id', 'product_id');
+        return $this->belongsToMany(Products::class, 'order_products', 'order_id', 'product_id')
+            ->withPivot('product_title', 'quantity','amount','duration_of_service','product_description');
     }
 
     /**

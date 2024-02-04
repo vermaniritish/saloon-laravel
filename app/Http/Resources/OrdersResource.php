@@ -31,6 +31,16 @@ class OrdersResource extends JsonResource
             'discount' => $this->discount,
             'total_amount' => $this->total_amount,
             'coupon_code_id' => $this->coupon_code_id,
-    ];
+            'products' => $this->products->map(function ($product) {
+                return [
+                    'id' => $product->id,
+                    'title' => $product->pivot->product_title,
+                    'quantity' => $product->pivot->quantity,
+                    'amount' => $product->pivot->amount,
+                    'duration_of_service' => $product->pivot->duration_of_service,
+                    'product_description' => $product->pivot->product_description,
+                ];
+            }),
+        ];
     }
 }
