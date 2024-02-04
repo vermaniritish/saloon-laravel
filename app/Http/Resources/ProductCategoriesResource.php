@@ -19,7 +19,7 @@ class ProductCategoriesResource extends JsonResource
                 'id'   =>  $this->id,
                 'title' =>  $this->title,
                 'image' => $this->image,
-                'products' => ProductsResource::collection($this->products)
+                'products' => ProductsResource::collection($this->whenLoaded('products'))
         ];
     }
 }

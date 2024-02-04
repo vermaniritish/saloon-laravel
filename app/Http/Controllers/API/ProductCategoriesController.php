@@ -20,7 +20,8 @@ class ProductCategoriesController extends BaseController
      */
     public function index(Request $request)
     {
-        return $this->_index($request, ProductCategories::class, ProductCategoriesResource::class, []);
+        $productCategories = ProductCategories::with('products')->get();
+        return ProductCategoriesResource::collection($productCategories);
     }
 
     /**
