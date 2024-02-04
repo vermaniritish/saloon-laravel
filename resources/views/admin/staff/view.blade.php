@@ -180,7 +180,7 @@ use App\Models\Admin\Settings;
 												<td class="text-right">
 													@if(Permissions::hasPermission('staff', 'delete'))
 														<a class="dropdown-item _delete" href="javascript:;"
-														data-link="{{ route('admin.staff.documentDelete', ['id' => $doc->id, 'index' => $index]) }}">
+														data-link="{{ route('admin.staff.documentDelete', ['staffId' => $page->id,'id' => $doc->id, 'index' => $index]) }}">
 															<i class="fas fa-times text-danger"></i>
 															<span class="status text-danger">Delete</span>
 														</a>

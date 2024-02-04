@@ -27,5 +27,5 @@ Route::get('/staff/{id}/delete', [StaffController::class, 'delete'])
     ->name('admin.staff.delete');
 
 Route::post('/staff/{id}/add-doc', [StaffController::class,'addDocument'])->name('admin.staff.addDocument');
-Route::get('/staff/{id}/document-delete/{index}', [StaffController::class,'deleteDocument'])->name('admin.staff.documentDelete');
+Route::get('/staff/{staffId}/document-delete/{id}/{index}', [StaffController::class,'deleteDocument'])->name('admin.staff.documentDelete');
 

@@ -470,7 +470,7 @@ class StaffController extends AppController
         }
     }
 
-	function deleteDocument(Request $request, $id, $index)
+	function deleteDocument(Request $request, $staffId, $id, $index)
     {
         if(!Permissions::hasPermission('staff', 'delete'))
         {
@@ -479,24 +479,33 @@ class StaffController extends AppController
 		}
 		$staffDoc = StaffDocuments::find($id);
 		if($staffDoc){
-			$staffDoc->file = json_decode($staffDoc->file);
-			foreach ($staffDoc->file as $document) {
-				$filePath = public_path($document[$index]); 
-				if (File::exists($filePath)) {
-					File::delete($filePath);
+				$fileArray = json_decode($staffDoc->file, true);
+				if (count($fileArray) === 1 && array_key_exists($index, $fileArray)) {
+					$staffDoc->delete();
+					$filePath = public_path($fileArray[$index]);
+					if (File::exists($filePath)) {
+						File::delete($filePath);
+					}
+					$request->session()->flash('success', 'Document and row deleted successfully.');
+					return redirect()->route('admin.staff.view', ['id' => $staffId]);
+				} elseif (array_key_exists($index, $fileArray)) {
+					$filePath = public_path($fileArray[$index]);
+					if (File::exists($filePath)) {
+						File::delete($filePath);
+					}
+					unset($fileArray[$index]);
+					$staffDoc->file = json_encode(array_values($fileArray));
+					$staffDoc->save();
+					$request->session()->flash('success', 'Document deleted successfully.');
+					return redirect()->route('admin.staff.view', ['id' => $staffId]);
+				} else {
+					$request->session()->flash('error', 'Invalid index specified.');
+					return redirect()->route('admin.staff.view', ['id' => $staffId]);
 				}
 			}
-			StaffDocuments::where('id', $id)->delete();
-			return Response()->json([
-				'status' => 'success',
-				'message' => 'Document deleted successfully.'
-			], 200);
-		}
 			else {
-			return Response()->json([
-				'status' => 'error',
-				'message' => 'Document not found.'
-			], 200);
+				$request->session()->flash('Document not found.');
+				return redirect()->route('admin.staff.view',['id' => $staffId]);
 		}
     }
 }

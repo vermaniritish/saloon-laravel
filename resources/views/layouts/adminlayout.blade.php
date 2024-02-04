@@ -33,7 +33,8 @@ $version = 1.0;
     <link href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" rel="stylesheet" type="text/css" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css" rel="stylesheet" type="text/css" />
 	<!-- ==== owl carousel ==== -->
-
+	<!-- ==== Lightbox  ==== -->
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet" />
 	<link rel="stylesheet" href="<?php echo url('assets/css/argon.css') ?>" type="text/css">
 	<?php if(strpos(request()->route()->getAction()['as'], 'admin.products.add') > -1 || strpos(request()->route()->getAction()['as'], 'admin.products.edit') > -1): ?>
 	<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false&key=<?php echo $googleKey ?>&libraries=places&language=en-AU"></script>
