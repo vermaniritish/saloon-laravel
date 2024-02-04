@@ -94,7 +94,7 @@ use App\Models\Admin\Settings;
 					<div class="card listing-block">
 						<div class="card-header">
 							<div class="row align-items-center">
-								<div class="col-md-8">
+								<div class="col-md-6">
 									<h3 class="mb-0">Orders Assigned</h3>
 								</div>
 								<div class="col-md-4">
@@ -105,29 +105,10 @@ use App\Models\Admin\Settings;
 										<input class="form-control listing-search" placeholder="Search" type="text" value="<?php echo (isset($_GET['search']) && $_GET['search'] ? $_GET['search'] : '') ?>">
 									</div>
 								</div>
-							</div>
-							<form action="<?php echo route('admin.staff.view',['id' => $page->id]) ?>" method="GET" id="filters-form">
-								<div class="row">
-									<div class="col-md-4">
-										<div class="form-group">
-											<label class="form-control-label" for="fromDate">From Date:</label>
-											<input type="date" class="form-control" name="order_created[0]" value="{{ isset($_GET['order_created'][0]) ? $_GET['order_created'][0] : '' }}" placeholder="DD-MM-YYYY" >
-										</div>
-									</div>
-									<div class="col-md-4">
-										<div class="form-group">
-											<label class="form-control-label" for="toDate">To Date:</label>
-											<input type="date" class="form-control" name="order_created[1]" id="toDate" value="{{ isset($_GET['order_created'][1]) ? $_GET['order_created'][1] : '' }}" placeholder="DD-MM-YYYY" >
-										</div>
-									</div>
-									<div class="col-md-4">
-										<div class="form-group">
-											<label> </label>
-											<button type="submit" class="btn btn-primary mt-4"><i class="fas fa-filter"></i> Filter</button>
-										</div>
-									</div>
+								<div class="col-md-2">
+								@include('admin.staff.orders.filters',['id' => $page->id])
 								</div>
-							</form>
+							</div>
 						</div>
 						<div class="card-body p-0">
 							@include('admin.staff.orders.index',['listing' => $listing])
