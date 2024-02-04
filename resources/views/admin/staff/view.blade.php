@@ -90,15 +90,22 @@ use App\Models\Admin\Settings;
 							</table>
 						</div>
 					</div>
-					<div class="card">
+					<?php if(Permissions::hasPermission('products', 'listing')): ?>
+					<div class="card listing-block">
 						<div class="card-header">
 							<div class="row align-items-center">
-								<div class="col">
+								<div class="col-md-8">
 									<h3 class="mb-0">Orders Assigned</h3>
 								</div>
+								<div class="col-md-4">
+									<div class="input-group input-group-alternative input-group-merge">
+										<div class="input-group-prepend">
+											<span class="input-group-text"><i class="fas fa-search"></i></span>
+										</div>
+										<input class="form-control listing-search" placeholder="Search" type="text" value="<?php echo (isset($_GET['search']) && $_GET['search'] ? $_GET['search'] : '') ?>">
+									</div>
+								</div>
 							</div>
-						</div>
-						<div class="card-body">
 							<form action="<?php echo route('admin.staff.view',['id' => $page->id]) ?>" method="GET" id="filters-form">
 								<div class="row">
 									<div class="col-md-4">
@@ -121,64 +128,12 @@ use App\Models\Admin\Settings;
 									</div>
 								</div>
 							</form>
-							<div class="table-responsive small-max-card-table">
-								<!-- Projects table -->
-								<table class="table align-items-center table-flush">
-									<thead class="thead-light">
-										<tr>
-											<th scope="col" style="width: 15%;">Order Id</th>
-											<th scope="col" style="width: 35%;">Products</th>
-											<th scope="col" style="width: 15%;">Status</th>
-											<th scope="col" style="width: 20%;">Created</th>
-											<th scope="col" style="width: 15%;">Total Amount</th>
-										</tr>
-									</thead>
-									<tbody>
-										@forelse ($orders as $order)
-											<tr>
-												<th scope="row">
-													<a href="<?php echo route('admin.orders.view', ['id' => $order->id]) ?>"><?php echo $order->id; ?></a>
-												</th>
-												<td>
-												@foreach ($order->products as $index => $product)
-													{{ $product->title }}
-													<i title="Amount: {{$currency}} {{ $product->amount }}, Quantity: {{ $product->quantity }}">
-														| Amount: {{$currency}} {{ $product->amount }} | Quantity: {{ $product->quantity }}
-													</i>
-
-													{{-- Add a line break after each product except the last one --}}
-													@if (!$loop->last)
-														<br>
-													@endif
-												@endforeach
-												</td>
-												<td>
-													<?php $statusData = $status[$order->status] ?? null; ?>
-													<?php if ($statusData): ?>
-														<button class="btn btn-sm" style="<?php echo $statusData['styles']; ?>"
-																type="button" id="statusDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-																data-toggle="tooltip" title="{{ $order->statusBy ? ($order->statusBy->first_name . ($order->statusBy->last_name ? ' ' . $order->statusBy->last_name : '')) : null }}">
-															{{ $statusData['label'] }}
-														</button>
-													<?php endif; ?>
-												</td>
-												<td>
-													{{ _dt($order->created) }}
-												</td>
-												<td style="font-size: 16px; font-weight: bold;">
-													{{$currency}} {{$order->total_amount }}
-												</td>
-											</tr>
-										@empty
-											<tr>
-												<td colspan="3">No orders found</td>
-											</tr>
-										@endforelse
-									</tbody>
-								</table>
-							</div>
+						</div>
+						<div class="card-body p-0">
+							@include('admin.staff.orders.index',['listing' => $listing])
 						</div>
 					</div>
+				<?php endif; ?>
 				</div>
 				<div class="col-xl-4 order-xl-1">
 					<?php if($page->image): ?>

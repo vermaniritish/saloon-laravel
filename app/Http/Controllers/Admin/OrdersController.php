@@ -314,6 +314,16 @@ class OrdersController extends AppController
     	}
     	$page = Orders::get($id);
 		$where = ['order_products.order_id' => $id];
+		if($request->get('search'))
+    	{
+    		$search = $request->get('search');
+    		$search = '%' . $search . '%';
+    		$where['(
+				order_products.id LIKE ? or
+				order_products.product_title LIKE ? or
+				order_products.quantity LIKE ? or
+				order_products.amount LIKE ?)'] = [$search, $search, $search, $search];
+    	}
 		$listing = OrderProductRelation::getListing($request, $where);
 		$staff = Staff::getAll(
 			[
@@ -328,13 +338,34 @@ class OrdersController extends AppController
 		);
     	if($page)
     	{
-	    	return view("admin/orders/view", [
-    			'page' => $page,
-				'status' => Orders::getStaticData()['status'],
-				'history' => OrderStatusHistory::where('order_id', $id)->get(),
-				'listing' => $listing,
-				'staff' => $staff
-    		]);
+			if($request->ajax())
+			{
+				$html = view(
+					"admin/orders/orderedProducts/listingLoop", 
+					[
+						'listing' => $listing
+					]
+				)->render();
+	
+				return Response()->json([
+					'status' => 'success',
+					'html' => $html,
+					'page' => $listing->currentPage(),
+					'counter' => $listing->perPage(),
+					'count' => $listing->total(),
+					'pagination_counter' => $listing->currentPage() * $listing->perPage()
+				], 200);
+			}
+			else
+			{
+				return view("admin/orders/view", [
+					'page' => $page,
+					'status' => Orders::getStaticData()['status'],
+					'history' => OrderStatusHistory::where('order_id', $id)->get(),
+					'listing' => $listing,
+					'staff' => $staff
+				]);
+			}
 		}
 		else
 		{

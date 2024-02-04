@@ -20,6 +20,7 @@ use Illuminate\Validation\Rule;
 use App\Libraries\FileSystem;
 use App\Http\Controllers\Admin\AppController;
 use App\Models\Admin\Orders;
+use App\Models\Admin\Settings;
 use App\Models\Admin\Staff;
 use App\Models\Admin\StaffDocuments;
 use Carbon\Carbon;
@@ -200,28 +201,57 @@ class StaffController extends AppController
 			$fromDate = $customDateRange[0];
 			$toDate = $customDateRange[1];
 		}	
-    	$page = Staff::get($id);
-		$orders = Orders::select('id', 'total_amount', 'created','status','status_by')
-						->with('statusBy')
-						->where('staff_id', $id)
-						->whereNull('deleted_at')
-						->where(function ($query) use ($fromDate, $toDate) {
-							$query->whereDate('created', '>=', $fromDate)
-								->whereDate('created', '<=', $toDate);
-						})
-						->with([
-							'products' => function ($query) {
-								$query->select('products.id', 'title', 'amount', 'quantity');
-							},
-						])
-						->get();
-    	if($page)
+		if($fromDate && $toDate)
     	{
+    		if(isset($fromDate) && !empty($fromDate))
+    			$where['orders.created >= ?'] = [
+    				date('Y-m-d 00:00:00', strtotime($fromDate))
+    			];
+    		if(isset($toDate) && !empty($toDate))
+    			$where['orders.created <= ?'] = [
+    				date('Y-m-d 23:59:59', strtotime($toDate))
+    			];
+    	}
+    	$page = Staff::get($id);
+		$where['staff_id'] = $id;
+		if($request->get('search'))
+    	{
+    		$search = $request->get('search');
+    		$search = '%' . $search . '%';
+    		$where['(
+				orders.status LIKE ? or
+				orders.id LIKE ? or
+				orders.total_amount LIKE ?)'] = [$search, $search, $search];
+    	}
+		$listing = Orders::getListing($request,$where);
+    	if($page)
+    	{	if($request->ajax())
+			{
+				$html = view(
+					"admin/staff/orders/listingLoop", 
+					[
+						'listing' => $listing,
+						'currency' => Settings::get('currency_symbol'),
+						'status' => Orders::getStaticData()['status'],
+					]
+				)->render();
+	
+				return Response()->json([
+					'status' => 'success',
+					'html' => $html,
+					'page' => $listing->currentPage(),
+					'counter' => $listing->perPage(),
+					'count' => $listing->total(),
+					'pagination_counter' => $listing->currentPage() * $listing->perPage()
+				], 200);
+			}
+			else
+			{
 	    	return view("admin/staff/view", [
     			'page' => $page,
-				'orders' => $orders,
 				'status' => Orders::getStaticData()['status'],
-    		]);
+				'listing' => $listing
+    		]);}
 		}
 		else
 		{
