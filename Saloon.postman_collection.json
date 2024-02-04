@@ -309,7 +309,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"customer_id\": 1,\n    \"product_id\": [76, 77],\n    \"booking_date\": \"2024-01-01\",\n    \"booking_time\": \"12:00\",\n    \"address_id\": 29,\n    \"payment_type\": \"Credit Card\",\n    \"coupon_code_id\": 3,\n    \"manual_address\" : 0\n}",
+							"raw": "{\n    \"customer_id\":2,\n    \"booking_date\": \"2024-01-01\",\n    \"booking_time\": \"12:00\",\n    \"address_id\": 29,\n    \"payment_type\": \"Credit Card\",\n    \"manual_address\" : 1,\n    \"address\": \"Manual\",\n    \"state\": \"Manual\",\n    \"city\": \"Manual\",\n    \"area\": \"Manual\",\n    \"coupon_code_id\": 3,\n    \"productsData\" :[\n        {\n            \"id\":78,\n            \"quantity\": 4\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
