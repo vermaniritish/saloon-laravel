@@ -17,8 +17,6 @@ class Blogs extends AppModel
     protected $primaryKey = 'id';
     public $timestamps = false;
 
-    /**** ONLY USE FOR MAIN TALBLES NO NEED TO USE FOR RELATION TABLES OR DROPDOWNS OR SMALL SECTIONS ***/
-    use SoftDeletes;
     
     /**
     * Blogs -> BlogCategories belongsToMany relation
