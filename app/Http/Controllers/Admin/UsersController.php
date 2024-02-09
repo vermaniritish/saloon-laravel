@@ -22,6 +22,8 @@ use App\Models\Admin\AdminAuth;
 use App\Models\Admin\Products;
 use App\Libraries\General;
 use App\Libraries\FileSystem;
+use App\Models\Admin\OrderProductRelation;
+use App\Models\Admin\Orders;
 use App\Models\Admin\Users;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
@@ -323,19 +325,24 @@ class UsersController extends AppController
     	$user = Users::get($id);
     	if($user)
     	{
-    		$where = ['products.user_id' => $id];
-	    	if($request->get('search'))
-	    	{
-	    		$search = $request->get('search');
-	    		$search = '%' . $search . '%';
-	    		$where['(products.title LIKE ? or shop_owner.first_name LIKE ? or shop_owner.last_name LIKE ? or products.address LIKE ? or products.postcode LIKE ?)'] = [$search, $search, $search, $search, $search];
-	    	}
-
-	    	$listing = Products::getListing($request, $where);
+			if($request->get('search'))
+			{
+				$search = $request->get('search');
+				$search = '%' . $search . '%';
+				$where['(
+					order_products.id LIKE ? or
+					order_products.product_title LIKE ? or
+					order_products.quantity LIKE ? or
+					order_products.amount LIKE ?)'] = [$search, $search, $search, $search];
+			}
+			$orderId = Orders::where('customer_id',$id)->pluck('id')->toArray();
+			$ids = implode(',',$orderId);
+			$where[] = "order_id in ({$ids})";
+			$listing = OrderProductRelation::getListing($request, $where);
 	    	if($request->ajax())
 	    	{
 			    $html = view(
-		    		"admin/products/listingLoop", 
+					"admin/users/orderedProducts/listingLoop", 
 		    		[
 		    			'listing' => $listing
 		    		]
