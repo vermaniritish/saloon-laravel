@@ -98,7 +98,7 @@
 							</div>
 						</div>
 						<div class="card-body p-0">
-							@include('admin.users.customerProducts.index',['listing' => $listing])
+							@include('admin.orders.orderedProducts.index',['listing' => $listing])
 						</div>
 					</div>
 				<?php endif; ?>
