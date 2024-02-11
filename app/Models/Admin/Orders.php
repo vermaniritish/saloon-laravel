@@ -115,6 +115,7 @@ class Orders extends AppModel
                 'approved' => ['label' => 'Approved', 'styles' => 'background-color: #ccffcc; color: #006600;'],
                 'in_progress' => ['label' => 'In Progress', 'styles' => 'background-color: #ffffcc; color: #996600;'],
                 'completed' => ['label' => 'Completed', 'styles' => 'background-color: #d9ead3; color: #006600;'],
+                'cancel' => ['label' => 'Cancel', 'styles' => 'background-color: #dc3545; color: #FFF;'],
             ],
             
         ];

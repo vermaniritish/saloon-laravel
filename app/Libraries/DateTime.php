@@ -1,5 +1,7 @@
 <?php
 namespace App\Libraries;
+use Carbon\Carbon;
+
 
 class DateTime
 {
@@ -96,5 +98,28 @@ class DateTime
 		$hours = floor(($seconds%86400)/3600);
 		$days = floor(($seconds%2592000)/86400);
 		return $days;
+	}
+
+	public static function calculateTimeDifference($start_time, $end_time)
+	{
+		// Convert string times to Carbon instances
+		$start_time = Carbon::parse($start_time);
+		$end_time = Carbon::parse($end_time);
+
+		// Calculate the time difference in minutes
+		$time_difference_minutes = $end_time->diffInMinutes($start_time);
+
+		// Calculate the number of intervals of 30 minutes
+		$intervals = floor($time_difference_minutes / 30);
+
+		// Calculate the remaining minutes
+		$remaining_minutes = $time_difference_minutes % 30;
+		$times = [];
+		for($i = 0; $i <= $intervals; $i++)
+		{
+			$times[] = date('h:i A', strtotime($start_time . ' + ' . ($i*30) . ' minutes'));
+		}
+
+		return $times;
 	}
 }

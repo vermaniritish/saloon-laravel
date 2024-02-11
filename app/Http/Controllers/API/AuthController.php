@@ -162,140 +162,50 @@ class AuthController extends AppController
 
     function login(Request $request)
     {	
-    	$allowed = ['email', 'password'];
-    	if($request->has($allowed))
-    	{
-    		$validator = Validator::make(
-	            $request->toArray(),
-	            [
-	                'email' => 'required|email',
-	                'password' => 'required',
-	                'device_type' => 'required',
-	                'device_id' => Rule::requiredIf(function () use ($request) {
-				        return $request->get('device_type') != 'web';
-				    }),
-				    'device_name' => Rule::requiredIf(function () use ($request) {
-				        return $request->get('device_type') != 'web';
-				    }),
-				    'fcm_token' => Rule::requiredIf(function () use ($request) {
-				        return $request->get('device_type') != 'web';
-				    }),
-	            ]
-	        );
+		$validator = Validator::make(
+			$request->toArray(),
+			[
+				'phonenumber' => 'required',
+			]
+		);
 
-	        if(!$validator->fails())
-	        {
-	        	//Validate recaptcha and throw error.
-	        	if(Settings::get('client_recaptcha'))
-	        	{
-	        		if(!$request->get('g-recaptcha-response') || !General::validateReCaptcha( $request->get('g-recaptcha-response') ))
-	        		{
-	        			$request->session()->flash('error', 'Captcha does not match. Please try again.');
-		        		return redirect()->back()->withInput();
-	        		}
-	        	}
-
-
-		    	// Make user login
-		    	$user = ApiAuth::attemptLogin($request);
-		    	if ($user) 
-		        {
-		        	if($user->verified_at && Settings::get('client_second_auth_factor'))
-		        	{
-		        		$otp = General::hash(8);
-		        		$user->token = General::hash(64);
-		        		$user->otp = $otp;
-		        		if($user->save())
-		        		{
-		        			$codes = [
-		        				'{first_name}' => $user->first_name,
-		        				'{last_name}' => $user->last_name,
-		        				'{one_time_password}' => $otp
-		        			];
-		        			General::sendTemplateEmail($user->email, 'admin-second-auth-otp', $codes);
-
-
-		        			return Response()->json([
-						    	'status' => true,
-						    	'message' => 'We have sent an OTP on your email address.',
-						    	'hash' => $user->token
-						    ]);
-		        		}
-		        		else
-		        		{
-		        			return Response()->json([
-						    	'status' => false,
-						    	'message' => 'Session could not be establised. Please try again.',
-						    ], 400);
-		        		}
-		        	}
-		        	else if($user->verified_at)
-		        	{
-			        	$user = ApiAuth::makeLoginSession($request, $user);
-			        	if($user)
-			        	{
-			        		if($request->get('wishlist_product'))
-		        			{
-		        				$product = Products::select(['id'])->where('id', $request->get('wishlist_product'))->count();
-		        				if($product && $product > 0)
-		        				{
-			        				$exist = UsersWishlist::select(['id'])
-			        						->where('product_id', $request->get('wishlist_product'))
-			        						->where('user_id', $user->id)
-			        						->first();
-			        				if(!$exist)
-			        				{
-			        					UsersWishlist::create($request->get('wishlist_product'), $user->id);
-			        				}
-			        			}
-		        			}
-
-			        		$user->wishlist = UsersWishlist::where('user_id', $user->id)->pluck('product_id')->toArray();
-			        		return Response()->json([
-						    	'status' => true,
-						    	'message' => 'Login successfully',
-						    	'user' => $user
-						    ]);
-			        	}
-			        	else
-			        	{
-			        		return Response()->json([
-						    	'status' => false,
-						    	'message' => 'Session could not be establised. Please try again.',
-						    ], 400);
-			        	}
-			        }
-			        else
-			        {
-			        	return Response()->json([
-						    	'status' => false,
-						    	'message' => 'We have already sent you an email having verification link. Please verify and proceed.',
-						    ], 400);
-			        }
-		        }
-		        else
-		        {
-		        	return Response()->json([
-				    	'status' => false,
-				    	'message' => 'The credentials that you\'ve entered doesn\'t match any account.',
-				    ], 400);
-		        }
-		    }
-		    else
-		    {
-		    	return Response()->json([
-			    	'status' => false,
-			    	'message' => current( current( $validator->errors()->getMessages() ) )
-			    ], 400);
-		    }
-	    }
-	    else
-	    {
-	    	return Response()->json([
-		    	'status' => false,
-		    	'message' => 'Some of inputs are invalid in request.',
-		    ], 400);
-	    }
+		if(!$validator->fails())
+		{
+			$user = Users::where('phonenumber', $request->get('phonenumber'))->limit(1)->first();
+			if(!$user)
+			{
+				$user = new Users();
+				$user->first_name = $request->get('name');
+				$user->phonenumber = $request->get('phonenumber');
+				$user->status = 1;
+			}
+			$otp = mt_rand(1000, 9999);
+			$user->otp = $otp;
+			$user->token = General::hash(64);
+			$user->token_expiry = null;
+			if($user->save())
+			{
+				return Response()->json([
+					'status' => true,
+					'message' => 'We have sent an OTP on your phone number.',
+					'hash' => $user->token
+				]);
+			}
+			else
+			{
+				return Response()->json([
+					'status' => false,
+					'message' => 'Session could not be establised. Please try again.',
+				], 400);
+			}
+		}
+		else
+		{
+			return Response()->json([
+				'status' => false,
+				'message' => current( current( $validator->errors()->getMessages() ) )
+			], 400);
+		}
     }
 
     function secondAuth(Request $request, $token)
@@ -321,16 +231,21 @@ class AuthController extends AppController
 			if($user->otp == $otp)
 			{
 				$user->otp = null;
-				$user->token = null;
+				$user->token = General::hash(64);
+				$user->token_expiry = date('Y-m-d', strtotime('+2 Month'));
 				if($user->save())
 				{
-					$user = AdminAuth::makeLoginSession($request, $user);
-		        	if($user)
+					if($user)
 		        	{
 		        		return Response()->json([
 					    	'status' => true,
 					    	'message' => 'Login successfully',
-					    	'user' => $user
+					    	'token' => $user->token,
+							'user' => [
+								'name' => $user->first_name,
+								'address' => $user->address,
+								'token' => $user->token
+							]
 					    ]);
 		        	}
 		        	else
@@ -338,7 +253,7 @@ class AuthController extends AppController
 		        		return Response()->json([
 					    	'status' => false,
 					    	'message' => 'Session could not be establised. Please try again.',
-					    ], 400);
+					    ]);
 		        	}
 				}
 				else
@@ -346,15 +261,15 @@ class AuthController extends AppController
 					return Response()->json([
 				    	'status' => false,
 				    	'message' => 'User could not be saved. Please try again.',
-				    ], 400);
+				    ]);
 				}
 			}
 			else
 			{
 				return Response()->json([
 				    	'status' => false,
-				    	'message' => 'The one time password is incorrect.',
-				    ], 400);
+				    	'message' => 'Your OTP is incorrect.',
+				    ]);
 			}
     	}
     	else
@@ -362,7 +277,7 @@ class AuthController extends AppController
     		return Response()->json([
 			    	'status' => false,
 			    	'message' => 'Please enter your one time password.',
-			    ], 400);
+			    ]);
     	}
     }
 

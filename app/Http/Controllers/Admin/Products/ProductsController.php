@@ -208,7 +208,7 @@ class ProductsController extends AppController
     	{
     		$data = $request->toArray();
     		unset($data['_token']);
-			$data['tags'] = explode(',', $data['tags']);
+			$data['tags'] = $data['tags'] ? explode(',', $data['tags']) : null;
     		$validator = Validator::make(
 	            $data,
 	            [

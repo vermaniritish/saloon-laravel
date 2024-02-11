@@ -6,6 +6,8 @@ use App\Http\Controllers\API\BaseController;
 use Illuminate\Http\Request;
 use App\Http\Resources\ProductCategoriesResource;
 use App\Models\API\ProductCategories;
+use App\Models\Admin\Settings;
+use App\Models\Admin\Orders;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -21,7 +23,19 @@ class ProductCategoriesController extends BaseController
     public function index(Request $request)
     {
         $productCategories = ProductCategories::with('products')->get();
-        return ProductCategoriesResource::collection($productCategories);
+        $data = ProductCategoriesResource::collection($productCategories);
+        return Response()->json([
+            'data' => $data,
+            'cgst' => Settings::get('cgst'),
+            'sgst' => Settings::get('sgst'),
+            'runningOrder' => Orders::select(['prefix_id'])
+                ->where('status', '!=', 'completed')
+                ->where('status', '!=', 'cancel')
+                ->orderBy('booking_date', 'asc')
+                ->limit(1)
+                ->pluck('prefix_id')
+                ->first()
+        ]);
     }
 
     /**

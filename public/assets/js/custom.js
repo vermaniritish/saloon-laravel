@@ -2,6 +2,7 @@ var lang = {"field_required":"This field is required","provide_valid_email":"Ple
 
 $(".tag-it").tagit();
 $(".tag-it-capital").tagit({
+    allowSpaces: true,
     preprocessTag: function(val) {
       if (!val) { return ''; }
       return val[0].toUpperCase() + val.slice(1, val.length);

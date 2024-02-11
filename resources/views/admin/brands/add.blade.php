@@ -66,8 +66,8 @@
 											data-type="image"
 											data-multiple="false"
 											data-path="brands"
-											data-resize-large="55*10"
-											data-resize-small="55*10"
+											data-resize-large="70*18"
+											data-resize-small="70*18"
 										>
 											<div class="upload-section">
 												<div class="button-ref mb-3">

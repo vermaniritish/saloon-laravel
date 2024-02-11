@@ -21,25 +21,32 @@ use App\Http\Controllers\API\ProductsController;
 Route::middleware(['guest:api'])->group(function () {
     include "API/auth.php";
     include "API/home.php";
+    Route::get('/categories', [ProductCategoriesController::class,'index'])
+        ->name('api.categories');
 
+    Route::get('/user/{id}/orders', [OrdersController::class,'getCustomerOrders'])
+        ->name('api.orders.getCustomerOrders');
+
+    Route::post('/orders/booking', [OrdersController::class,'createBooking'])
+        ->name('api.orders.createBooking');
+
+    Route::get('/slots', [ProductsController::class,'getSlots'])
+        ->name('api.getSlots');
 });
 
 Route::middleware(['apiAuth'])->group(function () {
-    include "API/users.php";
+    // include "API/users.php";
     // include "API/wishlist.php";
     // include "API/messages.php";
 });
 
 
-Route::apiResources(
-    [
-    'categories' => ProductCategoriesController::class,
-    'products' => ProductsController::class,
-    'coupons' => CouponsController::class,
-    'addresses' => AddressesController::class,
-    'orders' => OrdersController::class,
-    ]
-);
-
-Route::get('/user/{id}/orders', [OrdersController::class,'getCustomerOrders'])
-    ->name('api.orders.getCustomerOrders');
+// Route::apiResources(
+//     [
+//         'categories' => ProductCategoriesController::class,
+//         'products' => ProductsController::class,
+//         'coupons' => CouponsController::class,
+//         'addresses' => AddressesController::class,
+//         'orders' => OrdersController::class,
+//     ]
+// )->middleware(['apiAuth']);
