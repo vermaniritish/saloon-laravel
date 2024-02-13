@@ -181,25 +181,25 @@ class Activities extends AppModel
     */
     public static function create($data)
     {
-    	$activity = new Activities();
+    	// $activity = new Activities();
 
-    	foreach($data as $k => $v)
-    	{
-    		$activity->{$k} = $v;
-    	}
+    	// foreach($data as $k => $v)
+    	// {
+    	// 	$activity->{$k} = $v;
+    	// }
 
-        $activity->created = date('Y-m-d H:i:s');
-        $activity->device = self::getOS();
-        $activity->browser = self::getBrowser();
-        if($activity->save())
-        {
-          return $activity;
-      }
-      else
-      {
-          return null;
-      }
-  }
+        // $activity->created = date('Y-m-d H:i:s');
+        // $activity->device = self::getOS();
+        // $activity->browser = self::getBrowser();
+        // if($activity->save())
+        // {
+        //     return $activity;
+        // }
+        // else
+        // {
+        //     return null;
+        // }
+    }
 
     /**
     * To delete

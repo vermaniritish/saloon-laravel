@@ -18,15 +18,6 @@ class Guest
      */
     public function handle(Request $request, Closure $next)
     {
-        $data =  !empty($request->toArray()) ? json_encode($request->toArray()) : null;
-        $data = $data ? General::encrypt($data) : null;
-        Activities::create([
-            'url' => url()->current(),
-            'data' => $data,
-            'admin' => null,
-            'client' => null,
-            'ip' => $request->getClientIp()
-        ]);
         return $next($request)
         ->header('Access-Control-Allow-Origin', '*')
         ->header('Access-Control-Allow-Methods', '*')

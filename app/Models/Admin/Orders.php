@@ -111,8 +111,9 @@ class Orders extends AppModel
             ],
             'status' => [
                 'pending' => ['label' => 'Pending', 'styles' => 'background-color: #ffa07a; color: #cc0000;'],
+                'accepted' => ['label' => 'Accepted', 'styles' => 'background-color: #ccffcc; color: #006600;'],
                 'on_the_way' => ['label' => 'On The Way', 'styles' => 'background-color: #cce5ff; color: #004080;'],
-                'approved' => ['label' => 'Approved', 'styles' => 'background-color: #ccffcc; color: #006600;'],
+                'reached_at_location' => ['label' => 'Reached at Location', 'styles' => 'background-color: #cce5ff; color: #004080;'],
                 'in_progress' => ['label' => 'In Progress', 'styles' => 'background-color: #ffffcc; color: #996600;'],
                 'completed' => ['label' => 'Completed', 'styles' => 'background-color: #d9ead3; color: #006600;'],
                 'cancel' => ['label' => 'Cancel', 'styles' => 'background-color: #dc3545; color: #FFF;'],

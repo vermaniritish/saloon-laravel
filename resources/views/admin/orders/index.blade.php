@@ -8,10 +8,8 @@
 						<h6 class="h2 text-white d-inline-block mb-0">Manage Orders</h6>
 					</div>
 					<div class="col-lg-6 col-5 text-right">
-					<?php if(Permissions::hasPermission('coupons', 'create')): ?>
-						<a href="<?php echo route('admin.orders.add') ?>" class="btn btn-neutral">
+						<a href="https://order.shaguna.in" target="_blank"  class="btn btn-neutral">
 						<i class="fas fa-plus"></i> New</a>
-					<?php endif; ?>	
 						@include('admin.orders.filters')
 					</div>
 				</div>

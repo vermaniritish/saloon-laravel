@@ -50,7 +50,7 @@ use App\Models\Admin\Settings;
 	<!-- Page content -->
 	<div class="container-fluid mt--6">
 		<div class="row">
-			<div class="col-xl-8 order-xl-1">
+			<div class="col-xl-7 order-xl-1">
 				<div class="card">
 					<!--!! FLAST MESSAGES !!-->
 					@include('admin.partials.flash_messages')
@@ -122,7 +122,6 @@ use App\Models\Admin\Settings;
 						</table>
 					</div>
 				</div>
-				<?php if(Permissions::hasPermission('products', 'listing')): ?>
 					<div class="card listing-block">
 						<div class="card-header">
 							<div class="row align-items-center">
@@ -143,17 +142,7 @@ use App\Models\Admin\Settings;
 							@include('admin.orders.orderedProducts.index',['listing' => $listing])
 						</div>
 					</div>
-				<?php endif; ?>
-			</div>
-			<div class="col-xl-4 order-xl-1">
-				<?php if($page->image): ?>
-				<div class="card">
-					<div class="card-body">
-						<img src="<?php echo url($page->image) ?>">
-					</div>
-				</div>
-				<?php endif; ?>
-				<div class="card">
+					<div class="card">
 					<div class="card-header">
 						<div class="row align-items-center">
 							<div class="col">
@@ -198,6 +187,9 @@ use App\Models\Admin\Settings;
 						</table>
 					</div>
 				</div>
+			</div>
+			<div class="col-xl-5 order-xl-1">
+				
 				<div class="card">
 					<div class="card-header">
 						<div class="row align-items-center">

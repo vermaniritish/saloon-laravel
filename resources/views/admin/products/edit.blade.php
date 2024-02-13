@@ -132,7 +132,7 @@
 								<div class="col-lg-6">
 									<div class="form-group">
 										<label class="form-control-label" for="input-emails">Tag</label>
-										<input type="text" class="form-control tag-it" name="tags" placeholder="info@example.com" value="{{ old('tags',implode(', ', $product->tags)) }}">
+										<input type="text" class="form-control tag-it" name="tags" placeholder="info@example.com" value="{{ old('tags',implode(', ', $product->tags ? $product->tags : [])) }}">
 										@error('tags.*')
 											<small class="text-danger">{{ $message }}</small>
 										@enderror
