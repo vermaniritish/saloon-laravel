@@ -261,6 +261,11 @@ use App\Models\Admin\Settings;
 									<div class="d-flex justify-content-between align-items-top">
 										<div>
 											<h4 class="mb-0 text-sm" style="font-size: 14px !important;padding-right: 10px;">{{ $admin ? ($admin->first_name . ($admin->last_name ? ' ' . $admin->last_name : '')) : null  }}</h4>
+											@if ($change->staff_id)
+												<p class="text-success m-0" style="font-size: 12px !important;">
+													Assigned Staff: {{ $change->staff ? $change->staff->first_name : null}} {{ $change->staff ? $change->staff->last_name : null }}
+												</p>
+											@endif
 										</div>
 										<div class="text-right">
 											@if ($change->status)

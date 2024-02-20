@@ -24,6 +24,16 @@ class OrderStatusHistory extends AppModel
     }
 
     /**
+    * OrderStatusHistory -> Staff hasOne relation
+    * 
+    * @return Staff
+    */
+    public function staff()
+    {
+        return $this->hasOne(Staff::class, 'id','staff_id');
+    }
+
+    /**
     * To search and get pagination listing
     * @param Request $request
     * @param $limit

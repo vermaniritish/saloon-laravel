@@ -165,6 +165,14 @@ class Orders extends AppModel
         ]);
     }
 
+    public function logStaffHistory($staffId, $id)
+    {
+        OrderStatusHistory::create([
+            'order_id' => $id,
+            'staff_id' => $staffId,
+            'created_by' => AdminAuth::getLoginId(),
+        ]);
+    }
     /**
     * To search and get pagination listing
     * @param Request $request

@@ -361,7 +361,7 @@ class OrdersController extends AppController
 				return view("admin/orders/view", [
 					'page' => $page,
 					'status' => Orders::getStaticData()['status'],
-					'history' => OrderStatusHistory::where('order_id', $id)->get(),
+					'history' => OrderStatusHistory::where('order_id', $id)->orderBy('created', 'desc')->get(),
 					'listing' => $listing,
 					'staff' => $staff
 				]);
@@ -616,8 +616,8 @@ class OrdersController extends AppController
 			$request->toArray(),
 			[
 				'staff_id' => ['required', Rule::exists(Staff::class, 'id')],
-				]
-			);
+			]
+		);
 			
 			if (!$validator->fails()) {
 				$order = Orders::find($id);
@@ -678,6 +678,7 @@ class OrdersController extends AppController
 					}
 				}
 				if ($updated) {
+					$order->logStaffHistory($order->staff_id, $id);
 					$request->session()->flash('success', 'Staff assigned successfully.');
 					return redirect()->back()->withErrors($validator)->withInput();
 				} else {
