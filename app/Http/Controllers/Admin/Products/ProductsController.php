@@ -208,7 +208,9 @@ class ProductsController extends AppController
     	{
     		$data = $request->toArray();
     		unset($data['_token']);
-			$data['tags'] = $data['tags'] ? explode(',', $data['tags']) : null;
+			if (isset($data['tags']) && $data['tags']) {
+				$data['tags'] = explode(',', $data['tags']);
+			}
     		$validator = Validator::make(
 	            $data,
 	            [
@@ -318,7 +320,9 @@ class ProductsController extends AppController
 	    	if($request->isMethod('post'))
 	    	{
 	    		$data = $request->toArray();
-				$data['tags'] = explode(',', $data['tags']);
+				if (isset($data['tags']) && $data['tags']) {
+					$data['tags'] = explode(',', $data['tags']);
+				}
 	    		$validator = Validator::make(
 		            $data,
 			            [
