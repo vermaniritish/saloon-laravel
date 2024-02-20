@@ -56,9 +56,10 @@ class OrdersController extends AppController
     		$search = '%' . $search . '%';
     		$where['(
 				orders.id LIKE ? or
-				orders.title LIKE ? or
-			 	owner.first_name LIKE ? or 
-				owner.last_name LIKE ?)'] = [$search, $search, $search, $search];
+				orders.customer_name LIKE ? or
+				orders.address LIKE ? or
+				orders.status LIKE ? or
+			 	orders.total_amount LIKE ?)'] = [$search, $search, $search, $search, $search];
     	}
 
     	if($request->get('created_on'))
@@ -103,7 +104,8 @@ class OrdersController extends AppController
 		    $html = view(
 	    		"admin/orders/listingLoop", 
 	    		[
-	    			'listing' => $listing
+	    			'listing' => $listing,
+					'status' => Orders::getStaticData()['status'],
 	    		]
 	    	)->render();
 
