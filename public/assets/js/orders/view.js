@@ -57,9 +57,9 @@ async function saveEdit(id, fieldName, orderId) {
             document.getElementById(id).querySelector('.fill-text').innerHTML = fieldName == 'booking_time' ? _time(newValue) : _d(newValue) + ' <i class="fas fa-pencil text-primary edit-icon" onclick="enableEdit(\'' + id + '\')"></i>';
             document.getElementById(id).querySelector('.fill-text').style.display = 'inline-block';
             document.getElementById(id).querySelector('.edit').classList.add('d-none');
-            set_notification('success', fieldName + ' updated successfully.');
+            set_notification('success', ucfirst(str_replace('_', ' ', fieldName)) + ' updated successfully.');
         } else {
-            set_notification('error', 'Failed to update ' +fieldName+'.');
+            set_notification('error', 'Failed to update ' +ucfirst(str_replace('_', ' ', fieldName))+'.');
         }
     } catch (error) {
         console.error('Error:', error);
