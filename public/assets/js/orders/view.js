@@ -54,12 +54,12 @@ async function saveEdit(id, fieldName, orderId) {
         });
         const data = await response.json();
         if (response.ok && data.status === 'success') {
-            document.getElementById(id).querySelector('.fill-text').innerHTML = newValue + ' <i class="fas fa-pencil text-primary edit-icon" onclick="enableEdit(\'' + id + '\')"></i>';
+            document.getElementById(id).querySelector('.fill-text').innerHTML = fieldName == 'booking_time' ? _time(newValue) : _d(newValue) + ' <i class="fas fa-pencil text-primary edit-icon" onclick="enableEdit(\'' + id + '\')"></i>';
             document.getElementById(id).querySelector('.fill-text').style.display = 'inline-block';
             document.getElementById(id).querySelector('.edit').classList.add('d-none');
-            set_notification('success', fieldName + 'updated successfully.');
+            set_notification('success', fieldName + ' updated successfully.');
         } else {
-            set_notification('error', 'Failed to update field.');
+            set_notification('error', 'Failed to update ' +fieldName+'.');
         }
     } catch (error) {
         console.error('Error:', error);

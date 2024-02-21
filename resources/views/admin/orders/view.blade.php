@@ -277,6 +277,8 @@ use App\Models\Admin\Settings;
 												<p class="text-success m-0" style="font-size: 12px !important;">
 													Assigned Staff: {{ $change->staff ? $change->staff->first_name : null}} {{ $change->staff ? $change->staff->last_name : null }}
 												</p>
+											@elseif($change->field)
+												<p class="text-muted m-0" style="font-size: 12px !important;">Updated {{ ucfirst(str_replace('_', ' ', $change->field)) }} from {{ $change->old_value }} to {{ $change->new_value }}</p>
 											@endif
 										</div>
 										<div class="text-right">
