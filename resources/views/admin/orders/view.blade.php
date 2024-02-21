@@ -82,11 +82,23 @@ use App\Models\Admin\Settings;
 								</tr>
 								<tr>
 									<th>Booking Date</th>
-									<td><?php echo _d($page->booking_date) ?></td>
+									<td class="editable" id="booking-date">
+										<span class="fill-text dotted-border old_work_diary_number" name="work_diary_number"><?php echo _d($page->booking_date) ?> <i class="fas fa-pencil text-primary edit-icon" onclick="enableEdit('booking-date')"></i></span>
+										<span class="d-none edit with-icon">
+											<input type="date" name="booking_date" id="booking_date" class="form-control" value="<?php echo _d($page->booking_date) ?>"/>
+											<i class="fa fa-save text-primary save-icon" onclick="saveEdit('booking-date', 'booking_date', '<?php echo $page->id ?>')"></i>
+										</span>
+									</td> 
 								</tr>
 								<tr>
 									<th>Booking Time</th>
-									<td><?php echo ($page->booking_time) ?></td>
+									<td class="editable" id="booking-time">
+										<span class="fill-text dotted-border old_work_diary_number" name="work_diary_number"><?php echo _time($page->booking_time) ?> <i class="fas fa-pencil text-primary edit-icon" onclick="enableEdit('booking-time')"></i></span>
+										<span class="d-none edit with-icon">
+											<input type="time" name="booking_time" id="booking_time" class="form-control" value="<?php echo _time($page->booking_time) ?>"/>
+											<i class="fa fa-save text-primary save-icon" onclick="saveEdit('booking-time', 'booking_time', '<?php echo $page->id ?>')"></i>
+										</span>
+									</td> 
 								</tr>
 								<tr>
 									<th>Payment Type</th>

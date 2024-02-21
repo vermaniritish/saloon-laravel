@@ -697,4 +697,42 @@ class OrdersController extends AppController
 			return redirect()->back()->withErrors($validator)->withInput();
 		}
 	}
+
+	function updateField(Request $request, $id)
+	{
+		if (!Permissions::hasPermission('orders', 'update')) {
+		$request->session()->flash('error', 'Permission denied.');
+		return redirect()->route('admin.dashboard');
+		}
+		$data = $request->toArray();
+		$validator = Validator::make(
+		$request->toArray(),
+		[
+			'fieldName' => 'required',
+			'value' => 'required',
+		]
+		);
+		if (!$validator->fails()) {
+		$order = Orders::find($id);
+		if($order){
+			$updated = $order->updateFieldAndLogHistory($request->get('fieldName'), $request->get('value'));
+		}
+		if ($updated) {
+			return Response()->json([
+			'status' => 'success',
+			'message' => 'Record updated successfully.'
+			]);
+		} else {
+			return Response()->json([
+			'status' => 'error',
+			'message' => 'Record could not be update.'
+			]);
+		}
+		} else {
+		return Response()->json([
+			'status' => 'error',
+			'message' => 'Record could not be update.'
+		]);
+		}
+	}
 }
