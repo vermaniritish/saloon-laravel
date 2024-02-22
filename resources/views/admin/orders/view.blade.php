@@ -277,9 +277,20 @@ use App\Models\Admin\Settings;
 												<p class="text-success m-0" style="font-size: 12px !important;">
 													Assigned Staff: {{ $change->staff ? $change->staff->first_name : null}} {{ $change->staff ? $change->staff->last_name : null }}
 												</p>
-											@elseif($change->field)
-												<p class="text-muted m-0" style="font-size: 12px !important;">Updated {{ ucfirst(str_replace('_', ' ', $change->field)) }} from {{ $change->old_value }} to {{ $change->new_value }}</p>
-											@endif
+												@elseif($change->field)
+													@php
+														$fieldName = ucfirst(str_replace('_', ' ', $change->field));
+														$new = $change->new_value;
+														if ($change->field == 'booking_time') {
+															$new = _time($new);
+															$old = _time($change->old_value); 
+														} elseif ($change->field == 'booking_date') {
+															$new = _d($new);
+															$old = _d($change->old_value); 
+														}
+													@endphp
+													<p class="text-muted m-0" style="font-size: 12px !important;">Updated {{ $fieldName }} from {{ $old }} to {{ $new }}</p>
+												@endif
 										</div>
 										<div class="text-right">
 											@if ($change->status)

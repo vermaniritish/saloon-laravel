@@ -166,7 +166,6 @@ class Orders extends AppModel
         if ($updated) {
             $this->logFieldHistory($field,$newValue, $id,$old);
         }
-        return $updated;
     }
 
     public function logFieldHistory($field,$newValue, $id,$old)
