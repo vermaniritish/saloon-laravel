@@ -28,8 +28,9 @@ let order = new Vue({
     mounted: function() {
         this.mounting = false;
         this.initBasics();
-        document.getElementById('order-form').classList.remove('d-none');
         this.initEditValues();
+        console.log(this.subtotal);
+        document.getElementById('order-form').classList.remove('d-none');
     },
     methods: {
         removeItem: function(index) {
@@ -41,7 +42,6 @@ let order = new Vue({
         initEditValues: function () {
             if ($('#edit-form').length > 0) {
                 let data = JSON.parse($('#edit-form').text());
-                console.log(data.discount);
                 this.url = admin_url + '/order/' + data.id + '/edit';
                 this.selectedCustomer = data.customer_id;
                 this.selectedAddress = data.address_id;
@@ -80,7 +80,9 @@ let order = new Vue({
         },
         updateTotal: function () {
             this.updateProductsData();
+            setTimeout(function () {
             this.calculateTotal();
+        }, 50);
         },
         updateProductsData: function () {
             for (let productId of this.selectedProducts) {
@@ -112,7 +114,6 @@ let order = new Vue({
 
             this.tax = (this.subtotal - this.discount) * (this.taxPercentage / 100);
             this.totalAmount = this.subtotal - this.discount + this.tax;
-
             document.getElementById('subtotal').textContent = this.subtotal.toFixed(2);
             document.getElementById('discount').textContent = this.discount.toFixed(2);
             document.getElementById('tax').textContent = this.tax.toFixed(2);
@@ -127,7 +128,6 @@ let order = new Vue({
             this.productsData[index].quantity = parseInt(this.productsData[index].quantity);
             this.calculateSubtotal();
             this.calculateTotal();
-            console.log(this.productsData);
         },
         calculateSubtotal: function () {
             this.subtotal = 0;
