@@ -80,9 +80,8 @@ let order = new Vue({
         },
         updateTotal: function () {
             this.updateProductsData();
-            setTimeout(function () {
+            this.calculateSubtotal();
             this.calculateTotal();
-        }, 50);
         },
         updateProductsData: function () {
             for (let productId of this.selectedProducts) {
@@ -181,8 +180,7 @@ let order = new Vue({
                 set_notification('error', response.message);
                 
             }
-        },
-        
+        },    
     },
     watch: {
         selectedCustomer: function (newCustomerId) {
