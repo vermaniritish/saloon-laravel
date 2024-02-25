@@ -423,7 +423,8 @@ class OrdersController extends AppController
 					]
 		        );
 		        if(!$validator->fails())
-				{   
+				{  
+					dd($page); 
 					unset($data['product_id']);
 					unset($data['productsData']);
 					$formattedDateTime = date('Y-m-d H:i:s', strtotime($request->get('booking_date')));
@@ -468,8 +469,10 @@ class OrdersController extends AppController
 				}
 			    else
 			    {
-			    	$request->session()->flash('error', 'Please provide valid inputs.');
-			    	return redirect()->back()->withErrors($validator)->withInput();
+					return Response()->json([
+						'status' => false,
+						'message' => current(current($validator->errors()->getMessages()))
+					], 400);
 			    }
 			}
 			$users = Users::getAll(
