@@ -24,8 +24,11 @@ Route::middleware(['guest:api'])->group(function () {
     Route::get('/categories', [ProductCategoriesController::class,'index'])
         ->name('api.categories');
 
-    Route::get('/user/{id}/orders', [OrdersController::class,'getCustomerOrders'])
+    Route::get('/user/{token}/orders', [OrdersController::class,'getCustomerOrders'])
         ->name('api.orders.getCustomerOrders');
+    
+    Route::get('/user/{token}/order/{id}', [OrdersController::class,'detail'])
+        ->name('api.orders.deail');
 
     Route::post('/orders/booking', [OrdersController::class,'createBooking'])
         ->name('api.orders.createBooking');

@@ -174,9 +174,11 @@ class ProductsController extends BaseController
 		$maxOrders = Settings::get('max_orders_per_hour');
 		$duration = Settings::get('duration');
 		$duration = $duration ? json_decode($duration) : null;
-		$dates = DateTime::getDatesBetweenTwoDates(date('Y-m-d'), date('Y-m-d', strtotime('+2 days')));
+		$dates = DateTime::getDatesBetweenTwoDates(
+			date('Y-m-d'), 
+			strtotime('+1 hour') >= strtotime($duration[1]) ? date('Y-m-d', strtotime('+3 days')) : date('Y-m-d', strtotime('+2 days'))
+		);
 		$final = [];
-		
 		foreach($dates as $d)
 		{
 			$disabled = Orders::select([DB::raw('TIME_FORMAT(booking_time, \'%h:%i %p\') as booking_time'), DB::raw('count(booking_time) as c')])
@@ -186,12 +188,15 @@ class ProductsController extends BaseController
 			->havingRaw('c >= ' . $maxOrders)
 			->pluck('booking_time')
 			->toArray();
+			if(date('Y-m-d', $d) == date('Y-m-d') && strtotime('+1 hour') >= strtotime($duration[1]))  {
+				continue;
+			}
 			
 			$final[] = [
 				'day' => date('D', $d),
 				'd' => date('d', $d),
 				'date' => date('Y-m-d', $d),
-				'time' => DateTime::calculateTimeDifference($duration[0], $duration[1]),
+				'time' => DateTime::calculateTimeDifference(date('Y-m-d', $d) == date('Y-m-d') && time() > strtotime(date('Y-m-d') . ' ' . $duration[0]) ? (date('H', strtotime('+1 hour')) . ':' . (round(date('H', strtotime('+1 hour'))/30)*30) )  : $duration[0], $duration[1]),
 				'disabled' => $disabled
 			];
 		}

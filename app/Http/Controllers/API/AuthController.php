@@ -24,6 +24,7 @@ use App\Models\API\Products;
 use App\Libraries\General;
 use App\Libraries\Facebook;
 use App\Libraries\Google;
+use App\Libraries\SMSCountry;
 
 class AuthController extends AppController
 {
@@ -185,6 +186,8 @@ class AuthController extends AppController
 			$user->token_expiry = null;
 			if($user->save())
 			{
+				// SMSCountry::send($user->phonenumber, "Hello {$user->first_name}, your OTP is {$user->otp} to login to the application SHAGUNA.IN - SHAGUNA");
+				
 				return Response()->json([
 					'status' => true,
 					'message' => 'We have sent an OTP on your phone number.',
