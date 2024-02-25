@@ -29,10 +29,15 @@ let order = new Vue({
         this.mounting = false;
         this.initBasics();
         document.getElementById('order-form').classList.remove('d-none');
-        this.initBasics();
         this.initEditValues();
     },
     methods: {
+        removeItem: function(index) {
+            this.productsData.splice(index, 1);
+            this.selectedProducts.splice(index, 1, null);
+            this.calculateSubtotal();
+            this.calculateTotal();
+        },
         initEditValues: function () {
             if ($('#edit-form').length > 0) {
                 let data = JSON.parse($('#edit-form').text());
