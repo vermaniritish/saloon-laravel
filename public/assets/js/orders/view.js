@@ -32,38 +32,40 @@ function getStatuses() {
     });
 }
 
-function enableEdit(id) {
+function enableEdit(id,currentValue) {
+    document.getElementById(id).querySelector('input').value = currentValue;
     document.getElementById(id).querySelector('.edit-icon').style.display = 'none';
     document.getElementById(id).querySelector('.fill-text').style.display = 'none';
     document.getElementById(id).querySelector('.edit').classList.remove('d-none');
 }
 
+function str_replace(search, replace, subject) {
+    return subject.replace(new RegExp(search, 'g'), replace);
+}
+
+function ucfirst(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 async function saveEdit(id, fieldName, orderId) {
     let newValue = document.getElementById(id).querySelector('input').value;
-    try {
-        const response = await fetch(admin_url + '/order/'+ orderId+'/updateField', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrf_token()
-            },
-            body: JSON.stringify({
-                fieldName: fieldName,
-                value: newValue
-            })
-        });
-        const data = await response.json();
-        if (response.ok && data.status === 'success') {
-            document.getElementById(id).querySelector('.fill-text').innerHTML = fieldName == 'booking_time' ? _time(newValue) : _d(newValue) + ' <i class="fas fa-pencil text-primary edit-icon" onclick="enableEdit(\'' + id + '\')"></i>';
-            document.getElementById(id).querySelector('.fill-text').style.display = 'inline-block';
-            document.getElementById(id).querySelector('.edit').classList.add('d-none');
-            set_notification('success', ucfirst(str_replace('_', ' ', fieldName)) + ' updated successfully.');
-        } else {
-            set_notification('error', 'Failed to update ' +ucfirst(str_replace('_', ' ', fieldName))+'.');
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        set_notification('error', 'An error occurred while updating the field.');
+    const response = await fetch(admin_url + '/order/'+ orderId+'/updateField', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrf_token()
+        },
+        body: JSON.stringify({
+            fieldName: fieldName,
+            value: newValue
+        })
+    });
+    const data = await response.json();
+    if (data.status) {
+        console.log(data);
+        set_notification('success', ucfirst(str_replace('_', ' ', fieldName)) + ' updated successfully.');
+    } else {
+        set_notification('error', 'Failed to update ' +ucfirst(str_replace('_', ' ', fieldName))+'.');
     }
 }
 

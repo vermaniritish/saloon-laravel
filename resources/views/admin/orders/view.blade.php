@@ -61,77 +61,79 @@ use App\Models\Admin\Settings;
 							</div>
 						</div>
 					</div>
-					<div class="table-responsive">
-						<!-- Projects table -->
-						<table class="table align-items-center table-flush">
-							<tbody>
-								<tr>
-									<th>Id</th>
-									<td><?php echo $page->id ?></td>
-								</tr>
-								<tr>
-									<th>Customer Name</th>
-									<td>
-										<?php echo $page->customer_name ?? 'N/A'; ?>
-										<?php echo $page->customer ? ' - ' . $page->customer->phonenumber : ''; ?>
-									</td>
-								</tr>
-								<tr>
-									<th>Address</th>
-									<td><?php echo implode(', ', array_filter([$page->address, $page->state, $page->city, $page->area])); ?></td>
-								</tr>
-								<tr>
-									<th>Booking Date</th>
-									<td class="editable" id="booking-date">
-										<span class="fill-text dotted-border old_work_diary_number" name="work_diary_number"><?php echo _d($page->booking_date) ?> <i class="fas fa-pencil text-primary edit-icon" onclick="enableEdit('booking-date')"></i></span>
-										<span class="d-none edit with-icon">
-											<input type="date" name="booking_date" id="booking_date" class="form-control" value="<?php echo _d($page->booking_date) ?>"/>
-											<i class="fa fa-save text-primary save-icon" onclick="saveEdit('booking-date', 'booking_date', '<?php echo $page->id ?>')"></i>
-										</span>
-									</td> 
-								</tr>
-								<tr>
-									<th>Booking Time</th>
-									<td class="editable" id="booking-time">
-										<span class="fill-text dotted-border old_work_diary_number" name="work_diary_number"><?php echo _time($page->booking_time) ?> <i class="fas fa-pencil text-primary edit-icon" onclick="enableEdit('booking-time')"></i></span>
-										<span class="d-none edit with-icon">
-											<input type="time" name="booking_time" id="booking_time" class="form-control" value="<?php echo _time($page->booking_time) ?>"/>
-											<i class="fa fa-save text-primary save-icon" onclick="saveEdit('booking-time', 'booking_time', '<?php echo $page->id ?>')"></i>
-										</span>
-									</td> 
-								</tr>
-								<tr>
-									<th>Payment Type</th>
-									<td><?php echo ($page->payment_type) ?></td>
-								</tr>
-								<tr>
-									<th>Status</th>
-									<td>	
-										<div class="dropdown">
-											<?php $statusData = $status[$page->status] ?? null; ?>
-											<?php if ($statusData): ?>
-												<button class="btn btn-sm dropdown-toggle" style="<?php echo $statusData['styles']; ?>"
-														type="button" id="statusDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-														data-toggle="tooltip" title="{{ $page->statusBy ? ($page->statusBy->first_name . ($page->statusBy->last_name ? ' ' . $page->statusBy->last_name : '')) : null }}">
-													{{ $statusData['label'] }}
-												</button>
-												<input type="hidden" id="Currentstatus" value={{ $page->status }} >
-												<div class="dropdown-menu dropdown-menu-left" aria-labelledby="statusDropdown">
-													<?php $switchUrl = route('admin.order.switchStatus', ['field' => 'status', 'id' => $page->id]); ?>
-													<?php foreach ($status as $statusKey => $statusData): ?>
-														<a class="dropdown-item" href="javascript:;" data-value="<?php echo $statusKey; ?>" onclick="switch_diary_page_action('<?php echo $switchUrl; ?>', this)">{{ ucfirst($statusData['label']) }}</a>
-													<?php endforeach; ?>
-												</div>
-											<?php endif; ?>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<th>Created On</th>
-									<td><?php echo _dt($page->created) ?></td>
-								</tr>
-							</tbody>
-						</table>
+					<div class="card-body">
+						<div class="table-responsive">
+							<!-- Projects table -->
+							<table class="table align-items-center table-flush">
+								<tbody>
+									<tr>
+										<th>Id</th>
+										<td><?php echo $page->id ?></td>
+									</tr>
+									<tr>
+										<th>Customer Name</th>
+										<td>
+											<?php echo $page->customer_name ?? 'N/A'; ?>
+											<?php echo $page->customer ? ' - ' . $page->customer->phonenumber : ''; ?>
+										</td>
+									</tr>
+									<tr>
+										<th>Address</th>
+										<td><?php echo implode(', ', array_filter([$page->address, $page->state, $page->city, $page->area])); ?></td>
+									</tr>
+									<tr>
+										<th>Booking Date</th>
+										<td class="editable" id="booking-date">
+										<span class="fill-text dotted-border">{{ _d($page->booking_date) }}<i class="fas fa-pencil text-primary edit-icon" onclick="enableEdit('booking-date', '<?php echo $page->booking_date; ?>')"></i></span>
+											<span class="d-none edit with-icon">
+												<input type="date" name="booking_date" id="booking_date" class="form-control" value="<?php echo _d($page->booking_date) ?>"/>
+												<i class="fa fa-save text-primary save-icon" onclick="saveEdit('booking-date', 'booking_date', '<?php echo $page->id ?>')"></i>
+											</span>
+										</td> 
+									</tr>
+									<tr>
+										<th>Booking Time</th>
+										<td class="editable" id="booking-time">
+										<span class="fill-text dotted-border">{{_time($page->booking_time)}}<i class="fas fa-pencil text-primary edit-icon" onclick="enableEdit('booking-time', '<?php echo $page->time; ?>')"></i></span>
+											<span class="d-none edit with-icon">
+												<input type="time" name="booking_time" id="booking_time" class="form-control" value="<?php echo _time($page->booking_time) ?>"/>
+												<i class="fa fa-save text-primary save-icon" onclick="saveEdit('booking-time', 'booking_time', '<?php echo $page->id ?>')"></i>
+											</span>
+										</td> 
+									</tr>
+									<tr>
+										<th>Payment Type</th>
+										<td><?php echo ($page->payment_type) ?></td>
+									</tr>
+									<tr>
+										<th>Status</th>
+										<td>	
+											<div class="dropdown">
+												<?php $statusData = $status[$page->status] ?? null; ?>
+												<?php if ($statusData): ?>
+													<button class="btn btn-sm dropdown-toggle" style="<?php echo $statusData['styles']; ?>"
+															type="button" id="statusDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+															data-toggle="tooltip" title="{{ $page->statusBy ? ($page->statusBy->first_name . ($page->statusBy->last_name ? ' ' . $page->statusBy->last_name : '')) : null }}">
+														{{ $statusData['label'] }}
+													</button>
+													<input type="hidden" id="Currentstatus" value={{ $page->status }} >
+													<div class="dropdown-menu dropdown-menu-left" aria-labelledby="statusDropdown">
+														<?php $switchUrl = route('admin.order.switchStatus', ['field' => 'status', 'id' => $page->id]); ?>
+														<?php foreach ($status as $statusKey => $statusData): ?>
+															<a class="dropdown-item" href="javascript:;" data-value="<?php echo $statusKey; ?>" onclick="switch_diary_page_action('<?php echo $switchUrl; ?>', this)">{{ ucfirst($statusData['label']) }}</a>
+														<?php endforeach; ?>
+													</div>
+												<?php endif; ?>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<th>Created On</th>
+										<td><?php echo _dt($page->created) ?></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</div>
 					<div class="card listing-block">
@@ -200,8 +202,7 @@ use App\Models\Admin\Settings;
 					</div>
 				</div>
 			</div>
-			<div class="col-xl-5 order-xl-1">
-				
+			<div class="col-xl-5 order-xl-1">	
 				<div class="card">
 					<div class="card-header">
 						<div class="row align-items-center">

@@ -714,23 +714,23 @@ class OrdersController extends AppController
 		);
 		if (!$validator->fails()) {
 		$order = Orders::find($id);
-		if($order){
-			$updated = $order->updateFieldAndLogHistory($request->get('fieldName'), $request->get('value'));
-		}
-		if ($updated) {
-			return Response()->json([
-			'status' => 'success',
-			'message' => 'Record updated successfully.'
-			]);
-		} else {
-			return Response()->json([
-			'status' => 'error',
-			'message' => 'Record could not be update.'
-			]);
-		}
+			if($order){
+				$updated = $order->updateFieldAndLogHistory($request->get('fieldName'), $request->get('value'));
+				if ($updated) {
+					return Response()->json([
+					'status' => true,
+					'message' => 'Record updated successfully.'
+					],200);
+				} else {
+					return Response()->json([
+					'status' => false,
+					'message' => 'Record could not be update.'
+					],200);
+				}
+			}
 		} else {
 		return Response()->json([
-			'status' => 'error',
+			'status' => false,
 			'message' => 'Record could not be update.'
 		]);
 		}
