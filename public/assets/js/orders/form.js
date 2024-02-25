@@ -103,6 +103,12 @@ let order = new Vue({
                     this.subtotal += price;
                 }
             }
+            for (let product of this.productsData) {
+                if (!this.selectedProducts.includes(product.id)) {
+                    let index = this.productsData.findIndex(p => p.id === product.id);
+                    this.removeItem(index, product.id);
+                }
+            }
         },
         calculateTotal: function () {
             if (this.selectedCouponId) {
