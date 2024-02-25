@@ -388,33 +388,84 @@ class OrdersController extends AppController
 	    	if($request->isMethod('post'))
 	    	{
 	    		$data = $request->toArray();
+				$data['productsData'] = json_decode($data['productsData'], true);
+				$productData = [];
+				$productData = $data['productsData'];
 	    		$validator = Validator::make(
 		            $request->toArray(),
-		            [
-						'title' => ['required'],
-						'coupon_code' => ['required', Rule::unique('coupons','coupon_code')->ignore($page->id)->whereNull('deleted_at')],
-						'max_use' => ['required', 'integer'],
-						'end_date' => ['required', 'after_or_equal:today'],
-						'description' => 'nullable',
-		            ]
+					[
+						'customer_id' => ['required', Rule::exists(User::class,'id')],
+						'product_id' => ['required', 'array'],
+						'product_id.*' => ['required', Rule::exists(Products::class, 'id')->where(function ($query) {
+							$query->where('status', 1)->whereNull('deleted_at');
+						})],
+						'booking_date' => ['required', 'date'],
+						'booking_time' => ['required', 'after_or_equal:today'],
+						'manual_address' => ['nullable','boolean'],
+						'address' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:255'],
+						'state' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:40'],
+						'city' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:30'],
+						'area' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:40'],
+						'address_id' => ['exclude_if:manual_address,true','required_if:manual_address,false',Rule::exists(Addresses::class,'id')],
+						'payment_type' => ['required'], 
+						'coupon_code_id' => ['nullable', Rule::exists(Coupons::class, 'id')->where(function ($query) {
+							$query->where('status', 1)->whereNull('deleted_at');
+						})],
+						'subtotal' => ['required', 'numeric'],
+						'discount' => ['required', 'numeric'],
+						'tax' => ['required', 'numeric'],
+						'total_amount' => ['required', 'numeric'],
+						'productsData' => ['required', 'array'],
+						'productsData.*.id' => ['required', Rule::exists(Products::class, 'id')->where(function ($query) {
+							$query->where('status', 1)->whereNull('deleted_at');
+						})],
+						'productsData.*.quantity' => ['required', 'integer', 'min:1'],
+					]
 		        );
-
 		        if(!$validator->fails())
-		        {
-					$formattedDateTime = date('Y-m-d H:i:s', strtotime($request->get('end_date')));
-					$data['end_date'] = $formattedDateTime;
-		        	unset($data['_token']);
-		        	if(Orders::modify($id, $data))
-		        	{
-		        		$request->session()->flash('success', 'Coupon updated successfully.');
-		        		return redirect()->route('admin.orders');
-		        	}
-		        	else
-		        	{
-		        		$request->session()->flash('error', 'Order could not be save. Please try again.');
-			    		return redirect()->back()->withErrors($validator)->withInput();
-		        	}
-			    }
+				{   
+					unset($data['product_id']);
+					unset($data['productsData']);
+					$formattedDateTime = date('Y-m-d H:i:s', strtotime($request->get('booking_date')));
+					$data['booking_date'] = $formattedDateTime;
+					$data['created_by_admin'] = true;
+					$customerId = $request->input('customer_id');
+					$user = User::find($customerId);
+					if($user){
+						$data['customer_name'] = $user->first_name . ' ' . $user->last_name; 
+					}
+					if (!$data['manual_address']) {
+						$address = Addresses::where('id', $data['address_id'])->first();
+						if($address){
+							$data['address'] = $address->address; 
+							$data['city'] = $address->city; 
+							$data['state'] = $address->state; 
+							$data['area'] = $address->area; 
+							$input['latitude'] = $address->latitude;
+							$input['longitude'] = $address->longitude;
+						}
+					}
+					$order = Orders::modify($id,$data);
+					if($order)
+					{
+						if (!empty($productData)) {
+							Orders::handleProducts($order->id, $productData);
+						}
+						$request->session()->flash('success', trans('ORDER_CREATED'));
+						return Response()->json([
+							'status' => true,
+							'message' => trans('ORDER_CREATED'),
+							'id' => $order->id
+						]);
+					}
+					else
+					{
+						return Response()->json([
+							'status' => false,
+							'message' => 'Order could not be saved. Please try again.'
+						], 400);
+					}
+				}
 			    else
 			    {
 			    	$request->session()->flash('error', 'Please provide valid inputs.');
