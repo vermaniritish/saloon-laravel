@@ -30,6 +30,7 @@ Route::post('/order/bulkActions/{action}', [OrdersController::class, 'bulkAction
 Route::get('/order/{id}/delete', [OrdersController::class, 'delete'])
     ->name('admin.orders.delete');
 
+Route::post('/order/{id}/updateField', [OrdersController::class, 'updateField'])->name('admin.order.updateField');
 Route::post('/order/switch-status/{field}/{id}', [OrdersController::class, 'switchStatus'])->name('admin.order.switchStatus');
 Route::get('/order/getStatus', [OrdersController::class, 'getStatuses'])->name('admin.order.getStatus');
 

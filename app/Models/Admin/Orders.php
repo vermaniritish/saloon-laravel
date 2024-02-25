@@ -156,15 +156,49 @@ class Orders extends AppModel
         return $updated;
     }
 
+    public function updateFieldAndLogHistory($field, $newValue)
+    {
+        $id = $this->id;
+        $old = Orders::where('id', $id)->limit(1)->value($field);
+        $updated = Orders::where('id', $id)->update([
+                $field => $newValue
+            ]);
+        if ($updated) {
+            $this->logFieldHistory($field,$newValue, $id,$old);
+        }
+    }
+
+    public function logFieldHistory($field,$newValue, $id,$old)
+    {
+        $create = OrderStatusHistory::create([
+            'order_id' => $id,
+            'field' => $field,
+            'old_value' => $old,
+            'new_value' => $newValue,
+            'created_by' => AdminAuth::getLoginId(),
+        ]);
+        return $create;
+    }
+
     public function logStatusHistory($newStatus, $id)
     {
-        OrderStatusHistory::create([
+        $create = OrderStatusHistory::create([
             'order_id' => $id,
             'status' => $newStatus,
             'created_by' => AdminAuth::getLoginId(),
         ]);
+        return $create;
     }
 
+    public function logStaffHistory($staffId, $id)
+    {
+        $create = OrderStatusHistory::create([
+            'order_id' => $id,
+            'staff_id' => $staffId,
+            'created_by' => AdminAuth::getLoginId(),
+        ]);
+        return $create;
+    }
     /**
     * To search and get pagination listing
     * @param Request $request

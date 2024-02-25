@@ -82,11 +82,23 @@ use App\Models\Admin\Settings;
 								</tr>
 								<tr>
 									<th>Booking Date</th>
-									<td><?php echo _d($page->booking_date) ?></td>
+									<td class="editable" id="booking-date">
+										<span class="fill-text dotted-border old_work_diary_number" name="work_diary_number"><?php echo _d($page->booking_date) ?> <i class="fas fa-pencil text-primary edit-icon" onclick="enableEdit('booking-date')"></i></span>
+										<span class="d-none edit with-icon">
+											<input type="date" name="booking_date" id="booking_date" class="form-control" value="<?php echo _d($page->booking_date) ?>"/>
+											<i class="fa fa-save text-primary save-icon" onclick="saveEdit('booking-date', 'booking_date', '<?php echo $page->id ?>')"></i>
+										</span>
+									</td> 
 								</tr>
 								<tr>
 									<th>Booking Time</th>
-									<td><?php echo ($page->booking_time) ?></td>
+									<td class="editable" id="booking-time">
+										<span class="fill-text dotted-border old_work_diary_number" name="work_diary_number"><?php echo _time($page->booking_time) ?> <i class="fas fa-pencil text-primary edit-icon" onclick="enableEdit('booking-time')"></i></span>
+										<span class="d-none edit with-icon">
+											<input type="time" name="booking_time" id="booking_time" class="form-control" value="<?php echo _time($page->booking_time) ?>"/>
+											<i class="fa fa-save text-primary save-icon" onclick="saveEdit('booking-time', 'booking_time', '<?php echo $page->id ?>')"></i>
+										</span>
+									</td> 
 								</tr>
 								<tr>
 									<th>Payment Type</th>
@@ -261,6 +273,24 @@ use App\Models\Admin\Settings;
 									<div class="d-flex justify-content-between align-items-top">
 										<div>
 											<h4 class="mb-0 text-sm" style="font-size: 14px !important;padding-right: 10px;">{{ $admin ? ($admin->first_name . ($admin->last_name ? ' ' . $admin->last_name : '')) : null  }}</h4>
+											@if ($change->staff_id)
+												<p class="text-success m-0" style="font-size: 12px !important;">
+													Assigned Staff: {{ $change->staff ? $change->staff->first_name : null}} {{ $change->staff ? $change->staff->last_name : null }}
+												</p>
+												@elseif($change->field)
+													@php
+														$fieldName = ucfirst(str_replace('_', ' ', $change->field));
+														$new = $change->new_value;
+														if ($change->field == 'booking_time') {
+															$new = _time($new);
+															$old = _time($change->old_value); 
+														} elseif ($change->field == 'booking_date') {
+															$new = _d($new);
+															$old = _d($change->old_value); 
+														}
+													@endphp
+													<p class="text-muted m-0" style="font-size: 12px !important;">Updated {{ $fieldName }} from {{ $old }} to {{ $new }}</p>
+												@endif
 										</div>
 										<div class="text-right">
 											@if ($change->status)

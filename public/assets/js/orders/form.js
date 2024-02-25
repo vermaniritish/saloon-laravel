@@ -36,7 +36,7 @@ let order = new Vue({
         initEditValues: function () {
             if ($('#edit-form').length > 0) {
                 let data = JSON.parse($('#edit-form').text());
-                console.log(data);
+                console.log(data.discount);
                 this.url = admin_url + '/order/' + data.id + '/edit';
                 this.selectedCustomer = data.customer_id;
                 this.selectedAddress = data.address_id;

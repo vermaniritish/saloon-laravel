@@ -56,9 +56,10 @@ class OrdersController extends AppController
     		$search = '%' . $search . '%';
     		$where['(
 				orders.id LIKE ? or
-				orders.title LIKE ? or
-			 	owner.first_name LIKE ? or 
-				owner.last_name LIKE ?)'] = [$search, $search, $search, $search];
+				orders.customer_name LIKE ? or
+				orders.address LIKE ? or
+				orders.status LIKE ? or
+			 	orders.total_amount LIKE ?)'] = [$search, $search, $search, $search, $search];
     	}
 
     	if($request->get('created_on'))
@@ -103,7 +104,8 @@ class OrdersController extends AppController
 		    $html = view(
 	    		"admin/orders/listingLoop", 
 	    		[
-	    			'listing' => $listing
+	    			'listing' => $listing,
+					'status' => Orders::getStaticData()['status'],
 	    		]
 	    	)->render();
 
@@ -361,7 +363,7 @@ class OrdersController extends AppController
 				return view("admin/orders/view", [
 					'page' => $page,
 					'status' => Orders::getStaticData()['status'],
-					'history' => OrderStatusHistory::where('order_id', $id)->get(),
+					'history' => OrderStatusHistory::where('order_id', $id)->orderBy('created', 'desc')->get(),
 					'listing' => $listing,
 					'staff' => $staff
 				]);
@@ -616,8 +618,8 @@ class OrdersController extends AppController
 			$request->toArray(),
 			[
 				'staff_id' => ['required', Rule::exists(Staff::class, 'id')],
-				]
-			);
+			]
+		);
 			
 			if (!$validator->fails()) {
 				$order = Orders::find($id);
@@ -678,6 +680,7 @@ class OrdersController extends AppController
 					}
 				}
 				if ($updated) {
+					$order->logStaffHistory($order->staff_id, $id);
 					$request->session()->flash('success', 'Staff assigned successfully.');
 					return redirect()->back()->withErrors($validator)->withInput();
 				} else {
@@ -692,6 +695,44 @@ class OrdersController extends AppController
 		} else {
 			$request->session()->flash('error', 'Please provide valid inputs.');
 			return redirect()->back()->withErrors($validator)->withInput();
+		}
+	}
+
+	function updateField(Request $request, $id)
+	{
+		if (!Permissions::hasPermission('orders', 'update')) {
+		$request->session()->flash('error', 'Permission denied.');
+		return redirect()->route('admin.dashboard');
+		}
+		$data = $request->toArray();
+		$validator = Validator::make(
+		$request->toArray(),
+		[
+			'fieldName' => 'required',
+			'value' => 'required',
+		]
+		);
+		if (!$validator->fails()) {
+		$order = Orders::find($id);
+		if($order){
+			$updated = $order->updateFieldAndLogHistory($request->get('fieldName'), $request->get('value'));
+		}
+		if ($updated) {
+			return Response()->json([
+			'status' => 'success',
+			'message' => 'Record updated successfully.'
+			]);
+		} else {
+			return Response()->json([
+			'status' => 'error',
+			'message' => 'Record could not be update.'
+			]);
+		}
+		} else {
+		return Response()->json([
+			'status' => 'error',
+			'message' => 'Record could not be update.'
+		]);
 		}
 	}
 }
