@@ -236,7 +236,7 @@
 													<td>@{{ product.rate.toFixed(2) }}</td>
 													<td><input type="number" v-on:change="updateQuantity(index)"  v-model="product.quantity" min="1"></td>
 													<td>@{{ (product.rate * product.quantity).toFixed(2) }}</td>
-													<td><i class="fa fa-times" v-on:click="removeItem(index)"></i></td>
+													<td><i class="fa fa-times" v-on:click="removeItem(index,product.id)"></i></td>
 												</tr>
 											</tbody>
 										</table>

@@ -33,11 +33,15 @@ let order = new Vue({
         document.getElementById('order-form').classList.remove('d-none');
     },
     methods: {
-        removeItem: function(index) {
+        removeItem(index, productId) {
+            this.productsData.splice(index, 1); 
+            this.selectedProducts = this.selectedProducts.filter(id => id !== productId); 
+            this.updateTotal(); 
+        },
+        removeItem(index, productId) {
             this.productsData.splice(index, 1);
-            this.selectedProducts.splice(index, 1, null);
-            this.calculateSubtotal();
-            this.calculateTotal();
+            this.selectedProducts = this.selectedProducts.filter(id => id !== productId); 
+            this.updateTotal(); 
         },
         initEditValues: function () {
             if ($('#edit-form').length > 0) {
