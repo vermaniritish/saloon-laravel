@@ -388,11 +388,12 @@ class OrdersController extends AppController
 	    	if($request->isMethod('post'))
 	    	{
 	    		$data = $request->toArray();
+				unset($data['_token']);
 				$data['productsData'] = json_decode($data['productsData'], true);
 				$productData = [];
 				$productData = $data['productsData'];
 	    		$validator = Validator::make(
-		            $request->toArray(),
+		            $data,
 					[
 						'customer_id' => ['required', Rule::exists(User::class,'id')],
 						'product_id' => ['required', 'array'],
@@ -424,7 +425,6 @@ class OrdersController extends AppController
 		        );
 		        if(!$validator->fails())
 				{  
-					dd($page); 
 					unset($data['product_id']);
 					unset($data['productsData']);
 					$formattedDateTime = date('Y-m-d H:i:s', strtotime($request->get('booking_date')));
@@ -452,10 +452,10 @@ class OrdersController extends AppController
 						if (!empty($productData)) {
 							Orders::handleProducts($order->id, $productData);
 						}
-						$request->session()->flash('success', trans('ORDER_CREATED'));
+						$request->session()->flash('success', trans('ORDER_UPDATED'));
 						return Response()->json([
 							'status' => true,
-							'message' => trans('ORDER_CREATED'),
+							'message' => trans('ORDER_UPDATED'),
 							'id' => $order->id
 						]);
 					}
