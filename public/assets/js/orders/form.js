@@ -4,7 +4,8 @@ let order = new Vue({
         mounting: true,
         subtotal: 0,
         discount: 0,
-        taxPercentage: parseFloat(document.getElementById('taxPercentageInput').value),
+        cgst: parseFloat(document.getElementById('cgstInput').value),
+        sgst: parseFloat(document.getElementById('sgstInput').value),
         selectedProducts: [], 
         selectedCouponId: '',
         tax: 0,
@@ -29,7 +30,6 @@ let order = new Vue({
         this.mounting = false;
         this.initBasics();
         this.initEditValues();
-        console.log(this.subtotal);
         document.getElementById('order-form').classList.remove('d-none');
     },
     methods: {
@@ -120,8 +120,7 @@ let order = new Vue({
                     this.discount = amount;
                 }
             }
-
-            this.tax = (this.subtotal - this.discount) * (this.taxPercentage / 100);
+            this.tax = ((this.subtotal - this.discount) * this.cgst / 100) + ((this.subtotal - this.discount) * this.sgst / 100);
             this.totalAmount = this.subtotal - this.discount + this.tax;
             document.getElementById('subtotal').textContent = this.subtotal.toFixed(2);
             document.getElementById('discount').textContent = this.discount.toFixed(2);

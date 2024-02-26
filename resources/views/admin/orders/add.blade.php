@@ -263,9 +263,10 @@
 									<div class="row">
 										<div class="col-md-6">
 											<div class="form-group">
-											<input type="hidden" id="taxPercentageInput" value="{{ $tax_percentage }}">
+											<input type="hidden" id="cgstInput" value="{{ $cgst }}">
+											<input type="hidden" id="sgstInput" value="{{ $sgst }}">
 											<input type="hidden" name="tax" v-model="tax">
-												<label class="form-control-label">Tax And Charges ({{ $tax_percentage }}%)</label>
+												<label class="form-control-label">Tax And Charges ({{ $cgst }}% CGST + {{ $sgst }}% SGST)</label>
 												<span id="tax" name="tax" class="form-control-static">0.00</span>
 											</div>
 										</div>

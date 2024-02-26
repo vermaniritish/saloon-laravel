@@ -524,6 +524,8 @@ class OrdersController extends AppController
 				],
 				'concat(staff.first_name, staff.last_name) desc'
 			);
+			$cgst = Settings::get('cgst');
+			$sgst = Settings::get('sgst');
 			return view("admin/orders/add", [
     			'page' => $page,
 				'users' => $users,
@@ -531,8 +533,9 @@ class OrdersController extends AppController
 				'address' => $address,
 				'coupons' => $coupons,
 				'paymentType' => Orders::getStaticData()['paymentType'],
-				'tax_percentage' => Settings::get('tax_percentage'),
-				'staff' => $staff
+				'staff' => $staff,
+				'cgst' => $cgst,
+				'sgst' => $sgst
     		]);
 		}
 		else
