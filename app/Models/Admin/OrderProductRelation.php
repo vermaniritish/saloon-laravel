@@ -8,7 +8,7 @@ class OrderProductRelation extends AppModel
 {
     protected $table = 'order_products';
     protected $primaryKey = 'id';
-    public $timestamps = false;
+    public $timestamps = true;
 
 
     /**
