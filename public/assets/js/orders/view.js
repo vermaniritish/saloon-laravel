@@ -62,8 +62,10 @@ async function saveEdit(id, fieldName, orderId) {
     });
     const data = await response.json();
     if (data.status) {
-        console.log(data);
         set_notification('success', ucfirst(str_replace('_', ' ', fieldName)) + ' updated successfully.');
+        setTimeout(function () {
+        window.location.reload();
+    }, 1000);
     } else {
         set_notification('error', 'Failed to update ' +ucfirst(str_replace('_', ' ', fieldName))+'.');
     }
