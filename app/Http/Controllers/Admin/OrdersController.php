@@ -727,13 +727,13 @@ class OrdersController extends AppController
 					if ($oldStaffId != $data['staff_id']) {
 						$oldStaff = Staff::find($oldStaffId);
 						if ($oldStaff) {
-							General::sendTemplateEmail($oldStaff->email, 'order-unassigned', $codes);
+							// General::sendTemplateEmail($oldStaff->email, 'order-unassigned', $codes);
 							General::sendTemplateEmail($order->customer->email, 'staff-reassigned', $codes);
 						}
 						$newStaff = Staff::find($data['staff_id']);
-						if ($newStaff) {
-							General::sendTemplateEmail($newStaff->email, 'staff-reassigned', $codes);
-						}
+						// if ($newStaff) {
+						// 	General::sendTemplateEmail($newStaff->email, 'staff-reassigned', $codes);
+						// }
 					}
 				}
 				if ($updated) {
