@@ -32,12 +32,18 @@ function getStatuses() {
     });
 }
 
-function enableEdit(id,currentValue) {
-    document.getElementById(id).querySelector('input').value = currentValue;
+function enableEdit(id, currentValue) {
+    // Find the input field within the edit section
+    var inputField = document.getElementById(id).querySelector('input');
+    // Set the value of the input field
+    inputField.value = currentValue;
+    // Hide the edit icon and the filled text
     document.getElementById(id).querySelector('.edit-icon').style.display = 'none';
     document.getElementById(id).querySelector('.fill-text').style.display = 'none';
+    // Show the edit section
     document.getElementById(id).querySelector('.edit').classList.remove('d-none');
 }
+
 
 function str_replace(search, replace, subject) {
     return subject.replace(new RegExp(search, 'g'), replace);
