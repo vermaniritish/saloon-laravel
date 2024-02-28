@@ -90,7 +90,12 @@ use App\Models\Admin\Settings;
 													<input type="date" name="booking_date" id="booking_date" class="form-control" value="<?php echo _d($page->booking_date) ?>"/>
 												</div>
 												<div class="col-md-6 p-0">
-													<i class="fa fa-save text-primary save-icon mt-4" onclick="saveEdit('booking-date', 'booking_date', '<?php echo $page->id ?>')"></i>
+													<div class="row">
+														<i class="fas fa-times text-primary times ml-2" onclick="exitEditMode('booking-date')"></i>
+													</div>
+													<div class="row">
+														<i class="fa fa-save text-primary save-icon mt-3 ml-2" onclick="saveEdit('booking-date', 'booking_date', '<?php echo $page->id ?>')"></i>
+													</div>
 												</div>
 											</div>
 										</td> 
@@ -104,7 +109,12 @@ use App\Models\Admin\Settings;
 													<input type="time" name="booking_time" id="booking_time" class="form-control" value="<?php echo _time($page->booking_time) ?>"/>
 												</div>
 												<div class="col-md-6 p-0">
-													<i class="fa fa-save text-primary save-icon mt-4" onclick="saveEdit('booking-time', 'booking_time', '<?php echo $page->id ?>')"></i>
+													<div class="row">
+														<i class="fas fa-times text-primary times ml-2" onclick="exitEditMode('booking-time')"></i>
+													</div>
+													<div class="row">
+														<i class="fa fa-save text-primary save-icon mt-3 ml-2" onclick="saveEdit('booking-time', 'booking_time', '<?php echo $page->id ?>')"></i>
+													</div>
 												</div>
 											</div>
 										</td> 
