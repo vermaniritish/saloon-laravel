@@ -52,6 +52,7 @@ $loginId = AdminAuth::getLoginId();
          <i class="zmdi zmdi-chevron-down fs-4 me-3"></i>
          <small class="text-muted text-nowrap"><?php echo _dt($value->created) ?></small>
       </a>
+      <hr> 
    </div>
 </div>
 <?php endforeach; ?>

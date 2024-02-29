@@ -85,20 +85,38 @@ use App\Models\Admin\Settings;
 										<th>Booking Date</th>
 										<td class="editable" id="booking-date">
 										<span class="fill-text dotted-border">{{ _d($page->booking_date) }}<i class="fas fa-pencil text-primary edit-icon" onclick="enableEdit('booking-date', '<?php echo $page->booking_date; ?>')"></i></span>
-											<span class="d-none edit with-icon">
-												<input type="date" name="booking_date" id="booking_date" class="form-control" value="<?php echo _d($page->booking_date) ?>"/>
-												<i class="fa fa-save text-primary save-icon" onclick="saveEdit('booking-date', 'booking_date', '<?php echo $page->id ?>')"></i>
-											</span>
+											<div class="row d-none edit with-icon">
+												<div class="col-md-6">
+													<input type="date" name="booking_date" id="booking_date" class="form-control" value="<?php echo _d($page->booking_date) ?>"/>
+												</div>
+												<div class="col-md-6 p-0">
+													<div class="row">
+														<i class="fas fa-times text-primary times ml-2" onclick="exitEditMode('booking-date')"></i>
+													</div>
+													<div class="row">
+														<i class="fa fa-save text-primary save-icon mt-3 ml-2" onclick="saveEdit('booking-date', 'booking_date', '<?php echo $page->id ?>')"></i>
+													</div>
+												</div>
+											</div>
 										</td> 
 									</tr>
 									<tr>
 										<th>Booking Time</th>
 										<td class="editable" id="booking-time">
-										<span class="fill-text dotted-border">{{_time($page->booking_time)}}<i class="fas fa-pencil text-primary edit-icon" onclick="enableEdit('booking-time', '<?php echo $page->time; ?>')"></i></span>
-											<span class="d-none edit with-icon">
-												<input type="time" name="booking_time" id="booking_time" class="form-control" value="<?php echo _time($page->booking_time) ?>"/>
-												<i class="fa fa-save text-primary save-icon" onclick="saveEdit('booking-time', 'booking_time', '<?php echo $page->id ?>')"></i>
-											</span>
+											<span class="fill-text dotted-border">{{_time($page->booking_time)}}<i class="fas fa-pencil text-primary edit-icon" onclick="enableEdit('booking-time', '<?php echo $page->booking_time; ?>')"></i></span>
+											<div class="row d-none edit with-icon">
+												<div class="col-md-6">
+													<input type="time" name="booking_time" id="booking_time" class="form-control" value="<?php echo _time($page->booking_time) ?>"/>
+												</div>
+												<div class="col-md-6 p-0">
+													<div class="row">
+														<i class="fas fa-times text-primary times ml-2" onclick="exitEditMode('booking-time')"></i>
+													</div>
+													<div class="row">
+														<i class="fa fa-save text-primary save-icon mt-3 ml-2" onclick="saveEdit('booking-time', 'booking_time', '<?php echo $page->id ?>')"></i>
+													</div>
+												</div>
+											</div>
 										</td> 
 									</tr>
 									<tr>

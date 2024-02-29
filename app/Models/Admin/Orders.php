@@ -160,9 +160,13 @@ class Orders extends AppModel
     {
         $id = $this->id;
         $old = Orders::where('id', $id)->limit(1)->value($field);
+        if ($old === $newValue) {
+            return true;
+        }
         $updated = Orders::where('id', $id)->update([
             $field => $newValue
         ]);
+        dd($updated);
         if ($updated) {
             $this->logFieldHistory($field,$newValue, $id,$old);
         }

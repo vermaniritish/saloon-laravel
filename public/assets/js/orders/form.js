@@ -119,6 +119,8 @@ let order = new Vue({
                 } else {
                     this.discount = amount;
                 }
+            } else {
+                this.discount = 0;
             }
             this.tax = ((this.subtotal - this.discount) * this.cgst / 100) + ((this.subtotal - this.discount) * this.sgst / 100);
             this.totalAmount = this.subtotal - this.discount + this.tax;

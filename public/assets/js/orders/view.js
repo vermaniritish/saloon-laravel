@@ -32,11 +32,18 @@ function getStatuses() {
     });
 }
 
-function enableEdit(id,currentValue) {
-    document.getElementById(id).querySelector('input').value = currentValue;
+function enableEdit(id, currentValue) {
+    var inputField = document.getElementById(id).querySelector('input');
+    inputField.value = currentValue;
     document.getElementById(id).querySelector('.edit-icon').style.display = 'none';
     document.getElementById(id).querySelector('.fill-text').style.display = 'none';
     document.getElementById(id).querySelector('.edit').classList.remove('d-none');
+}
+
+function exitEditMode(id) {
+    document.getElementById(id).querySelector('.edit').classList.add('d-none');
+    document.getElementById(id).querySelector('.fill-text').style.display = 'inline-block';
+    document.getElementById(id).querySelector('.edit-icon').style.display = 'inline-block';
 }
 
 function str_replace(search, replace, subject) {
@@ -62,8 +69,10 @@ async function saveEdit(id, fieldName, orderId) {
     });
     const data = await response.json();
     if (data.status) {
-        console.log(data);
         set_notification('success', ucfirst(str_replace('_', ' ', fieldName)) + ' updated successfully.');
+        setTimeout(function () {
+        window.location.reload();
+    }, 1000);
     } else {
         set_notification('error', 'Failed to update ' +ucfirst(str_replace('_', ' ', fieldName))+'.');
     }
