@@ -14,7 +14,7 @@
 	<td>
 		<span class="badge badge-dot mr-4">
 			<i class="bg-warning"></i>
-			<span class="status"><?php echo $row->id ?></span>
+			<span class="status"><?php echo $row->prefix_id ?></span>
 		</span>
 	</td>
 	<td>

@@ -29,6 +29,9 @@ Route::middleware(['guest:api'])->group(function () {
     
     Route::get('/user/{token}/order/{id}', [OrdersController::class,'detail'])
         ->name('api.orders.deail');
+    
+    Route::post('/orders/{token}/cancel-booking', [OrdersController::class,'cancelBooking'])
+        ->name('api.orders.deail');
 
     Route::post('/orders/booking', [OrdersController::class,'createBooking'])
         ->name('api.orders.createBooking');

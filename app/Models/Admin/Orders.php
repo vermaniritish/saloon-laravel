@@ -116,7 +116,7 @@ class Orders extends AppModel
                 'reached_at_location' => ['label' => 'Reached at Location', 'styles' => 'background-color: #cce5ff; color: #004080;', 'message' => 'Professions is reached at location.'],
                 'in_progress' => ['label' => 'In Progress', 'styles' => 'background-color: #ffffcc; color: #996600;', 'message' => 'Your order is in progress.'],
                 'completed' => ['label' => 'Completed', 'styles' => 'background-color: #d9ead3; color: #006600;', 'message' => 'Your order is in completed.'],
-                'cancel' => ['label' => 'Cancel', 'styles' => 'background-color: #dc3545; color: #FFF;', 'message' => 'This order is in cancelled.'],
+                'cancel' => ['label' => 'Cancel', 'styles' => 'background-color: #dc3545; color: #FFF;', 'message' => 'This order is cancelled.'],
             ],
             
         ];

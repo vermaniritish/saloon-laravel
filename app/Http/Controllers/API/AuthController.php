@@ -235,7 +235,7 @@ class AuthController extends AppController
 			{
 				$user->otp = null;
 				$user->token = General::hash(64);
-				$user->token_expiry = date('Y-m-d', strtotime('+2 Month'));
+				$user->token_expiry = date('Y-m-d', strtotime('+1 Month'));
 				if($user->save())
 				{
 					if($user)

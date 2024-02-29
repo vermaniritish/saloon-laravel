@@ -79,6 +79,10 @@ class OrdersController extends BaseController
             'address', 
             'booking_date', 
             'booking_time', 
+            'subtotal',
+            'cgst',
+            'sgst',
+            'tax',
             'total_amount', 
             'status', 
             'created',
@@ -93,6 +97,52 @@ class OrdersController extends BaseController
                 ]);
     }
 
+    public function cancelBooking(Request $request, $token) {
+        $user = Users::select(['id', 'first_name', 'phonenumber'])->where('token', $token)
+            ->where('token_expiry', '>', date('Y-m-d H:i'))
+            ->whereNotNull('token_expiry')
+            ->where('status', 1)
+            ->limit(1)
+            ->first();
+        if (!$user) {
+            return Response()
+                ->json([
+                    'status' => false,
+                    'authRequired' => true
+                ]);
+        }
+        $order = Orders::whereCustomerId($user->id)->where('id', $request->get('id'))->orderBy('id', 'desc')->limit(1)->first();
+        if($order)
+        {
+            $order->status = 'cancel';
+            if($order->save())
+            {
+                $order->updateStatusAndLogHistory('status', 'cancel_by_client', $order->id);
+
+                $order = Orders::select([
+                    'id',
+                    'address', 
+                    'booking_date', 
+                    'booking_time', 
+                    'subtotal',
+                    'cgst',
+                    'sgst',
+                    'tax',
+                    'total_amount', 
+                    'status', 
+                    'created',
+                    DB::raw("(Select sum(quantity) from order_products op where op.order_id = orders.id limit 1) as service_count")
+                ])->with(['products', 'products.brands'])->where('id', $order->id)->orderBy('id', 'desc')->limit(1)->first();
+
+                return Response()->json([
+                    'status' => true
+                ]);
+            }
+        }
+        return Response()->json([
+            'status' => false,
+        ]);
+    }
     
 	function createBooking(Request $request)
 	{
@@ -154,7 +204,7 @@ class OrdersController extends BaseController
                                 'amount' => $product->price,
                                 'quantity' => $c['quantity'],
                                 'duration_of_service' => $product->duration_of_service,
-                                'created' => date('Y-m-d H:i:s')
+                                'created_at' => date('Y-m-d H:i:s')
                             ];
 
                             $subtotal += ($c['quantity'] * $product->price) > 0 ? $c['quantity'] * $product->price : 0;
@@ -169,6 +219,8 @@ class OrdersController extends BaseController
                         $sgst = Settings::get('sgst');
                         $order->subtotal = $subtotal;
                         $order->discount = 0;
+                        $order->cgst = $cgst;
+                        $order->sgst = $sgst;
                         $order->tax = (($subtotal * $cgst) / 100) + (($subtotal * $sgst) / 100);
                         $order->total_amount = $order->subtotal + $order->tax;
                         $order->save();
