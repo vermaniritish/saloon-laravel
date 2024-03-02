@@ -204,7 +204,7 @@ class OrdersController extends BaseController
                                 'amount' => $product->price,
                                 'quantity' => $c['quantity'],
                                 'duration_of_service' => $product->duration_of_service,
-                                'created_at' => date('Y-m-d H:i:s')
+                                'updated_at' => now() 
                             ];
 
                             $subtotal += ($c['quantity'] * $product->price) > 0 ? $c['quantity'] * $product->price : 0;

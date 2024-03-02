@@ -108,7 +108,7 @@
 											</div>
 										</div>
 									</div>
-									<div class="row">
+									<!-- <div class="row">
 										<div class="col-md-6">
 											<div class="form-group">
 												<label class="form-control-label" for="input-first-name">Payment Type</label>
@@ -128,7 +128,7 @@
 												@enderror
 											</div>
 										</div>
-									</div>
+									</div> -->
 									<div class="row">
 										<div class="col-md-6">
 											<div class="form-group">
@@ -153,7 +153,7 @@
 												<input type="text" class="form-control" v-model="address" name="address" :required ="manualAddress">
 											</div>
 										</div>
-										<div class="col-md-6">
+										<!-- <div class="col-md-6">
 											<div class="form-group">
 												<label class="form-control-label" for="input-manual-address">State</label>
 												<input type="text" class="form-control" v-model="state" name="state" :required ="manualAddress">
@@ -170,7 +170,7 @@
 												<label class="form-control-label" for="input-manual-address">Area</label>
 												<input type="text" class="form-control" v-model="area" name="area" :required ="manualAddress">
 											</div>
-										</div>
+										</div> -->
 									</div>
 									<div v-else id="address-form" class="row">
 										<div class="col-md-6">

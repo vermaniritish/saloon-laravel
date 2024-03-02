@@ -15,7 +15,7 @@
 		<?php echo $row->amount ?>
 	</td>
 	<td>
-		<?php echo _dt($row->created) ?>
+		<?php echo _dt($row->created_at) ?>
 	</td>
 </tr>
 <?php endforeach; ?>

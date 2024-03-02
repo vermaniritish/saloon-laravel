@@ -183,11 +183,11 @@ class OrdersController extends AppController
 					'booking_time' => ['required', 'after_or_equal:today'],
 					'manual_address' => ['nullable','boolean'],
 					'address' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:255'],
-					'state' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:40'],
-					'city' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:30'],
-					'area' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:40'],
+					// 'state' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:40'],
+					// 'city' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:30'],
+					// 'area' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:40'],
 					'address_id' => ['exclude_if:manual_address,true','required_if:manual_address,false',Rule::exists(Addresses::class,'id')],
-					'payment_type' => ['required'], 
+					// 'payment_type' => ['required'], 
 					'coupon_code_id' => ['nullable', Rule::exists(Coupons::class, 'id')->where(function ($query) {
 						$query->where('status', 1)->whereNull('deleted_at');
 					})],
@@ -404,11 +404,11 @@ class OrdersController extends AppController
 						'booking_time' => ['required', 'after_or_equal:today'],
 						'manual_address' => ['nullable','boolean'],
 						'address' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:255'],
-						'state' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:40'],
-						'city' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:30'],
-						'area' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:40'],
+						// 'state' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:40'],
+						// 'city' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:30'],
+						// 'area' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:40'],
 						'address_id' => ['exclude_if:manual_address,true','required_if:manual_address,false',Rule::exists(Addresses::class,'id')],
-						'payment_type' => ['required'], 
+						// 'payment_type' => ['required'], 
 						'coupon_code_id' => ['nullable', Rule::exists(Coupons::class, 'id')->where(function ($query) {
 							$query->where('status', 1)->whereNull('deleted_at');
 						})],

@@ -10,3 +10,8 @@ ALTER TABLE `order_products`
 ADD `updated_at` datetime NULL ON UPDATE CURRENT_TIMESTAMP;
 ALTER TABLE `order_products`
 CHANGE `created` `created_at` datetime NULL ON UPDATE CURRENT_TIMESTAMP AFTER `deleted_at`;
+
+--today
+ALTER TABLE `order_products`
+CHANGE `created_at` `created_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP AFTER `deleted_at`,
+CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
