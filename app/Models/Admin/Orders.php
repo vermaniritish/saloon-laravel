@@ -111,8 +111,8 @@ class Orders extends AppModel
             ],
             'status' => [
                 'pending' => ['label' => 'Pending', 'styles' => 'background-color: #ffa07a; color: #cc0000;', 'message' => 'Your order is pending to accept.'],
-                'accepted' => ['label' => 'Accepted', 'styles' => 'background-color: #ccffcc; color: #006600;', 'message' => 'Your order is pending to accepted.'],
-                'on_the_way' => ['label' => 'On The Way', 'styles' => 'background-color: #cce5ff; color: #004080;', 'message' => 'Service professional is assigned and on the way.'],
+                'accepted' => ['label' => 'Accepted', 'styles' => 'background-color: #ccffcc; color: #006600;', 'message' => 'Your order is accepted.'],
+                'on_the_way' => ['label' => 'On The Way', 'styles' => 'background-color: #cce5ff; color: #004080;', 'message' => 'Professional is assigned for your order and on the way.'],
                 'reached_at_location' => ['label' => 'Reached at Location', 'styles' => 'background-color: #cce5ff; color: #004080;', 'message' => 'Professions is reached at location.'],
                 'in_progress' => ['label' => 'In Progress', 'styles' => 'background-color: #ffffcc; color: #996600;', 'message' => 'Your order is in progress.'],
                 'completed' => ['label' => 'Completed', 'styles' => 'background-color: #d9ead3; color: #006600;', 'message' => 'Your order is in completed.'],

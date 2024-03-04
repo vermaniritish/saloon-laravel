@@ -186,7 +186,7 @@ class AuthController extends AppController
 			$user->token_expiry = null;
 			if($user->save())
 			{
-				// SMSCountry::send($user->phonenumber, "Hello {$user->first_name}, your OTP is {$user->otp} to login to the application SHAGUNA.IN - SHAGUNA");
+				SMSCountry::send($user->phonenumber, "Hello {$user->first_name}, your OTP is {$user->otp} to login to the application SHAGUNA.IN - SHAGUNA");
 				
 				return Response()->json([
 					'status' => true,
