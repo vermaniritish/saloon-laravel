@@ -17,14 +17,14 @@ let order = new Vue({
         selectedAddress: null,
         loading: false,
         url: '',
-        selectedPaymentType: '',
+        // selectedPaymentType: '',
         selectedStaff: '',
         bookingDate: '',
         bookingTime: '',
         address: '',
-        city: '',
-        state: '',
-        area: ''
+        // city: '',
+        // state: '',
+        // area: ''
     },
     mounted: function() {
         this.mounting = false;
@@ -49,7 +49,7 @@ let order = new Vue({
                 this.url = admin_url + '/order/' + data.id + '/edit';
                 this.selectedCustomer = data.customer_id;
                 this.selectedAddress = data.address_id;
-                this.selectedPaymentType = data.payment_type;
+                // this.selectedPaymentType = data.payment_type;
                 this.selectedCouponId = data.coupon_code_id;
                 this.subtotal = data.subtotal;
                 this.discount = data.discount;
@@ -60,9 +60,9 @@ let order = new Vue({
                 this.bookingTime = data.booking_time;
                 this.selectedStaff = data.staff_id;
                 this.address = data.address;
-                this.city = data.city;
-                this.state = data.state;
-                this.area = data.area;
+                // this.city = data.city;
+                // this.state = data.state;
+                // this.area = data.area;
                 this.selectedProducts = data && data.products && data.products.length > 0 ? data.products.map(product => product.id) : [];
                 this.productsData = data && data.products && data.products.length > 0 ? data.products.map(product => ({
                     id: product.id,

@@ -183,11 +183,11 @@ class OrdersController extends AppController
 					'booking_time' => ['required', 'after_or_equal:today'],
 					'manual_address' => ['nullable','boolean'],
 					'address' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:255'],
-					'state' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:40'],
-					'city' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:30'],
-					'area' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:40'],
+					// 'state' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:40'],
+					// 'city' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:30'],
+					// 'area' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:40'],
 					'address_id' => ['exclude_if:manual_address,true','required_if:manual_address,false',Rule::exists(Addresses::class,'id')],
-					'payment_type' => ['required'], 
+					// 'payment_type' => ['required'], 
 					'coupon_code_id' => ['nullable', Rule::exists(Coupons::class, 'id')->where(function ($query) {
 						$query->where('status', 1)->whereNull('deleted_at');
 					})],
@@ -404,11 +404,11 @@ class OrdersController extends AppController
 						'booking_time' => ['required', 'after_or_equal:today'],
 						'manual_address' => ['nullable','boolean'],
 						'address' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:255'],
-						'state' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:40'],
-						'city' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:30'],
-						'area' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:40'],
+						// 'state' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:40'],
+						// 'city' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:30'],
+						// 'area' => ['exclude_if:manual_address,false','required_if:manual_address,true','string','max:40'],
 						'address_id' => ['exclude_if:manual_address,true','required_if:manual_address,false',Rule::exists(Addresses::class,'id')],
-						'payment_type' => ['required'], 
+						// 'payment_type' => ['required'], 
 						'coupon_code_id' => ['nullable', Rule::exists(Coupons::class, 'id')->where(function ($query) {
 							$query->where('status', 1)->whereNull('deleted_at');
 						})],
@@ -687,48 +687,48 @@ class OrdersController extends AppController
 						'staff_id' => $data['staff_id'],
 					]);
 					$order = $order->fresh();
-					$codes = [
-						'{order_number}' => $order->id,
-						'{customer_name}' => $order->customer_name,
-						'{customer_email}' => $order->customer->email,
-						'{customer_contact}' => $order->customer ? $order->customer->phonenumber : null,
-						'{address}' => $order->address.','.$order->area.','.$order->city.','.$order->state,
-						'{booking_date}' => _d($order->booking_date),
-						'{total_amount}' => Settings::get('currency') .' '. $order->total_amount,
-						'{payment_type}' => $order->payment_type,
-						'{company_name}' => Settings::get('company_name'),
-						'{staff_name}' =>  $order->staff ? $order->staff->first_name.' '.$order->staff->last_name : null,
-						'{staff_email}' =>  $order->staff ? $order->staff->email : null,
-						'{staff_contact}' =>  $order->staff ? $order->staff->phone_number : null,
-					];
-					if ($updated) {
-						General::sendTemplateEmail($order->customer->email, 'staff-assigned', $codes);
-						General::sendTemplateEmail($order->staff->email, 'order-assigned', $codes);
-					}
+					// $codes = [
+					// 	'{order_number}' => $order->id,
+					// 	'{customer_name}' => $order->customer_name,
+					// 	'{customer_email}' => $order->customer->email,
+					// 	'{customer_contact}' => $order->customer ? $order->customer->phonenumber : null,
+					// 	'{address}' => $order->address.','.$order->area.','.$order->city.','.$order->state,
+					// 	'{booking_date}' => _d($order->booking_date),
+					// 	'{total_amount}' => Settings::get('currency') .' '. $order->total_amount,
+					// 	'{payment_type}' => $order->payment_type,
+					// 	'{company_name}' => Settings::get('company_name'),
+					// 	'{staff_name}' =>  $order->staff ? $order->staff->first_name.' '.$order->staff->last_name : null,
+					// 	'{staff_email}' =>  $order->staff ? $order->staff->email : null,
+					// 	'{staff_contact}' =>  $order->staff ? $order->staff->phone_number : null,
+					// ];
+					// if ($updated) {
+					// 	General::sendTemplateEmail($order->customer->email, 'staff-assigned', $codes);
+					// 	General::sendTemplateEmail($order->staff->email, 'order-assigned', $codes);
+					// }
 				} else{
 					$updated = Orders::where('id', $id)->update([
 						'staff_id' => $data['staff_id'],
 					]);
 					$order = $order->fresh();
-					$codes = [
-						'{order_number}' => $order->id,
-						'{customer_name}' => $order->customer_name,
-						'{customer_email}' => $order->customer->email,
-						'{customer_contact}' => $order->customer ? $order->customer->phonenumber : null,
-						'{address}' => $order->address.','.$order->area.','.$order->city.','.$order->state,
-						'{booking_date}' => _d($order->booking_date),
-						'{total_amount}' => Settings::get('currency') .' '. $order->total_amount,
-						'{payment_type}' => $order->payment_type,
-						'{company_name}' => Settings::get('company_name'),
-						'{staff_name}' =>  $order->staff ? $order->staff->first_name.' '.$order->staff->last_name : null,
-						'{staff_email}' =>  $order->staff ? $order->staff->email : null,
-						'{staff_contact}' =>  $order->staff ? $order->staff->phone_number : null,
-					];
+					// $codes = [
+					// 	'{order_number}' => $order->id,
+					// 	'{customer_name}' => $order->customer_name,
+					// 	'{customer_email}' => $order->customer->email,
+					// 	'{customer_contact}' => $order->customer ? $order->customer->phonenumber : null,
+					// 	'{address}' => $order->address.','.$order->area.','.$order->city.','.$order->state,
+					// 	'{booking_date}' => _d($order->booking_date),
+					// 	'{total_amount}' => Settings::get('currency') .' '. $order->total_amount,
+					// 	'{payment_type}' => $order->payment_type,
+					// 	'{company_name}' => Settings::get('company_name'),
+					// 	'{staff_name}' =>  $order->staff ? $order->staff->first_name.' '.$order->staff->last_name : null,
+					// 	'{staff_email}' =>  $order->staff ? $order->staff->email : null,
+					// 	'{staff_contact}' =>  $order->staff ? $order->staff->phone_number : null,
+					// ];
 					if ($oldStaffId != $data['staff_id']) {
 						$oldStaff = Staff::find($oldStaffId);
 						if ($oldStaff) {
 							// General::sendTemplateEmail($oldStaff->email, 'order-unassigned', $codes);
-							General::sendTemplateEmail($order->customer->email, 'staff-reassigned', $codes);
+							// General::sendTemplateEmail($order->customer->email, 'staff-reassigned', $codes);
 						}
 						$newStaff = Staff::find($data['staff_id']);
 						// if ($newStaff) {

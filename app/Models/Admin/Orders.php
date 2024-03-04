@@ -136,6 +136,8 @@ class Orders extends AppModel
                 $relation->order_id = $id;
                 $relation->product_id = $product->id;
                 $relation->quantity = $productData['quantity'];
+                $relation->created_at = now();
+                $relation->updated_at = now();
                 $relation->save();
             }
         }

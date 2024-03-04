@@ -79,7 +79,7 @@ use App\Models\Admin\Settings;
 									</tr>
 									<tr>
 										<th>Address</th>
-										<td><?php echo implode(', ', array_filter([$page->address, $page->state, $page->city, $page->area])); ?></td>
+										<td><?php echo implode(', ', array_filter([$page->address])); ?></td>
 									</tr>
 									<tr>
 										<th>Booking Date</th>
@@ -119,10 +119,10 @@ use App\Models\Admin\Settings;
 											</div>
 										</td> 
 									</tr>
-									<tr>
+									<!-- <tr>
 										<th>Payment Type</th>
 										<td><?php echo ($page->payment_type) ?></td>
-									</tr>
+									</tr> -->
 									<tr>
 										<th>Status</th>
 										<td>	
