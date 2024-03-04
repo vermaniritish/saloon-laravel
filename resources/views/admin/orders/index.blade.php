@@ -56,36 +56,57 @@
 								</div>
 								<input class="form-control listing-search" placeholder="Search" type="text" value="<?php echo (isset($_GET['search']) && $_GET['search'] ? $_GET['search'] : '') ?>">
 							</div>
-							<?php if(Permissions::hasPermission('coupons', 'update') || Permissions::hasPermission('coupons', 'delete')): ?>
+							<?php if(Permissions::hasPermission('orders', 'update') || Permissions::hasPermission('orders', 'delete')): ?>
 								<div class="dropdown" data-toggle="tooltip" data-title="Bulk Actions">
 									<a class="btn btn-sm btn-icon-only text-warning" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 										<i class="fas fa-ellipsis-v"></i>
 									</a>
 									<div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-										<?php if(Permissions::hasPermission('coupons', 'update')): ?>
-											<a 
-												class="dropdown-item" 
-												href="javascript:;"
-												onclick="bulk_actions('<?php echo route('admin.orders.bulkActions', ['action' => 'active']) ?>', 'active');"
-											>
+										<?php if(Permissions::hasPermission('orders', 'update')): ?>
+											<?php foreach ($status as $statusKey => $statusData): ?>
+													<a 
+														class="dropdown-item" 
+														href="javascript:;"
+														onclick="bulk_actions('<?php echo route('admin.orders.bulkActions', ['action' => $statusKey]) ?>', $statusKey);"
+													>
+												<?php
+													$badgeClass = '';
+													switch ($statusKey) {
+														case 'pending':
+															$badgeClass = 'bg-danger';
+															break;
+														case 'accepted':
+															$badgeClass = 'bg-info';
+															break;
+														case 'on_the_way':
+															$badgeClass = 'bg-light';
+															break;
+														case 'reached_at_location':
+															$badgeClass = 'bg-dark';
+															break;
+														case 'in_progress':
+															$badgeClass = 'bg-warning';
+															break;
+														case 'completed':
+															$badgeClass = 'bg-success';
+															break;
+														case 'cancel':
+															$badgeClass = 'bg-danger';
+															break;
+														default:
+															$badgeClass = 'bg-secondary';
+															break;
+													}
+												?>
 												<span class="badge badge-dot mr-4">
-													<i class="bg-success"></i>
-													<span class="status">Active</span>
+													<i class="<?php echo $badgeClass; ?>"></i>
+													<span class="status">{{ $statusData['label'] }}</span>
 												</span>
-											</a>
-											<a 
-												class="dropdown-item" 
-												href="javascript:;"
-												onclick="bulk_actions('<?php echo route('admin.orders.bulkActions', ['action' => 'inactive']) ?>', 'inactive');"
-											>
-												<span class="badge badge-dot mr-4">
-													<i class="bg-warning"></i>
-													<span class="status">Inactive</span>
-												</span>
-											</a>
-											<div class="dropdown-divider"></div>
+												</a>
+												<div class="dropdown-divider"></div>
+											<?php endforeach; ?>
 										<?php endif; ?>
-										<?php if(Permissions::hasPermission('coupons', 'delete')): ?>
+										<?php if(Permissions::hasPermission('orders', 'delete')): ?>
 											<a 
 												href="javascript:void(0);" 
 												class="waves-effect waves-block dropdown-item text-danger" 
