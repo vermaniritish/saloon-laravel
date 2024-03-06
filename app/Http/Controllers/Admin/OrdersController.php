@@ -575,21 +575,29 @@ class OrdersController extends AppController
 	    }
 	    $ids = $request->get('ids');
 	    if (is_array($ids) && !empty($ids)) {
-	      $diaryPage = new Orders();
-	      $statusLabel = Orders::getStaticData()['status'][$action]['label'];
-	      if ($statusLabel !== null) {
-	        foreach ($ids as $diaryPageId) {
-	          Orders::modify($diaryPageId, [
-	            'status' => $action,
-	            'status_by' => AdminAuth::getLoginId(),
-	          ]);
-	          $diaryPage->logStatusHistory($action, $diaryPageId);
-	        }
-	        $message = count($ids) . ' records status has been marked as ' . $statusLabel . '.';
-	      }
-	      else {
-	        $message = 'Invalid action.';
-	      }
+			switch ($action) {
+				case 'delete':
+					Orders::whereIn('id', $ids)->delete();
+					$message = count($ids) . ' records have been deleted.';
+					break;
+				default:
+					$diaryPage = new Orders();
+					$statusLabel = Orders::getStaticData()['status'][$action]['label'];
+	
+					if ($statusLabel !== null) {
+						foreach ($ids as $diaryPageId) {
+							Orders::modify($diaryPageId, [
+								'status' => $action,
+								'status_by' => AdminAuth::getLoginId(),
+							]);
+							$diaryPage->logStatusHistory($action, $diaryPageId);
+						}
+						$message = count($ids) . ' records status have been marked as ' . $statusLabel . '.';
+					} else {
+						$message = 'Invalid action.';
+					}
+				break;
+			}
 	      $request->session()->flash('success', $message);
 	      return Response()->json([
 	        'status' => 'success',
