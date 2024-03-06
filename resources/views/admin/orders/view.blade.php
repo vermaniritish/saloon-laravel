@@ -145,7 +145,43 @@ use App\Models\Admin\Settings;
 													<div class="dropdown-menu dropdown-menu-left" aria-labelledby="statusDropdown">
 														<?php $switchUrl = route('admin.order.switchStatus', ['field' => 'status', 'id' => $page->id]); ?>
 														<?php foreach ($status as $statusKey => $statusData): ?>
-															<a class="dropdown-item" href="javascript:;" data-value="<?php echo $statusKey; ?>" onclick="switch_diary_page_action('<?php echo $switchUrl; ?>', this)">{{ ucfirst($statusData['label']) }}</a>
+															<?php
+																$badgeClass = '';
+																switch ($statusKey) {
+																	case 'pending':
+																		$badgeClass = 'bg-danger';
+																		break;
+																	case 'accepted':
+																		$badgeClass = 'bg-info';
+																		break;
+																	case 'on_the_way':
+																		$badgeClass = 'bg-light';
+																		break;
+																	case 'reached_at_location':
+																		$badgeClass = 'bg-dark';
+																		break;
+																	case 'in_progress':
+																		$badgeClass = 'bg-warning';
+																		break;
+																	case 'completed':
+																		$badgeClass = 'bg-success';
+																		break;
+																	case 'cancel':
+																		$badgeClass = 'bg-danger';
+																		break;
+																	default:
+																		$badgeClass = 'bg-secondary';
+																		break;
+																}
+															?>
+															<a class="dropdown-item" href="javascript:;" data-value="<?php echo $statusKey; ?>" 
+																onclick="switch_diary_page_action('<?php echo $switchUrl; ?>', this)"
+															>
+															<span class="badge badge-dot mr-4">
+																<i class="<?php echo $badgeClass; ?>"></i>
+																<span class="status">{{ $statusData['label'] }}</span>
+															</span>
+															</a>
 														<?php endforeach; ?>
 													</div>
 												<?php endif; ?>

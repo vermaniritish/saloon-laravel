@@ -23,6 +23,7 @@ use App\Libraries\FileSystem;
 use App\Http\Controllers\Admin\AppController;
 use App\Libraries\General;
 use App\Models\Admin\Addresses;
+use App\Models\Admin\AdminAuth;
 use App\Models\Admin\OrderProductRelation;
 use App\Models\Admin\Orders;
 use App\Models\Admin\OrderStatusHistory;
@@ -32,6 +33,7 @@ use App\Models\Admin\Settings;
 use App\Models\Admin\Staff;
 use App\Models\Admin\Users;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 
 class OrdersController extends AppController
@@ -565,51 +567,49 @@ class OrdersController extends AppController
     	}
     }
 
-    function bulkActions(Request $request, $action)
-    {
-    	if( ($action != 'delete' && !Permissions::hasPermission('orders', 'update')) || ($action == 'delete' && !Permissions::hasPermission('orders', 'delete')) )
-    	{
-    		$request->session()->flash('error', 'Permission denied.');
-    		return redirect()->route('admin.dashboard');
-    	}
-
-    	$ids = $request->get('ids');
-    	if(is_array($ids) && !empty($ids))
-    	{
-    		switch ($action) {
-    			case 'active':
-    				Orders::modifyAll($ids, [
-    					'status' => 1
-    				]);
-    				$message = count($ids) . ' records has been published.';
-    			break;
-    			case 'inactive':
-    				Orders::modifyAll($ids, [
-    					'status' => 0
-    				]);
-    				$message = count($ids) . ' records has been unpublished.';
-    			break;
-    			case 'delete':
-    				Orders::removeAll($ids);
-    				$message = count($ids) . ' records has been deleted.';
-    			break;
-    		}
-
-    		$request->session()->flash('success', $message);
-
-    		return Response()->json([
-    			'status' => 'success',
-	            'message' => $message,
-	        ], 200);		
-    	}
-    	else
-    	{
-    		return Response()->json([
-    			'status' => 'error',
-	            'message' => 'Please select atleast one record.',
-	        ], 200);	
-    	}
-    }
+	function bulkActions(Request $request, $action)
+	  {
+	    if (($action != 'delete' && !Permissions::hasPermission('diary_pages', 'update')) || ($action == 'delete' && !Permissions::hasPermission('diary_pages', 'delete'))) {
+	      $request->session()->flash('error', 'Permission denied.');
+	      return redirect()->route('admin.dashboard');
+	    }
+	    $ids = $request->get('ids');
+	    if (is_array($ids) && !empty($ids)) {
+			switch ($action) {
+				case 'delete':
+					Orders::whereIn('id', $ids)->delete();
+					$message = count($ids) . ' records have been deleted.';
+					break;
+				default:
+					$diaryPage = new Orders();
+					$statusLabel = Orders::getStaticData()['status'][$action]['label'];
+	
+					if ($statusLabel !== null) {
+						foreach ($ids as $diaryPageId) {
+							Orders::modify($diaryPageId, [
+								'status' => $action,
+								'status_by' => AdminAuth::getLoginId(),
+							]);
+							$diaryPage->logStatusHistory($action, $diaryPageId);
+						}
+						$message = count($ids) . ' records status have been marked as ' . $statusLabel . '.';
+					} else {
+						$message = 'Invalid action.';
+					}
+				break;
+			}
+	      $request->session()->flash('success', $message);
+	      return Response()->json([
+	        'status' => 'success',
+	        'message' => $message,
+	      ], 200);
+	    } else {
+	      return Response()->json([
+	        'status' => 'error',
+	        'message' => 'Please select atleast one record.',
+	      ], 200);
+	    }
+	  }
 
 	function switchStatus(Request $request, $field, $id)
 	{
