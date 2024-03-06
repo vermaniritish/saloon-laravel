@@ -79,7 +79,14 @@ use App\Models\Admin\Settings;
 									</tr>
 									<tr>
 										<th>Address</th>
-										<td><?php echo implode(', ', array_filter([$page->address])); ?></td>
+										<td>
+										<?php echo implode(', ', array_filter([$page->address])); ?>
+										<br />
+										<?php if($page->latitude && $page->longitude): ?>
+										<a href="https://maps.google.com/maps?q={{$page->latitude}},{{$page->longitude }}&z=17&hl=en">Click to see location {{$page->latitude}} {{$page->longitude }}</a>
+										<br /><small>Right click and "Copy link url" to share the location with staff.</small>
+										<?php endif; ?>
+										</td>
 									</tr>
 									<tr>
 										<th>Booking Date</th>

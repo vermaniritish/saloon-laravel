@@ -117,6 +117,7 @@ class Orders extends AppModel
                 'in_progress' => ['label' => 'In Progress', 'styles' => 'background-color: #ffffcc; color: #996600;', 'message' => 'Your order is in progress.'],
                 'completed' => ['label' => 'Completed', 'styles' => 'background-color: #d9ead3; color: #006600;', 'message' => 'Your order is in completed.'],
                 'cancel' => ['label' => 'Cancel', 'styles' => 'background-color: #dc3545; color: #FFF;', 'message' => 'This order is cancelled.'],
+                'cancel_by_client' => ['label' => 'Cancel by client', 'styles' => 'background-color: #dc3545; color: #FFF;', 'message' => 'This order is cancelled.'],
             ],
             
         ];
@@ -168,7 +169,6 @@ class Orders extends AppModel
         $updated = Orders::where('id', $id)->update([
             $field => $newValue
         ]);
-        dd($updated);
         if ($updated) {
             $this->logFieldHistory($field,$newValue, $id,$old);
         }

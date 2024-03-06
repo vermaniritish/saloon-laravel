@@ -60,7 +60,8 @@ class OrdersController extends BaseController
                 ]);
     }
 
-    public function detail(Request $request, $token){
+    public function detail(Request $request, $token, $id)
+    {
         $user = Users::select(['id', 'first_name', 'phonenumber'])->where('token', $token)
             ->where('token_expiry', '>', date('Y-m-d H:i'))
             ->whereNotNull('token_expiry')
@@ -87,7 +88,7 @@ class OrdersController extends BaseController
             'status', 
             'created',
             DB::raw("(Select sum(quantity) from order_products op where op.order_id = orders.id limit 1) as service_count")
-        ])->with(['products', 'products.brands'])->whereCustomerId($user->id)->orderBy('id', 'desc')->limit(1)->first();
+        ])->with(['products', 'products.brands'])->whereCustomerId($user->id)->where('id', $id)->orderBy('id', 'desc')->limit(1)->first();
         return Response()
                 ->json([
                     'status' => true,
@@ -135,7 +136,8 @@ class OrdersController extends BaseController
                 ])->with(['products', 'products.brands'])->where('id', $order->id)->orderBy('id', 'desc')->limit(1)->first();
 
                 return Response()->json([
-                    'status' => true
+                    'status' => true,
+                    'order' => $order
                 ]);
             }
         }
