@@ -67,7 +67,7 @@
 													<a 
 														class="dropdown-item" 
 														href="javascript:;"
-														onclick="bulk_actions('<?php echo route('admin.orders.bulkActions', ['action' => $statusKey]) ?>', $statusKey);"
+														onclick="bulk_actions('<?php echo route('admin.orders.bulkActions', ['action' => $statusKey]) ?>');"
 													>
 												<?php
 													$badgeClass = '';
