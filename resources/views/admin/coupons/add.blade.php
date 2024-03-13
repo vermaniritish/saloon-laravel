@@ -84,7 +84,7 @@
 										@enderror
 									</div>
 								</div>
-								<div class="col-md-6">
+								<div class="col-md-3">
 									<div class="form-group">
 										<label class="form-control-label" for="input-first-name">Is Percentage ?</label>
 										<div required class="custom-control mt-2">
@@ -99,12 +99,21 @@
 										</div>
 									</div>
 								</div>
+								<div class="col-md-3">
+									<div class="form-group">
+										<label class="form-control-label" for="input-first-name">Min Amount to apply</label>
+										<input type="number" class="form-control" name="min_amount" required placeholder="Min Amount" value="{{ old('min_amount') }}">
+										@error('min_amount')
+											<small class="text-danger">{{ $message }}</small>
+										@enderror
+									</div>
+								</div>
 							</div>
 							<div class="row">
 								<div class="col-lg-12">
 									<div class="form-group">
 										<label class="form-control-label">Description</label>
-										<textarea rows="2" id="editor1" class="form-control" placeholder="Description" required name="description">{{ old('description') }}</textarea>
+										<textarea rows="2" class="form-control" placeholder="Description" required name="description">{{ old('description') }}</textarea>
 										@error('description')
 										    <small class="text-danger">{{ $message }}</small>
 										@enderror

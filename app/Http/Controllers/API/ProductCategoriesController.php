@@ -28,6 +28,9 @@ class ProductCategoriesController extends BaseController
             'data' => $data,
             'cgst' => Settings::get('cgst'),
             'sgst' => Settings::get('sgst'),
+            'igst' => Settings::get('igst'),
+            'margin' => Settings::get('margin'),
+            'rate' => Settings::get('rate'),
             'runningOrder' => Orders::select(['prefix_id'])
                 ->where('status', '!=', 'completed')
                 ->where('status', '!=', 'cancel')

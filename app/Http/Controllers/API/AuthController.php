@@ -35,17 +35,19 @@ class AuthController extends AppController
 
 	function authState(Request $request)
 	{
-		if(!ApiAuth::isLogin())
-		{
-			return Response()->json([
-			    	'status' => false
-			    ]);
-		}
-		else
-		{
-			return Response()->json([
-			    	'status' => true
-			    ]);	
+		$data = $request->toArray();
+		$token = isset($data['token']) && $data['token'] ? $data['token'] : null;
+        $user = Users::select(['id', 'first_name', 'phonenumber'])->where('token', $token)
+            ->where('token_expiry', '>', date('Y-m-d H:i'))
+            ->whereNotNull('token_expiry')
+            ->where('status', 1)
+            ->limit(1)
+            ->first();
+        if ($user) {
+            return Response()->json(['status' => true]);
+        }
+		else {
+			return Response()->json(['status' => false]);
 		}
 	}
 

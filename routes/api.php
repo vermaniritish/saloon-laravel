@@ -38,6 +38,14 @@ Route::middleware(['guest:api'])->group(function () {
 
     Route::get('/slots', [ProductsController::class,'getSlots'])
         ->name('api.getSlots');
+    Route::get('/addresses', [AddressesController::class,'listing'])
+        ->name('api.address.listing');
+    Route::post('/addresses', [AddressesController::class,'add'])
+        ->name('api.address.add');
+    Route::post('/addresses/delete', [AddressesController::class,'delete'])
+        ->name('api.address.delete');
+    Route::get('/coupons', [CouponsController::class,'index'])
+        ->name('api.coupons.index');
 });
 
 Route::middleware(['apiAuth'])->group(function () {

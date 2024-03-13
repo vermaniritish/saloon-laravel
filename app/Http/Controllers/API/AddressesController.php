@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\API\BaseController;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Http\Resources\AddressesResource;
 use App\Models\Admin\AdminAuth;
 use App\Models\API\Addresses;
+use App\Models\API\Users;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 
@@ -18,9 +20,32 @@ class AddressesController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(Request $request)
+    public function listing(Request $request)
     {
-        return $this->_index($request, Addresses::class, AddressesResource::class, []);
+        $data = $request->toArray();
+        $token = isset($data['token']) && $data['token'] ? $data['token'] : null;
+        $user = Users::select(['id', 'first_name', 'phonenumber'])->where('token', $token)
+            ->where('token_expiry', '>', date('Y-m-d H:i'))
+            ->whereNotNull('token_expiry')
+            ->where('status', 1)
+            ->limit(1)
+            ->first();
+        if (!$user) {
+            return Response()
+                ->json([
+                    'status' => false,
+                    'authRequired' => true
+                ]);
+        }
+        $addresses = Addresses::where('user_id', $user->id)
+            ->orderBy('id', 'desc')
+            ->limit(50)
+            ->get();
+        return Response() ->json([
+                'status' => true,
+                'cities' => ["Chandighar", "Mohali", "Panchkula", "Ludhiana"],
+                'addresses' => $addresses
+            ]);
     }
 
     /**
@@ -29,37 +54,64 @@ class AddressesController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function add(Request $request)
     {
-        $input = $request->validate([
-            'title' => ['required','string','max:255',],
-            'address' => ['required','string','max:255',],
-            'city' => ['required','string','max:255',],
-            'state' => ['required','string','max:255',],
-            'area' => ['required','string','max:255',],
-            'latitude' => ['required','numeric',],
-            'longitude' => ['required','numeric',]
-        ]);
-        $input['user_id'] = AdminAuth::getLoginId();
-        Addresses::where('user_id', $input['user_id'])->delete();
-        Addresses::create($input);
-        return $this->success([], Response::HTTP_OK, trans('ADDRESS_CREATED'));
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  string  $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function show(string $id)
-    {
-        $check_brand = Addresses::whereId($id)->first();
-        if (!$check_brand) {
-            return $this->error(trans('ADDRESS_NOT_FOUND'), Response::HTTP_NOT_FOUND);
+        $data = $request->toArray();
+        $token = isset($data['token']) && $data['token'] ? $data['token'] : null;
+        $user = Users::select(['id', 'first_name', 'phonenumber'])->where('token', $token)
+            ->where('token_expiry', '>', date('Y-m-d H:i'))
+            ->whereNotNull('token_expiry')
+            ->where('status', 1)
+            ->limit(1)
+            ->first();
+        if (!$user) {
+            return Response()
+                ->json([
+                    'status' => false,
+                    'authRequired' => true
+                ]);
         }
 
-        return $this->success(new AddressesResource($check_brand), Response::HTTP_OK);
+		$validator = Validator::make(
+			$data,
+			[
+                'address' => ['required','string','max:255',],
+                'city' => ['required','string','max:255',],
+                'token' => ['required','string','max:255'],
+                'latitude' => ['numeric','nullable'],
+                'longitude' => ['numeric','nullable']
+			]
+		);
+        if(!$validator->fails())
+        {
+            $data['user_id'] = $user->id;
+            unset($data['token']);
+            $address = Addresses::create($data);
+            if($address)
+            {
+                return Response()
+                    ->json([
+                        'status' => true,
+                        'address' => $address
+                    ]);
+            }
+            else
+            {
+                return Response()
+                    ->json([
+                        'status' => false,
+                        'message' => 'Address could not be saved.'
+                    ]);
+            }
+        }
+        else
+		{
+            return Response()
+                ->json([
+                    'status' => false,
+                    'message' => current( current( $validator->errors()->getMessages() ) )
+                ]);
+		}
     }
 
     /**
@@ -96,16 +148,38 @@ class AddressesController extends BaseController
      * @param  string  $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(Request $request, string $id)
+    public function delete(Request $request)
     {
-        $check_address = Addresses::whereId($id)->where('user_id', $request->user()?->id)->first();
-        if (!$check_address) {
-            return $this->error(trans('ADDRESS_NOT_FOUND'), Response::HTTP_NOT_FOUND);
+        $data = $request->toArray();
+        $id = $request->get('id');
+        $token = isset($data['token']) && $data['token'] ? $data['token'] : null;
+        $user = Users::select(['id', 'first_name', 'phonenumber'])->where('token', $token)
+            ->where('token_expiry', '>', date('Y-m-d H:i'))
+            ->whereNotNull('token_expiry')
+            ->where('status', 1)
+            ->limit(1)
+            ->first();
+        if (!$user) {
+            return Response()
+                ->json([
+                    'status' => false
+                ]);
         }
 
-        $check_address->delete();
+        $check_address = Addresses::whereId($id)->where('user_id', $user->id)->first();
+        if($check_address)
+        {
+            if($check_address->delete())
+            {
+                return Response()->json([
+                    'status' => true
+                ]);
+            }
+        }
 
-        return $this->success([], Response::HTTP_OK, trans('ADDRESS_DELETED'));
+        return Response()->json([
+            'status' => false
+        ]);
     }
 
 }

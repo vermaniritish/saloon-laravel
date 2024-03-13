@@ -53,7 +53,10 @@ class Coupons extends AdminCoupons
             'coupon_code',
             'title',
             'description',
-            'max_use'
+            'max_use',
+            'amount',
+            'is_percentage',
+            'min_amount',
         ];
     }
 

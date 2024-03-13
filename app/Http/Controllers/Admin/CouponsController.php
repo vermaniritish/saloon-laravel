@@ -154,7 +154,7 @@ class CouponsController extends AppController
 					'end_date' => ['required', 'after_or_equal:today'],
 	                'description' => 'nullable',
 					'is_percentage' => ['required','boolean'],
-					'amount' => ['required', 'integer']
+					'amount' => ['required']
 	            ]
 	        );
 	        if(!$validator->fails())
@@ -229,7 +229,7 @@ class CouponsController extends AppController
 						'end_date' => ['required', 'after_or_equal:today'],
 						'description' => 'nullable',
 						'is_percentage' => ['required','boolean'],
-						'amount' => ['required', 'integer']
+						'amount' => ['required']
 		            ]
 		        );
 

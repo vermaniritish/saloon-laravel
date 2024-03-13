@@ -19,6 +19,7 @@ class ProductCategoriesResource extends JsonResource
                 'id'   =>  $this->id,
                 'title' =>  $this->title,
                 'image' => $this->image,
+                'slug' => $this->slug,
                 'products' => ProductsResource::collection($this->whenLoaded('products'))
         ];
     }

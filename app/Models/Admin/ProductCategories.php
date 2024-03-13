@@ -141,7 +141,8 @@ class ProductCategories extends AppModel
         $listing = ProductCategories::select([
                 'id',
                 'parent_id',
-                'title'
+                'title',
+                'slug'
             ])
             ->whereNotNull('parent_id');
         if($ids)
@@ -238,7 +239,7 @@ class ProductCategories extends AppModel
 	    {
             if(isset($data['title']) && $data['title'])
             {
-                $category->slug = Str::slug($category->title) . '-' . General::encode($category->id);
+                $category->slug = Str::slug($category->title);
                 $category->save();
             }
 	    	return $category;
