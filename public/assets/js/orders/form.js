@@ -38,11 +38,6 @@ let order = new Vue({
             this.selectedProducts = this.selectedProducts.filter(id => id !== productId); 
             this.updateTotal(); 
         },
-        removeItem(index, productId) {
-            this.productsData.splice(index, 1);
-            this.selectedProducts = this.selectedProducts.filter(id => id !== productId); 
-            this.updateTotal(); 
-        },
         initEditValues: function () {
             if ($('#edit-form').length > 0) {
                 let data = JSON.parse($('#edit-form').text());
@@ -174,22 +169,26 @@ let order = new Vue({
             }
         },
         submitForm: async function() {
-            let formData = new FormData(document.getElementById('order-form'));
-            let productIdsAndQuantities = this.productsData.map(product => ({ id: product.id, quantity: product.quantity }));
-            formData.append('productsData', JSON.stringify(productIdsAndQuantities));
-            let response = await fetch(this.url, {
-                method: 'POST',
-                body: formData,
-            });
-            response = await response.json();
-            if(response && response.status)
-            {
-                setTimeout(function () {
-                    window.location.href = (admin_url + '/order/' + response.id + '/view');
-                }, 200)
-            }else{
-                set_notification('error', response.message);
-                
+            if ($('#order-form').valid()) {
+                let formData = new FormData(document.getElementById('order-form'));
+                let productIdsAndQuantities = this.productsData.map(product => ({ id: product.id, quantity: product.quantity }));
+                formData.append('productsData', JSON.stringify(productIdsAndQuantities));
+                let response = await fetch(this.url, {
+                    method: 'POST',
+                    body: formData,
+                });
+                response = await response.json();
+                if(response && response.status)
+                {
+                    setTimeout(function () {
+                        window.location.href = (admin_url + '/order/' + response.id + '/view');
+                    }, 200)
+                }else{
+                    set_notification('error', response.message);
+                }
+            }
+            else{
+                return false;
             }
         },    
     },
