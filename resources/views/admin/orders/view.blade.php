@@ -83,8 +83,11 @@ use App\Models\Admin\Settings;
 										<?php echo implode(', ', array_filter([$page->address])); ?>
 										<br />
 										<?php if($page->latitude && $page->longitude): ?>
+										
+										<br /><small>
 										<a href="https://maps.google.com/maps?q={{$page->latitude}},{{$page->longitude }}&z=17&hl=en">Click to see location {{$page->latitude}} {{$page->longitude }}</a>
-										<br /><small>Right click and "Copy link url" to share the location with staff.</small>
+										<br />
+										Right click and "Copy link url" to share the location with staff.</small>
 										<?php endif; ?>
 										</td>
 									</tr>
@@ -225,7 +228,7 @@ use App\Models\Admin\Settings;
 							</div>
 						</div>
 					</div>
-					<div class="table-responsive small-max-card-table">
+					<div class="table-responsive">
 						<!-- Projects table -->
 						<table class="table align-items-center table-flush">
 							<tbody>
@@ -235,28 +238,34 @@ use App\Models\Admin\Settings;
 								</tr>
 								<tr>
 									<th>Discount</th>
-									<td><?php echo $currency.' '.$page->discount ?></td>
+									<td class="text-danger">- <?php echo $currency.' '.$page->discount ?></td>
+								</tr>
+								@if($page->cgst != null && $page->sgst != null)
+								<tr>
+									<th>CGST ({{$page->cgst}}%)</th>
+									<td><?php echo $currency.' '.round(($page->our_profit*$page->cgst)/100, 2) ?></td>
 								</tr>
 								<tr>
-									<th>Tax & Charges</th>
-									<td><?php echo $page->tax ?></td>
+									<th>SGST ({{$page->sgst}}%)</th>
+									<td><?php echo $currency.' '.round(($page->our_profit*$page->sgst)/100, 2) ?></td>
+								</tr>
+								@else
+								<tr>
+									<th>IGST ({{$page->igst}}%)</th>
+									<td><?php echo $currency.' '.round(($page->our_profit*$page->igst)/100, 2) ?></td>
+								</tr>
+								@endif
+								<tr>
+									<th class="text-xl">Total Amount</th>
+									<th class="text-xl"><?php echo $currency.' '.$page->total_amount ?></th>
 								</tr>
 								<tr>
-									<th>Total Amount</th>
-									<td><?php echo $currency.' '.$page->total_amount ?></td>
+									<td class="text-purple">Amount to be paid to staff: </td>
+									<th class="text-purple"><?php echo $currency.' '.$page->staff_payment ?></td>
 								</tr>
 								<tr>
-									<th>Applied Coupon</th>
-									<td>
-										<?php if ($page->coupon): ?>
-											<a href="{{ route('admin.coupons.view', ['id' => $page->coupon->id]) }}">
-												{{ $page->coupon->title }}
-											</a>
-										<?php else: ?>
-											Coupon not applied.
-										<?php endif; ?>
-									</td>
-
+									<td class="text-success">Aaccount should be in shaguna account including tax: </td>
+									<th class="text-success"><?php echo $currency.' '.($page->total_amount-$page->staff_payment) ?></td>
 								</tr>
 							</tbody>
 						</table>

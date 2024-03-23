@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Libraries\FileSystem;
 use Illuminate\Support\Str;
 use App\Libraries\General;
+use App\Libraries\DateTime;
 use App\Models\Admin\Brands as AdminBrands;
 use App\Models\Brands;
 
@@ -17,8 +18,7 @@ class Products extends AppModel
 {
     protected $table = 'products';
     protected $primaryKey = 'id';
-    public $timestamps = false;
-
+    public $timestamps = false;    
 
     /**
      * The attributes that should be cast to native types.
@@ -398,5 +398,77 @@ class Products extends AppModel
         }
 
         $product = Products::find($id);
+    }
+
+    public static function getPrice($entity, $partnerCharges, $travelCharges, $shagunaMargin, $platformCharges, $bufferMarginPercent, $bufferMarginAmount, $shagunaMarginPercent)
+    {
+        $base = $entity['base_price'];
+        if($base) 
+        {
+            if($entity['service_price']  > 0) {
+                $shagunaMargin = ($entity['service_price']*$shagunaMarginPercent)/100;
+                $partnerCharges = $entity['service_price']-$shagunaMargin;     
+            }
+            $durationInMins = DateTime::hoursToSecondsFormat($entity['duration_of_service'])/60;
+            $totalAmount = $base +  ($durationInMins * $partnerCharges) + $travelCharges + ($durationInMins * $shagunaMargin);
+            
+            /** margin logic **/
+            $margin = ($totalAmount*$bufferMarginPercent)/100;
+            $actualMargin = $totalAmount + $margin;
+            $margin = ($actualMargin*$bufferMarginPercent)/100;
+            $totalAmount = $totalAmount + $margin;
+            /** margin logic **/
+            $totalAmount = $totalAmount + $platformCharges;
+            $totalAmount = $totalAmount + $bufferMarginAmount;
+            return $totalAmount;
+        }
+        else
+        {
+            return $entity['price'];
+        }
+    }
+
+    public static function getMyProfit($entity, $city, $partnerCharges, $travelCharges, $shagunaMargin, $platformCharges, $bufferMarginPercent, $bufferMarginAmount, $shagunaMarginPercent) 
+    {
+        $totalAmount = 0;
+        $deduction = 0;
+        $cgst = Settings::get('cgst');
+        $sgst = Settings::get('sgst');
+        $igst = Settings::get('igst');
+        $base = $entity['base_price'];
+        if($base) 
+        {
+            $price = self::getPrice($entity, $partnerCharges, $travelCharges, $shagunaMargin, $platformCharges, $bufferMarginPercent, $bufferMarginAmount, $shagunaMarginPercent);
+            if($price > 0) 
+            {
+                if($entity['service_price']  > 0) {
+                    $shagunaMargin = ($entity['service_price']*$shagunaMarginPercent)/100;
+                    $partnerCharges = $entity['service_price']-$shagunaMargin;     
+                }
+                
+                $totalAmount += $price;
+                $durationInMins = DateTime::hoursToSecondsFormat($entity['duration_of_service'])/60;
+                $deduction += $entity['base_price'];
+                $deduction = $deduction + ($durationInMins * $partnerCharges);
+                $deduction = $deduction;
+                $deduction = $price - $deduction;
+
+                $deduction = ($deduction * 1);
+            }
+        }
+        else
+        {
+            if($entity['service_price']  > 0) {
+                $shagunaMargin = ($entity['service_price']*$shagunaMarginPercent)/100;
+                $partnerCharges = $entity['service_price']-$shagunaMargin;     
+            }
+
+            $durationInMins = DateTime::hoursToSecondsFormat($entity['duration_of_service'])/60;
+            $deduction = ($durationInMins * $partnerCharges);
+            $deduction = $entity['price'] - $deduction;
+
+            $deduction = ($deduction * 1);
+        }
+        return $deduction;
     }
 }

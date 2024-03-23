@@ -220,7 +220,6 @@ class ProductsController extends AppController
 					'price' => ['required', 'numeric', 'min:0'],
 					'sale_price' => ['nullable', 'numeric', 'min:0'],
 	                'category' => 'required',
-	                'brand' => 'required',
 					'tags' => ['nullable', 'array'],
 					'tags.*' => ['string','max:20',],
 	            ]
@@ -337,9 +336,9 @@ class ProductsController extends AppController
 								Rule::exists(ProductCategories::class, 'id')->where(function ($query) {
 									$query->where('status', 1);
 							})],
-							'brand' => ['required', 'array', Rule::exists(Brands::class, 'id')->where(function ($query) {
-								$query->where('status', 1);
-							})],
+							// 'brand' => ['required', 'array', Rule::exists(Brands::class, 'id')->where(function ($query) {
+							// 	$query->where('status', 1);
+							// })],
 							'tags' => ['nullable', 'array'],
 							'tags.*' => ['string','max:20',],
 		            ]
@@ -374,14 +373,8 @@ class ProductsController extends AppController
 
 		        	if(Products::modify($id, $data))
 		        	{
-		        		if(!empty($categories))
-		        		{
-		        			Products::handleCategories($product->id, $categories);
-		        		}
-						if(!empty($brands))
-		        		{
-		        			Products::handleBrands($product->id, $brands);
-		        		}
+						Products::handleCategories($product->id, $categories);
+						Products::handleBrands($product->id, $brands);
 		        		$request->session()->flash('success', 'Product updated successfully.');
 		        		return redirect()->route('admin.products');
 		        	}

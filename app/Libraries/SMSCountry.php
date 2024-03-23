@@ -10,7 +10,7 @@ class SMSCountry
 	{
 		$username = 'KccaE7HV232iHX4gY7jc';
 		$password = 'iPVq83kRiunO7jMgAJYowOFlbTLPq12LUJwP4pSI';
-		if(strpos(request()->getHttpHost(), 'shaguna') > -1)
+		if(true)
 		{
 			$response = Http::withBasicAuth($username, $password)
 				->post('https://restapi.smscountry.com/v0.1/Accounts/'.$username.'/SMSes/', [

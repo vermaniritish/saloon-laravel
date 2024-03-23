@@ -107,7 +107,7 @@
 								<div class="col-lg-6">
 									<div class="form-group">
 										<label class="form-control-label" for="input-username">Brand</label>
-										<select class="form-control" name="brand[]" required multiple>
+										<select class="form-control" name="brand[]" multiple>
 											@foreach ($brands as $key => $value)
 											<option <?php echo (is_array(old('brand',$product->brands->pluck('id')->toArray())) && in_array($value['id'], old('brand', $product->brands->pluck('id')->toArray()))) ? 'selected' : ''; ?>
 												value="<?php echo $value['id']; ?>"><?php echo $value['title']; ?></option>

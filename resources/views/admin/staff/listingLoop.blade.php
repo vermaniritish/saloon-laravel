@@ -23,9 +23,6 @@
 		<?php echo $row->email ?>
 	</td>
 	<td>
-		<?php echo $row->aadhar_card_number ?>
-	</td>
-	<td>
 		<div class="custom-control">
 			<label class="custom-toggle">
 				<?php $switchUrl =  route('admin.actions.switchUpdate', ['relation' => 'staff', 'field' => 'status', 'id' => $row->id]); ?>

@@ -151,15 +151,7 @@ class StaffController extends AppController
 	            $request->toArray(),
 	            [
 					'first_name' => 'required',
-					'last_name' => 'required',
-					'email' => [
-						'required',
-						'email',
-						Rule::unique('staff','email')->whereNull('deleted_at'),
-					],
-					'phone_number' => ['required','numeric','digits:10',],
-					'aadhar_card_number' => ['required', 'numeric', 'digits:12',],
-					'image' => ['nullable'],
+					'phone_number' => ['required']
 	            ]
 	        );
 	        if(!$validator->fails())
@@ -178,7 +170,7 @@ class StaffController extends AppController
 		    }
 		    else
 		    {
-		    	$request->session()->flash('error', 'Please provide valid inputs.');
+				$request->session()->flash('error', 'Please provide valid inputs.');
 		    	return redirect()->back()->withErrors($validator)->withInput();
 		    }
 		}
@@ -280,15 +272,7 @@ class StaffController extends AppController
 		            $request->toArray(),
 		            [
 						'first_name' => 'required',
-						'last_name' => 'required',
-						'email' => [
-							'required',
-							'email',
-							Rule::unique('staff','email')->whereNull('deleted_at'),
-						],
-						'phone_number' => ['required','numeric','digits:10',],
-						'aadhar_card_number' => ['required', 'numeric', 'digits:12',],
-						'image' => ['nullable'],
+						'phone_number' => ['required']
 		            ]
 		        );
 

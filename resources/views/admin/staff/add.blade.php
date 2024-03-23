@@ -67,7 +67,7 @@
 								<div class="col-md-6">
 									<div class="form-group">
 										<label class="form-control-label" for="input-first-name">Email</label>
-										<input class="form-control" type="email" name="email" required placeholder="Email" value="{{ old('email') }}">
+										<input class="form-control" type="email" name="email" placeholder="Email" value="{{ old('email') }}">
 										@error('email')
 											<small class="text-danger">{{ $message }}</small>
 										@enderror
@@ -78,7 +78,7 @@
 								<div class="col-md-6">
 									<div class="form-group">
 										<label class="form-control-label" for="input-first-name">Aadhar Card Number</label>
-										<input type="number" class="form-control" name="aadhar_card_number" required placeholder="Aadhar Card Number" value="{{ old('aadhar_card_number') }}">
+										<input type="number" class="form-control" name="aadhar_card_number" placeholder="Aadhar Card Number" value="{{ old('aadhar_card_number') }}">
 										@error('aadhar_card_number')
 											<small class="text-danger">{{ $message }}</small>
 										@enderror

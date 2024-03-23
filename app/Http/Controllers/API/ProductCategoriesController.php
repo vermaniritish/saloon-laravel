@@ -8,6 +8,7 @@ use App\Http\Resources\ProductCategoriesResource;
 use App\Models\API\ProductCategories;
 use App\Models\Admin\Settings;
 use App\Models\Admin\Orders;
+use App\Models\Admin\Products;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -22,15 +23,36 @@ class ProductCategoriesController extends BaseController
      */
     public function index(Request $request)
     {
-        $productCategories = ProductCategories::with('products')->get();
-        $data = ProductCategoriesResource::collection($productCategories);
+        $data = ProductCategories::with('products')->get()->toArray();
+        // $data = ProductCategoriesResource::collection($productCategories)->toArray();
+        $partnerCharges = Settings::get('partner_margin');
+        $travelCharges = Settings::get('travel_charges');
+        $shagunaMargin = Settings::get('shaguna_margin');
+        $platformCharges = Settings::get('platform_charges');
+        $bufferMarginPercent = Settings::get('buffer_margin_percent');
+        $bufferMarginAmount = Settings::get('buffer_margin_amount');
+        $shagunaMarginAmount = Settings::get('shaguna_margin_percent');
+        $cart = $request->get('cart') ? json_decode($request->get('cart'), true) : [];
+        $cart = $cart ? $cart : [];
+        foreach($data as $k => $d)
+        {
+            foreach($d['products'] as $pk => $p)
+            {
+                $p['price'] = Products::getPrice($p, $partnerCharges, $travelCharges, $shagunaMargin, $platformCharges, $bufferMarginPercent, $bufferMarginAmount, $shagunaMarginAmount);
+                if($cart && isset($cart['product_' . $p['id']]) && $cart['product_' . $p['id']])
+                {
+                    $p['quantity'] = $cart['product_' . $p['id']]['quantity'];
+                    $p['deduction'] = Products::getMyProfit($p, $request->get('city'), $partnerCharges, $travelCharges, $shagunaMargin, $platformCharges, $bufferMarginPercent, $bufferMarginAmount, $shagunaMarginAmount);
+                }
+                $data[$k]['products'][$pk] = $p;
+            }
+        }
+
         return Response()->json([
             'data' => $data,
-            'cgst' => Settings::get('cgst'),
-            'sgst' => Settings::get('sgst'),
-            'igst' => Settings::get('igst'),
-            'margin' => Settings::get('margin'),
-            'rate' => Settings::get('rate'),
+            'travelCharges' => ($travelCharges),
+            'gst' => Settings::get('igst'),
+            'host' => strpos(request()->getHttpHost(), 'shaguna'),
             'runningOrder' => Orders::select(['prefix_id'])
                 ->where('status', '!=', 'completed')
                 ->where('status', '!=', 'cancel')

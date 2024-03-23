@@ -9,7 +9,7 @@ use App\Models\Admin\OrderProductRelation;
 use App\Models\Admin\Settings;
 use App\Models\API\Addresses;
 use App\Models\API\Coupons;
-use App\Models\API\Products;
+use App\Models\Admin\Products;
 use App\Models\API\Users;
 use App\Models\User;
 use Carbon\Carbon;
@@ -42,7 +42,7 @@ class OrdersController extends BaseController
                 ]);
         }
         $orders = Orders::select([
-            'id',
+            'prefix_id as id',
             'address', 
             'booking_date', 
             'booking_time', 
@@ -76,19 +76,24 @@ class OrdersController extends BaseController
                 ]);
         }
         $order = Orders::select([
-            'id',
+            'prefix_id as id',
             'address', 
             'booking_date', 
             'booking_time', 
             'subtotal',
+            'discount',
+            'coupon',
             'cgst',
             'sgst',
-            'tax',
+            'igst',
+            DB::raw('((our_profit * cgst)/100) as cgst_tax'),
+            DB::raw('((our_profit * sgst)/100) as sgst_tax'),
+            DB::raw('((our_profit * igst)/100) as igst_tax'),
             'total_amount', 
             'status', 
             'created',
             DB::raw("(Select sum(quantity) from order_products op where op.order_id = orders.id limit 1) as service_count")
-        ])->with(['products', 'products.brands'])->whereCustomerId($user->id)->where('id', $id)->orderBy('id', 'desc')->limit(1)->first();
+        ])->with(['products', 'products.brands'])->whereCustomerId($user->id)->where('prefix_id', $id)->orderBy('id', 'desc')->limit(1)->first();
         return Response()
                 ->json([
                     'status' => true,
@@ -175,56 +180,124 @@ class OrdersController extends BaseController
                 ->first();
 			if($user)
             {
+                $user->first_name = $request->get('name') ? $request->get('name') : $user->first_name;
+                $user->save();
+                
                 $order = new Orders();
                 $order->customer_name = $user->first_name;
                 $order->customer_id = $user->id;
                 $order->manual_address = 1;
                 $order->address = $data['address'];
+                $order->city = $data['city'];
                 $order->booking_date = date('Y-m-d', strtotime($data['date']));
                 $order->booking_time = date('H:i', strtotime($data['time']));
                 $order->latitude = isset($data['lat']) && $data['lat'] ? $data['lat'] : null;
                 $order->longitude = isset($data['lng']) && $data['lng'] ? $data['lng'] : null;
+                $order->coupon = isset($data['coupon']) && $data['coupon'] ? json_encode($data['coupon']) : null;
                 $order->status = 'pending';
                 $order->status_at = date('Y-m-d H:i:s');
                 $order->created = date('Y-m-d H:i:s');
                 if($order->save()) 
                 {
                     $order->prefix_id = Settings::get('order_prefix') + $order->id;
+                    $order->partner_margin = Settings::get('partner_margin');
+                    $order->travel_charges = Settings::get('travel_charges');
+                    $order->shaguna_margin = Settings::get('shaguna_margin');
+                    $order->platform_charges = Settings::get('platform_charges');
+                    $order->buffer_margin_percent = Settings::get('buffer_margin_percent');
+                    $order->buffer_margin_amount = Settings::get('buffer_margin_amount');
+                    $order->shaguna_margin_percent = Settings::get('shaguna_margin_percent');
                     $order->save();
+
+                    
                     $products = [];
+                    $discount = 0;
                     $subtotal = 0;
+                    $margin = 0;
+                    $includeTravelCharges = false;
                     foreach($data['cart'] as $c)
                     {
-                        $product = Products::select(['id', 'title', 'price', 'description', 'duration_of_service'])->where('id', $c['id'])->limit(1)->first();
+                        $product = Products::select(['id', 'title', 'base_price', 'service_price', 'price', 'description', 'duration_of_service'])->where('id', $c['id'])->limit(1)->first();
                         if($product)
                         {
+                            $price = Products::getPrice([
+                                    'price' => $product->price,
+                                    'base_price' => $product->base_price,
+                                    'service_price' => $product->service_price,
+                                    'duration_of_service' => $product->duration_of_service
+                                ],
+                                $order->partner_margin,
+                                $order->travel_charges,
+                                $order->shaguna_margin,
+                                $order->partner_charges,
+                                $order->buffer_margin_percent,
+                                $order->buffer_margin_amount,
+                                $order->shaguna_margin_percent
+                            );
+
                             $products[] = [
                                 'order_id' => $order->id,
                                 'product_id' => $product->id,
                                 'product_title' => $product->title,
                                 'product_description' => $product->description,
-                                'amount' => $product->price,
+                                'amount' => $price,
                                 'quantity' => $c['quantity'],
                                 'duration_of_service' => $product->duration_of_service,
                                 'updated_at' => now() 
                             ];
 
-                            $subtotal += ($c['quantity'] * $product->price) > 0 ? $c['quantity'] * $product->price : 0;
+                            $subtotal += $price * $c['quantity'];
+                            $includeTravelCharges = $includeTravelCharges ? $includeTravelCharges : ($product->base_price ? true : false);
+                            $margin += Products::getMyProfit([
+                                    'price' => $product->price,
+                                    'base_price' => $product->base_price,
+                                    'service_price' => $product->service_price,
+                                    'duration_of_service' => $product->duration_of_service
+                                ],
+                                $order->city,
+                                $order->partner_margin,
+                                $order->travel_charges,
+                                $order->shaguna_margin,
+                                $order->partner_charges,
+                                $order->buffer_margin_percent,
+                                $order->buffer_margin_amount,
+                                $order->shaguna_margin_percent
+                            );
                         }
                     }
 
                     if($products)
                     {
                         OrderProductRelation::insert($products);
-
+                        
                         $cgst = Settings::get('cgst');
                         $sgst = Settings::get('sgst');
+                        $igst = Settings::get('igst');
+                        $punjab = ["Mohali", "Ludhiana"];
+                        
+                        if(isset($data['coupon']) && $data['coupon']) {
+                            $discount = $data['coupon']['is_percentage'] ? (($subtotal * $data['coupon']['amount'])/100) : ($subtotal <= $data['coupon']['amount'] ? $subtotal : $data['coupon']['amount']);
+                        }
+                        $ourMargin = ( ($margin - $discount) - ($includeTravelCharges ? $order->travel_charges : 0));
+
+                        if(in_array($order->city, $punjab))
+                        {
+                            $tax = ($ourMargin * $cgst)/100;
+                            $tax += ($ourMargin * $sgst)/100;
+                        }
+                        else
+                        {
+                            $tax = ($ourMargin * $igst)/100;
+                        }
+                        $order->our_profit = $ourMargin;
                         $order->subtotal = $subtotal;
-                        $order->discount = 0;
-                        $order->cgst = $cgst;
-                        $order->sgst = $sgst;
-                        $order->tax = (($subtotal * $cgst) / 100) + (($subtotal * $sgst) / 100);
-                        $order->total_amount = $order->subtotal + $order->tax;
+                        $order->discount = $discount;
+                        $order->cgst = in_array($order->city, $punjab) ? $cgst : null;
+                        $order->sgst = in_array($order->city, $punjab) ? $sgst : null;
+                        $order->igst = !in_array($order->city, $punjab) ? $igst : null;
+                        $order->tax = $tax;
+                        $order->total_amount = $order->subtotal - $order->discount + $order->tax;
+                        $order->staff_payment = $order->subtotal - $order->discount - $ourMargin;
                         $order->save();
                     }
 

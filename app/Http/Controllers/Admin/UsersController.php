@@ -336,7 +336,7 @@ class UsersController extends AppController
 					order_products.amount LIKE ?)'] = [$search, $search, $search, $search];
 			}
 			$orderId = Orders::where('customer_id',$id)->pluck('id')->toArray();
-			$ids = implode(',',$orderId);
+			$ids = implode(',',$orderId ? $orderId : [-1]);
 			$where[] = "order_id in ({$ids})";
 			$listing = OrderProductRelation::getListing($request, $where);
 	    	if($request->ajax())

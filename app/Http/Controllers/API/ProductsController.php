@@ -196,7 +196,17 @@ class ProductsController extends BaseController
 				'day' => date('D', $d),
 				'd' => date('d', $d),
 				'date' => date('Y-m-d', $d),
-				'time' => DateTime::calculateTimeDifference(date('Y-m-d', $d) == date('Y-m-d') && time() > strtotime(date('Y-m-d') . ' ' . $duration[0]) ? (date('H', strtotime('+1 hour')) . ':' . (round(date('H', strtotime('+1 hour'))/30)*30) )  : $duration[0], $duration[1]),
+				'time' => DateTime::calculateTimeDifference(
+					(
+						date('Y-m-d', $d) == date('Y-m-d') && time() > strtotime(date('Y-m-d') . ' ' . $duration[0]) 
+						? 
+							(
+								date('H', strtotime('+1 hour')) . ':' . (round(date('H', strtotime('+1 hour'))/30)*30) 
+							)  
+						: 
+							$duration[0]
+					), 
+					$duration[1]),
 				'disabled' => $disabled
 			];
 		}

@@ -37,14 +37,18 @@ class AuthController extends AppController
 	{
 		$data = $request->toArray();
 		$token = isset($data['token']) && $data['token'] ? $data['token'] : null;
-        $user = Users::select(['id', 'first_name', 'phonenumber'])->where('token', $token)
+        $user = Users::select(['id', 'first_name', 'phonenumber', 'address', 'token'])->where('token', $token)
             ->where('token_expiry', '>', date('Y-m-d H:i'))
             ->whereNotNull('token_expiry')
             ->where('status', 1)
             ->limit(1)
             ->first();
         if ($user) {
-            return Response()->json(['status' => true]);
+            return Response()->json(['status' => true, 'user' => [
+				'name' => $user->first_name,
+				'address' => $user->address,
+				'token' => $user->token
+			]]);
         }
 		else {
 			return Response()->json(['status' => false]);
@@ -181,6 +185,7 @@ class AuthController extends AppController
 				$user->first_name = $request->get('name');
 				$user->phonenumber = $request->get('phonenumber');
 				$user->status = 1;
+				$user->modified = $user->created = date('Y-m-d H:i:s');
 			}
 			$otp = mt_rand(1000, 9999);
 			$user->otp = $otp;
