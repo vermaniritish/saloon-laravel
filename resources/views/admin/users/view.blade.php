@@ -84,7 +84,7 @@
 					<div class="card listing-block">
 						<div class="card-header">
 							<div class="row align-items-center">
-								<div class="col-md-8">
+								<div class="col-md-6">
 									<h3 class="mb-0">Customer Orders</h3>
 								</div>
 								<div class="col-md-4">
@@ -94,6 +94,9 @@
 										</div>
 										<input class="form-control listing-search" placeholder="Search" type="text" value="<?php echo (isset($_GET['search']) && $_GET['search'] ? $_GET['search'] : '') ?>">
 									</div>
+								</div>
+								<div class="col-md-2">
+									@include('admin.users.orders.filters',['id' => $user->id])
 								</div>
 							</div>
 						</div>
