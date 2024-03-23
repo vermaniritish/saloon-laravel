@@ -321,33 +321,48 @@ class UsersController extends AppController
     		$request->session()->flash('error', 'Permission denied.');
     		return redirect()->route('admin.dashboard');
     	}
-
     	$user = Users::get($id);
     	if($user)
     	{
+			$fromDate = now()->startOfMonth()->toDateString();
+			$toDate = now()->endOfMonth()->toDateString();
+			if ($request->filled('order_created')) {
+				$customDateRange = $request->input('order_created');
+				$fromDate = $customDateRange[0];
+				$toDate = $customDateRange[1];
+			}	
+			if($fromDate && $toDate)
+			{
+				if(isset($fromDate) && !empty($fromDate))
+					$where['orders.created >= ?'] = [
+						date('Y-m-d 00:00:00', strtotime($fromDate))
+					];
+				if(isset($toDate) && !empty($toDate))
+					$where['orders.created <= ?'] = [
+						date('Y-m-d 23:59:59', strtotime($toDate))
+					];
+			}
+			$where['customer_id'] = $id;
 			if($request->get('search'))
 			{
 				$search = $request->get('search');
 				$search = '%' . $search . '%';
 				$where['(
-					order_products.id LIKE ? or
-					order_products.product_title LIKE ? or
-					order_products.quantity LIKE ? or
-					order_products.amount LIKE ?)'] = [$search, $search, $search, $search];
+					orders.status LIKE ? or
+					orders.id LIKE ? or
+					orders.total_amount LIKE ?)'] = [$search, $search, $search];
 			}
-			$orderId = Orders::where('customer_id',$id)->pluck('id')->toArray();
-			$ids = implode(',',$orderId ? $orderId : [-1]);
-			$where[] = "order_id in ({$ids})";
-			$listing = OrderProductRelation::getListing($request, $where);
+			$listing = Orders::getListing($request,$where);
 	    	if($request->ajax())
 	    	{
 			    $html = view(
-					"admin/users/orderedProducts/listingLoop", 
+					"admin/staff/orders/listingLoop", 
 		    		[
-		    			'listing' => $listing
-		    		]
+						'listing' => $listing,
+						'currency' => Settings::get('currency_symbol'),
+						'status' => Orders::getStaticData()['status'],
+					]
 		    	)->render();
-
 			    return Response()->json([
 			    	'status' => 'success',
 		            'html' => $html,
@@ -363,7 +378,9 @@ class UsersController extends AppController
 		    		"admin/users/view", 
 		    		[
 		    			'user' => $user,
-		    			'listing' => $listing
+		    			'listing' => $listing,
+						'status' => Orders::getStaticData()['status'],
+						'currency' => Settings::get('currency_symbol'),
 		    		]
 		    	);
 		    }

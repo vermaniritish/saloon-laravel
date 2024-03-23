@@ -227,7 +227,6 @@ class StaffController extends AppController
 						'status' => Orders::getStaticData()['status'],
 					]
 				)->render();
-	
 				return Response()->json([
 					'status' => 'success',
 					'html' => $html,
