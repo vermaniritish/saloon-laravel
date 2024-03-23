@@ -68,7 +68,7 @@ use App\Models\Admin\Settings;
 								<tbody>
 									<tr>
 										<th>Id</th>
-										<td><?php echo $page->id ?></td>
+										<td><?php echo $page->prefix_id ?></td>
 									</tr>
 									<tr>
 										<th>Customer Name</th>
@@ -282,14 +282,14 @@ use App\Models\Admin\Settings;
 						</div>
 					</div>
 					<div class="card-body">
-						<form method="post" id="" action="<?php echo route('admin.orders.selectStaff', ['id' => $page->id]); ?>" class="form-validation" enctype="multipart/form-data">
+						<form method="post" id="" action="<?php echo in_array($page->status, ['completed', 'cancel', 'cancel_by_client']) ? '' : route('admin.orders.selectStaff', ['id' => $page->id]); ?>" class="form-validation" enctype="multipart/form-data">
 							<!--!! CSRF FIELD !!-->
 							{{ @csrf_field() }}	
 							<div class="row">
 								<div class="col-md-12">
 									<div class="form-group">
 									<label class="form-control-label">Staff</label>
-										<select class="form-control" name="staff_id" required>
+										<select class="form-control" name="staff_id" required <?php echo (in_array($page->status, ['completed', 'cancel', 'cancel_by_client']) ? 'disabled' : '')?>>
 											<option value="">Select</option>
 											<?php 
 												foreach($staff as $s): 
@@ -310,9 +310,11 @@ use App\Models\Admin\Settings;
 									</div>
 								</div>
 							</div>
+							<?php if(!in_array($page->status, ['completed', 'cancel', 'cancel_by_client'])): ?>
 							<button type="submit" class="btn btn-sm py-2 px-3 btn-primary float-right">
 								<i class="fa fa-save"></i> Submit
 							</button>
+							<?php endif; ?>
 						</form>
 					</div>
 				</div>

@@ -68,7 +68,7 @@ use App\Models\Admin\Settings;
 								<tbody>
 									<tr>
 										<th>Id</th>
-										<td><?php echo $page->id ?></td>
+										<td><?php echo $page->prefix_id ?></td>
 									</tr>
 									<tr>
 										<th>Staff Name</th>

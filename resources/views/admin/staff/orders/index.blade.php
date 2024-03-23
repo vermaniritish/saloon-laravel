@@ -54,6 +54,7 @@
                     <i class="fas fa-sort" data-field="orders.total_amount"></i>
                     <?php endif; ?>
                 </th>
+                <th class="sort" width="5%" ></th>
             </tr>
         </thead>
         <tbody class="list">

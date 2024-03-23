@@ -5,7 +5,7 @@ use App\Models\Admin\OrderProductRelation;
  foreach($listing->items() as $k => $row): ?>
 <tr>
 	<td>
-		<a href="<?php echo route('admin.orders.view', ['id' => $row->id]) ?>"><?php echo $row->id; ?></a>
+		<a href="<?php echo route('admin.orders.view', ['id' => $row->id]) ?>"><?php echo $row->prefix_id; ?></a>
 	</td>
 	<td>
 		@foreach ($row->products as $index => $product)
@@ -35,5 +35,6 @@ use App\Models\Admin\OrderProductRelation;
 	<td style="font-size: 16px; font-weight: bold;">
 		{{$currency}} {{$row->total_amount }}
 	</td>
+	<td><a href="<?php echo route('admin.orders.view', ['id' => $row->id]) ?>" target="_blank" class="btn btn-sm btn-primary"><i class="fa fa-eye"></i></a></td>
 </tr>
 <?php endforeach; ?>
