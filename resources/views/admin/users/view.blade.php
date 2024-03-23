@@ -80,7 +80,7 @@
 						</table>
 					</div>
 				</div>
-				<?php if(Permissions::hasPermission('products', 'listing')): ?>
+				<?php if(Permissions::hasPermission('orders', 'listing')): ?>
 					<div class="card listing-block">
 						<div class="card-header">
 							<div class="row align-items-center">
