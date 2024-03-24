@@ -17,6 +17,8 @@ Route::middleware(['guest'])->group(function () {
 	//Admin public
 	include "Admin/auth.php";
 
+	Route::get('/invoice/{orderId}/pdf', '\App\Http\Controllers\InvoiceController@pdf')->name('invoice');
+
 	//Public Routes
 	Route::get('/', function () {
 	    return view('welcome');
