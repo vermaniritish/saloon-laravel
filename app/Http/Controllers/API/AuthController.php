@@ -198,7 +198,8 @@ class AuthController extends AppController
 				return Response()->json([
 					'status' => true,
 					'message' => 'We have sent an OTP on your phone number.',
-					'hash' => $user->token
+					'hash' => $user->token,
+					'otp' => $user->otp
 				]);
 			}
 			else
