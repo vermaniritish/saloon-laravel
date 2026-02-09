@@ -76,10 +76,11 @@ class OrdersController extends BaseController
                 ]);
         }
         $order = Orders::select([
-            'prefix_id as id',
-            'address', 
-            'booking_date', 
-            'booking_time', 
+            'orders.id',          // real PK for relations
+            'orders.prefix_id',   // public/order id
+            'address',
+            'booking_date',
+            'booking_time',
             'subtotal',
             'discount',
             'coupon',
@@ -89,11 +90,25 @@ class OrdersController extends BaseController
             DB::raw('((our_profit * cgst)/100) as cgst_tax'),
             DB::raw('((our_profit * sgst)/100) as sgst_tax'),
             DB::raw('((our_profit * igst)/100) as igst_tax'),
-            'total_amount', 
-            'status', 
+            'total_amount',
+            'status',
             'created',
-            DB::raw("(Select sum(quantity) from order_products op where op.order_id = orders.id limit 1) as service_count")
-        ])->with(['products', 'products.brands'])->whereCustomerId($user->id)->where('prefix_id', $id)->orderBy('id', 'desc')->limit(1)->first();
+            DB::raw("(SELECT SUM(quantity)
+                    FROM order_products op
+                    WHERE op.order_id = orders.id) AS service_count")
+        ])
+        ->with(['products', 'products.brands'])
+        ->whereCustomerId($user->id)
+        ->where('prefix_id', $id)
+        ->orderBy('orders.id', 'desc')
+        ->limit(1)
+        ->first();
+
+        if ($order) {
+            $order->id = $order->prefix_id;
+            unset($order->prefix_id);
+        }
+
         return Response()
                 ->json([
                     'status' => true,
